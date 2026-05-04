@@ -273,7 +273,10 @@ const PortfolioRender = {
 
     createWorkCard(item) {
         const article = document.createElement("article");
-        article.className = "work-item" + (item.portraitCard ? " work-item--portrait" : "");
+        article.className =
+            "work-item" +
+            (item.portraitCard ? " work-item--portrait" : "") +
+            (item.impactLead ? " work-item--impact-lead" : "");
         article.dataset.category = this.slugify(item.category);
 
         const media = document.createElement("div");
