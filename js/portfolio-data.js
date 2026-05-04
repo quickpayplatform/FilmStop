@@ -86,8 +86,8 @@ window.PORTFOLIO_DATA = [
         category: "Music Videos",
         title: "Be More",
         thumbnail: "assets/thumbnails/be-more.webp",
-        link: "assets/videos/be-more.mov",
-        linkType: "video/quicktime",
+        link: "assets/videos/be-more.mp4",
+        linkType: "video/mp4",
         description: "<strong>Project:</strong> Film Stop-produced short film by Tee Forest. <strong>Goal:</strong> Capture Tee Forest's first-year Baltimore story through a narrated city film. <strong>Result:</strong> Increased socials and brought in sales."
     },
     {
@@ -130,16 +130,16 @@ window.PORTFOLIO_DATA = [
         category: "Commercials",
         title: "Swahili Video",
         thumbnail: "assets/thumbnails/swahili.jpg",
-        link: "assets/videos/swahili.mov",
-        linkType: "video/quicktime",
+        link: "assets/videos/swahili.mp4",
+        linkType: "video/mp4",
         description: "<strong>Client:</strong> Swahili (Washington, D.C.). <strong>Goal:</strong> Spotlight a business with bold, cinematic storytelling. <strong>Result:</strong> Increased sales and traffic to the Washington, D.C. restaurant."
     },
     {
         category: "Commercials",
         title: "Essoka French Bilingual New Comer's Help Center",
         thumbnail: "assets/thumbnails/mom-video.jpg",
-        link: "assets/videos/mom-video.mov",
-        linkType: "video/quicktime",
+        link: "assets/videos/mom-video.mp4",
+        linkType: "video/mp4",
         description: "<strong>Client:</strong> Canadian nonprofit. <strong>Goal:</strong> Tell a heartfelt brand story with warmth and credibility. <strong>Result:</strong> 4x sales and traffic."
     },
     {
@@ -186,16 +186,16 @@ window.PORTFOLIO_DATA = [
         category: "Documentary",
         title: "Ajay's Story",
         thumbnail: "assets/thumbnails/ajays-story.jpg",
-        link: "assets/videos/ajays-story.mov",
-        linkType: "video/quicktime",
+        link: "assets/videos/ajays-story.mp4",
+        linkType: "video/mp4",
         description: "<strong>Client:</strong> MPOWER Financing. <strong>Goal:</strong> Document a personal journey opened by access to education. <strong>Result:</strong> Built trust for MPOWER Financing, reaching up to $1,000,000 in loans within the first year."
     },
     {
         category: "Documentary",
         title: "Juan: Half Marathon",
         thumbnail: "assets/thumbnails/juan-half-marathon.jpg",
-        link: "assets/videos/juan-half-marathon.mov",
-        linkType: "video/quicktime",
+        link: "assets/videos/juan-half-marathon.mp4",
+        linkType: "video/mp4",
         description: "<strong>Goal:</strong> Capture a personal endurance story with real emotion. <strong>Result:</strong> Increased social engagement."
     },
     {
@@ -210,8 +210,8 @@ window.PORTFOLIO_DATA = [
         category: "Events",
         title: "Julie's Concert Teaser",
         thumbnail: "assets/thumbnails/julie-new-wide.jpg",
-        link: "assets/videos/julie-new-wide.mov",
-        linkType: "video/quicktime",
+        link: "assets/videos/julie-new-wide.mp4",
+        linkType: "video/mp4",
         description: "<strong>Goal:</strong> Promote Julie Williams' 2022 tour with a cinematic live-event cut. <strong>Result:</strong> Sold tickets for the upcoming concert tour."
     },
     {
