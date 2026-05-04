@@ -273,11 +273,11 @@ const PortfolioRender = {
 
     createWorkCard(item) {
         const article = document.createElement("article");
-        article.className = "work-item";
+        article.className = "work-item" + (item.portraitCard ? " work-item--portrait" : "");
         article.dataset.category = this.slugify(item.category);
 
         const media = document.createElement("div");
-        media.className = "work-item-media";
+        media.className = "work-item-media" + (item.portraitCard ? " work-item-media--portrait" : "");
 
         const video = document.createElement("video");
         video.muted = true;

@@ -20,6 +20,22 @@ window.PORTFOLIO_DATA = [
     },
     {
         category: "Music Videos",
+        title: "Be More",
+        thumbnail: "/assets/thumbnails/be-more.webp",
+        link: "/assets/videos/be-more.mp4",
+        linkType: "video/mp4",
+        description: "<strong>Project:</strong> Film Stop-produced short film by Tee Forest. <strong>Goal:</strong> Capture Tee Forest's first-year Baltimore story through a narrated city film. <strong>Result:</strong> Increased socials and brought in sales."
+    },
+    {
+        category: "Music Videos",
+        title: "Licy",
+        thumbnail: "/assets/thumbnails/artist-showcase.jpg",
+        link: "/assets/videos/licy-music-video-2.mp4",
+        linkType: "video/mp4",
+        description: "<strong>Goal:</strong> Deliver a cinematic artist visual with strong performance coverage. <strong>Result:</strong> Polished music video ready for release and social rollout."
+    },
+    {
+        category: "Music Videos",
         title: "On Your Way",
         thumbnail: "/assets/thumbnails/on-your-way.jpg",
         link: "/assets/videos/on-your-way.mp4",
@@ -83,14 +99,6 @@ window.PORTFOLIO_DATA = [
         description: "<strong>Goal:</strong> Match a playful sound with standout visuals. <strong>Result:</strong> Increased social engagement."
     },
     {
-        category: "Music Videos",
-        title: "Be More",
-        thumbnail: "/assets/thumbnails/be-more.webp",
-        link: "/assets/videos/be-more.mp4",
-        linkType: "video/mp4",
-        description: "<strong>Project:</strong> Film Stop-produced short film by Tee Forest. <strong>Goal:</strong> Capture Tee Forest's first-year Baltimore story through a narrated city film. <strong>Result:</strong> Increased socials and brought in sales."
-    },
-    {
         category: "Commercials",
         title: "Fly Level — Hoodie Campaign",
         thumbnail: "/assets/thumbnails/commercial-sample.jpg",
@@ -148,6 +156,7 @@ window.PORTFOLIO_DATA = [
         thumbnail: "/assets/thumbnails/paid-ad-4.jpg",
         link: "/assets/videos/mpower-financing.mp4",
         linkType: "video/mp4",
+        portraitCard: true,
         description: "A punchy paid spot designed for fast impact and a clear call-to-action."
     },
     {
@@ -156,6 +165,7 @@ window.PORTFOLIO_DATA = [
         thumbnail: "/assets/thumbnails/rbp-early-bird.jpg",
         link: "/assets/videos/good-things-come-in-3s.mp4",
         linkType: "video/mp4",
+        portraitCard: true,
         description: "Early-bird campaign video built to drive urgency and preorders."
     },
     {

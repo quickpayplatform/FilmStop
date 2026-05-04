@@ -13,11 +13,11 @@
     }
 
     const TEE_SECTION_ORDER = [
+        'Documentary / Storytelling',
         'Business Impact',
         'Branded Work',
         'Music Videos',
         'Events & Live Coverage',
-        'Documentary / Storytelling',
         'Social Content'
     ];
 
@@ -46,10 +46,30 @@
     TEE_SECTION_ORDER.forEach((label) => buckets.set(label, []));
 
     data.forEach((item) => {
+        if (item.title === 'Sample Work' && item.category === 'Reels') {
+            return;
+        }
         const label = mapToTeeCategory(item);
         const list = buckets.get(label);
         if (list) list.push(item);
     });
+
+    const sampleWork = data.find((i) => i.title === 'Sample Work' && i.category === 'Reels');
+    const bi = buckets.get('Business Impact');
+    if (sampleWork && bi) {
+        bi.push(
+            Object.assign({}, sampleWork, {
+                category: 'Business Impact'
+            })
+        );
+    }
+
+    const mv = buckets.get('Music Videos');
+    if (mv && mv.length) {
+        const beMore = mv.filter((i) => i.title === 'Be More');
+        const rest = mv.filter((i) => i.title !== 'Be More');
+        buckets.set('Music Videos', [...beMore, ...rest]);
+    }
 
     const activeLabels = TEE_SECTION_ORDER.filter((label) => (buckets.get(label) || []).length > 0);
 

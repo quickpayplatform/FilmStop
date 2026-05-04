@@ -3089,8 +3089,26 @@ section {
     align-items: center;
 }
 
-.tee-portfolio-prose {
+.tee-portfolio-about .section-header,
+.tee-portfolio-experience .section-header {
+    text-align: center;
     max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tee-portfolio-strategist .section-header {
+    text-align: center;
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tee-portfolio-prose {
+    max-width: 40rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }
 
 .tee-portfolio-prose p {
@@ -3100,8 +3118,25 @@ section {
     font-family: var(--font-serif);
 }
 
+.tee-portfolio-experience-notes {
+    max-width: 40rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.tee-portfolio-experience-notes p {
+    font-size: clamp(1.0625rem, 2vw, 1.2rem);
+    line-height: 1.82;
+    color: var(--color-text-muted);
+    font-family: var(--font-serif);
+}
+
 .tee-portfolio-experience .section-description {
     max-width: 38rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }
 
 .tee-collab-grid {
@@ -3153,6 +3188,10 @@ section {
 
 .tee-strategist-body {
     margin-top: var(--space-xl);
+    max-width: 40rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }
 
 .tee-strategist-body p {
@@ -3165,6 +3204,27 @@ section {
 .tee-portfolio-work.work {
     background: var(--color-bg-elevated);
     border-top: 1px solid var(--color-border);
+}
+
+/* Tee portfolio: portrait / vertical promo spots */
+.tee-portfolio-work .work-item--portrait .work-item-media--portrait {
+    aspect-ratio: 9 / 16;
+    max-width: min(300px, 82%);
+    max-height: min(72vh, 640px);
+    margin-left: auto;
+    margin-right: auto;
+    background: var(--color-bg);
+}
+
+.tee-portfolio-work .work-item--portrait .work-item-media--portrait video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+}
+
+.tee-portfolio-work .work-item--portrait:hover .work-item-media--portrait video {
+    transform: none;
 }
 
 .tee-portfolio-close-cta {
@@ -3196,6 +3256,294 @@ section {
 
 .tee-portfolio-footer-bottom a:hover {
     color: var(--color-accent-hover);
+}
+
+/* ============================================
+   TEE PORTFOLIO — TEAL ACCENT SYSTEM
+   Single accent: hierarchy + interaction only
+   ============================================ */
+.tee-portfolio-body {
+    --tee-teal: #14b8a6;
+    --tee-teal-hover: #0d9488;
+    --tee-teal-soft: rgba(20, 184, 166, 0.38);
+    --tee-teal-faint: rgba(20, 184, 166, 0.1);
+    --tee-teal-glow: rgba(20, 184, 166, 0.22);
+}
+
+/* Hero: subtle teal wash + accent line */
+.tee-portfolio-body .tee-portfolio-hero-overlay {
+    background:
+        linear-gradient(165deg, rgba(20, 184, 166, 0.08) 0%, transparent 45%),
+        linear-gradient(
+            165deg,
+            rgba(10, 10, 10, 0.55) 0%,
+            rgba(10, 10, 10, 0.72) 40%,
+            rgba(10, 10, 10, 0.94) 100%
+        );
+}
+
+.tee-portfolio-body .tee-portfolio-hero .section-label {
+    color: var(--tee-teal);
+}
+
+.tee-portfolio-body .tee-portfolio-title::after {
+    content: '';
+    display: block;
+    width: 4.5rem;
+    height: 2px;
+    margin: var(--space-md) auto 0;
+    background: linear-gradient(90deg, transparent, var(--tee-teal), transparent);
+    opacity: 0.9;
+}
+
+.tee-portfolio-body .tee-portfolio-role {
+    color: rgba(226, 232, 240, 0.88);
+}
+
+/* Section dividers */
+.tee-portfolio-body .tee-portfolio-about {
+    border-bottom: 1px solid var(--tee-teal-soft);
+}
+
+.tee-portfolio-body .tee-portfolio-experience {
+    border-bottom: 1px solid var(--tee-teal-soft);
+}
+
+.tee-portfolio-body .tee-portfolio-work.work {
+    border-top: 1px solid var(--tee-teal-soft);
+}
+
+.tee-portfolio-body .tee-portfolio-strategist {
+    border-top: 1px solid var(--tee-teal-soft);
+}
+
+/* Section labels & titles — restrained */
+.tee-portfolio-body .section-header .section-label {
+    color: var(--tee-teal);
+}
+
+.tee-portfolio-body .section-header .section-title {
+    position: relative;
+    display: inline-block;
+    padding-bottom: var(--space-sm);
+}
+
+.tee-portfolio-body .section-header .section-title::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: min(5rem, 28vw);
+    height: 2px;
+    background: var(--tee-teal);
+    opacity: 0.55;
+    border-radius: 1px;
+}
+
+.tee-portfolio-body .tee-portfolio-work .portfolio-section-title {
+    color: rgba(255, 255, 255, 0.96);
+    box-shadow: inset 0 -1px 0 var(--tee-teal-soft);
+    padding-bottom: var(--space-xs);
+    display: inline-block;
+}
+
+.tee-portfolio-body .tee-portfolio-work .portfolio-section-count {
+    color: rgba(20, 184, 166, 0.75);
+}
+
+.tee-portfolio-body .tee-portfolio-work .work-item-category {
+    color: var(--tee-teal);
+}
+
+/* Partnership block accent */
+.tee-portfolio-body .tee-strategist-body {
+    position: relative;
+    padding-top: var(--space-lg);
+}
+
+.tee-portfolio-body .tee-strategist-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3.5rem;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--tee-teal);
+    opacity: 0.75;
+}
+
+/* Nav & primary CTAs */
+.tee-portfolio-body .nav-cta {
+    background: transparent !important;
+    color: var(--tee-teal) !important;
+    border: 1px solid var(--tee-teal-soft) !important;
+    box-shadow: none !important;
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast) !important;
+}
+
+.tee-portfolio-body .nav-cta:hover {
+    background: var(--tee-teal) !important;
+    color: #fff !important;
+    border-color: var(--tee-teal) !important;
+    transform: translateY(-1px);
+}
+
+.tee-portfolio-body .btn.btn-primary {
+    background: transparent;
+    color: #fff;
+    border: 1px solid var(--tee-teal);
+    box-shadow: 0 0 0 1px rgba(20, 184, 166, 0.08);
+}
+
+.tee-portfolio-body .btn.btn-primary:hover {
+    background: var(--tee-teal);
+    color: #fff;
+    border-color: var(--tee-teal);
+    box-shadow: 0 8px 28px var(--tee-teal-glow);
+    transform: translateY(-2px);
+}
+
+.tee-portfolio-body .btn.btn-primary:focus-visible {
+    outline: 2px solid var(--tee-teal);
+    outline-offset: 3px;
+}
+
+.tee-portfolio-body .btn.btn-outline {
+    border-color: var(--tee-teal-soft);
+    color: var(--tee-teal);
+    background: rgba(20, 184, 166, 0.04);
+}
+
+.tee-portfolio-body .btn.btn-outline:hover {
+    background: var(--tee-teal);
+    color: #fff;
+    border-color: var(--tee-teal);
+}
+
+.tee-portfolio-body .btn.btn-outline:focus-visible {
+    outline: 2px solid var(--tee-teal);
+    outline-offset: 3px;
+}
+
+/* Filter chips */
+.tee-portfolio-body .work-filters .filter-btn {
+    border-color: var(--tee-teal-soft);
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.tee-portfolio-body .work-filters .filter-btn:hover {
+    color: var(--tee-teal);
+    border-color: var(--tee-teal);
+    background: rgba(20, 184, 166, 0.08);
+}
+
+.tee-portfolio-body .work-filters .filter-btn.active {
+    background: var(--tee-teal);
+    color: #fff;
+    border-color: var(--tee-teal);
+    font-weight: 600;
+    box-shadow: 0 4px 20px var(--tee-teal-glow);
+}
+
+.tee-portfolio-body .work-filters .filter-btn.active:hover {
+    background: var(--tee-teal-hover);
+    border-color: var(--tee-teal-hover);
+    color: #fff;
+}
+
+.tee-portfolio-body .work-filters .filter-btn:focus-visible {
+    outline: 2px solid var(--tee-teal);
+    outline-offset: 2px;
+}
+
+/* Video cards */
+.tee-portfolio-body .tee-portfolio-work .work-item:hover {
+    box-shadow:
+        0 0 0 1px var(--tee-teal-soft),
+        0 25px 50px rgba(0, 0, 0, 0.35);
+}
+
+.tee-portfolio-body .tee-portfolio-work .work-item-play {
+    background: var(--tee-teal);
+    color: #fff;
+    box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.35);
+    transition:
+        background var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.tee-portfolio-body .tee-portfolio-work .work-item:hover .work-item-play {
+    background: var(--tee-teal-hover);
+    box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.45);
+    transform: scale(1);
+}
+
+/* Closing CTA band — cooler undertone */
+.tee-portfolio-body .tee-portfolio-close-cta {
+    background:
+        radial-gradient(circle at 22% 28%, rgba(20, 184, 166, 0.12), transparent 48%),
+        var(--color-bg);
+}
+
+/* Inline links */
+.tee-portfolio-body .tee-portfolio-footer-bottom a {
+    color: var(--tee-teal);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.tee-portfolio-body .tee-portfolio-footer-bottom a:hover {
+    color: var(--tee-teal-hover);
+    border-bottom-color: var(--tee-teal-hover);
+}
+
+/* Inline copy links (descriptions, prose, CTAs) */
+.tee-portfolio-body .work-item-description a,
+.tee-portfolio-body .section-description a,
+.tee-portfolio-body .tee-portfolio-prose a,
+.tee-portfolio-body .tee-portfolio-experience-notes a,
+.tee-portfolio-body .tee-strategist-body a,
+.tee-portfolio-body .cta-description a,
+.tee-portfolio-body .tee-portfolio-hero-intro a {
+    color: var(--tee-teal);
+    text-decoration: none;
+    border-bottom: 1px solid var(--tee-teal-soft);
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.tee-portfolio-body .work-item-description a:hover,
+.tee-portfolio-body .section-description a:hover,
+.tee-portfolio-body .tee-portfolio-prose a:hover,
+.tee-portfolio-body .tee-portfolio-experience-notes a:hover,
+.tee-portfolio-body .tee-strategist-body a:hover,
+.tee-portfolio-body .cta-description a:hover,
+.tee-portfolio-body .tee-portfolio-hero-intro a:hover {
+    color: var(--tee-teal-hover);
+    border-bottom-color: var(--tee-teal-hover);
+}
+
+.tee-portfolio-body .mobile-menu-links a {
+    color: var(--tee-teal);
+    transition: color var(--transition-fast);
+}
+
+.tee-portfolio-body .mobile-menu-links a:hover {
+    color: var(--tee-teal-hover);
+}
+
+/* Collaborator cells — light teal frame on hover only */
+.tee-portfolio-body .tee-collab-cell:hover {
+    border-color: var(--tee-teal-soft);
+    box-shadow: 0 0 0 1px var(--tee-teal-faint);
 }
 
 @media (max-width: 768px) {
