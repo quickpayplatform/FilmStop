@@ -1,4 +1,4 @@
-/* Tee portfolio hero: fade in background video only after playback starts (no frozen first frame). */
+/* Tee portfolio hero: muted loop background — reliable autoplay + fade-in when playback starts. */
 
 (function initTeePortfolioHeroVideo() {
     function run() {
@@ -7,6 +7,9 @@
         const media = document.querySelector('.tee-portfolio-hero-media');
         const video = document.getElementById('tee-hero-video');
         if (!media || !video) return;
+
+        const sourceEl = video.querySelector('source');
+        const fallbackSrc = video.getAttribute('data-fallback-src') || '';
 
         let revealed = false;
         const reveal = () => {
@@ -19,6 +22,7 @@
         video.defaultMuted = true;
         video.setAttribute('muted', '');
         video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
 
         const tryPlay = () => {
             const p = video.play();
@@ -26,6 +30,17 @@
                 p.catch(() => {});
             }
         };
+
+        let swappedFallback = false;
+        const swapFallback = () => {
+            if (swappedFallback || !sourceEl || !fallbackSrc) return;
+            swappedFallback = true;
+            sourceEl.src = fallbackSrc;
+            video.load();
+            tryPlay();
+        };
+
+        video.addEventListener('error', () => swapFallback(), { once: true });
 
         video.addEventListener(
             'playing',
@@ -35,22 +50,25 @@
             { once: true }
         );
 
-        if (video.readyState >= 3) {
+        video.addEventListener('canplay', () => tryPlay(), { once: true });
+        video.addEventListener('loadeddata', () => tryPlay(), { once: true });
+
+        tryPlay();
+        if (video.readyState >= 2) {
             tryPlay();
-        } else {
-            video.addEventListener('canplay', tryPlay, { once: true });
-            video.addEventListener('loadeddata', tryPlay, { once: true });
         }
 
         window.setTimeout(() => {
-            if (revealed) return;
             tryPlay();
-            if (!video.paused && video.currentTime > 0) {
-                reveal();
-            } else if (video.readyState >= 3) {
+            if (!revealed && !video.error && (video.readyState >= 2 || !video.paused)) {
                 reveal();
             }
-        }, 12000);
+        }, 2800);
+
+        window.setTimeout(() => {
+            tryPlay();
+            if (!revealed) reveal();
+        }, 9000);
     }
 
     if (document.readyState === 'loading') {

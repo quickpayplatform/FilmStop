@@ -212,7 +212,7 @@ window.PORTFOLIO_DATA = [
         category: "Documentary",
         title: "Juan: Half Marathon",
         thumbnail: "/assets/thumbnails/juan-half-marathon.jpg",
-        link: "/assets/videos/Juan marathon - low res.mp4",
+        link: "/assets/videos/juan-marathon-low-res.mp4",
         linkType: "video/mp4",
         description: "<strong>Goal:</strong> Capture a personal endurance story with real emotion. <strong>Result:</strong> Increased social engagement."
     },
