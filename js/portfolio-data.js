@@ -20,11 +20,11 @@ window.PORTFOLIO_DATA = [
     },
     {
         category: "Music Videos",
-        title: "Be More",
-        thumbnail: "/assets/thumbnails/be-more.webp",
-        link: "/assets/videos/be-more.mp4",
+        title: "Sample Work",
+        thumbnail: "/assets/thumbnails/sample-work.jpg",
+        link: "/assets/videos/sample-work.mp4",
         linkType: "video/mp4",
-        description: "<strong>Project:</strong> Film Stop-produced short film by Tee Forest. <strong>Goal:</strong> Capture Tee Forest's first-year Baltimore story through a narrated city film. <strong>Result:</strong> Increased socials and brought in sales."
+        description: "A quick snapshot of brand stories and artist visuals."
     },
     {
         category: "Music Videos",
@@ -178,6 +178,14 @@ window.PORTFOLIO_DATA = [
     },
     {
         category: "Documentary",
+        title: "Be More",
+        thumbnail: "/assets/thumbnails/be-more.webp",
+        link: "/assets/videos/be-more.mp4",
+        linkType: "video/mp4",
+        description: "<strong>Project:</strong> Film Stop-produced short film by Tee Forest. <strong>Goal:</strong> Capture Tee Forest's first-year Baltimore story through a narrated city film. <strong>Result:</strong> Increased socials and brought in sales."
+    },
+    {
+        category: "Documentary",
         title: "Real Stories",
         thumbnail: "/assets/thumbnails/documentary-sample.jpg",
         link: "/assets/videos/documentary-sample.mp4",
@@ -231,13 +239,5 @@ window.PORTFOLIO_DATA = [
         link: "/assets/videos/julie-new-wide.mp4",
         linkType: "video/mp4",
         description: "<strong>Goal:</strong> Promote Julie Williams' 2022 tour with a cinematic live-event cut. <strong>Result:</strong> Sold tickets for the upcoming concert tour."
-    },
-    {
-        category: "Reels",
-        title: "Sample Work",
-        thumbnail: "/assets/thumbnails/sample-work.jpg",
-        link: "/assets/videos/sample-work.mp4",
-        linkType: "video/mp4",
-        description: "A quick snapshot of brand stories and artist visuals."
     }
 ];

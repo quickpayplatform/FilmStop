@@ -3259,76 +3259,131 @@ section {
 }
 
 /* ============================================
-   TEE PORTFOLIO — TEAL ACCENT SYSTEM
-   Single accent: hierarchy + interaction only
+   TEE PORTFOLIO — ORANGE (warm) + TEAL (accent)
+   Orange = cinematic base; teal = interaction / precision
    ============================================ */
 .tee-portfolio-body {
     --tee-teal: #14b8a6;
     --tee-teal-hover: #0d9488;
-    --tee-teal-soft: rgba(20, 184, 166, 0.38);
-    --tee-teal-faint: rgba(20, 184, 166, 0.1);
-    --tee-teal-glow: rgba(20, 184, 166, 0.22);
+    --tee-teal-line: rgba(20, 184, 166, 0.28);
+    --tee-teal-soft: rgba(20, 184, 166, 0.22);
+    --tee-teal-faint: rgba(20, 184, 166, 0.08);
+    --tee-teal-glow: rgba(20, 184, 166, 0.18);
+    --tee-warm-glow: rgba(255, 77, 0, 0.14);
+    --tee-warm-line: rgba(255, 77, 0, 0.35);
 }
 
-/* Hero: subtle teal wash + accent line */
+/* Two-line headings: small label + prominent title */
+.tee-portfolio-body .tee-section-heading-split {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    max-width: 52rem;
+}
+
+.tee-portfolio-body .tee-section-heading-split .section-label {
+    display: block;
+    width: 100%;
+    margin-bottom: 0;
+    padding-bottom: var(--space-xs);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--tee-teal);
+    border-bottom: 1px solid var(--tee-teal-line);
+    max-width: min(22rem, 88vw);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tee-portfolio-body .tee-section-heading-split .section-title {
+    display: block;
+    width: 100%;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    font-size: clamp(2.75rem, 7.2vw, 4.75rem);
+    line-height: 1.02;
+    letter-spacing: 0.03em;
+    color: #fff;
+}
+
+.tee-portfolio-body .tee-section-heading-split .section-title::after {
+    display: none;
+}
+
+.tee-portfolio-body .tee-section-heading-split .section-description {
+    margin-top: var(--space-lg);
+    max-width: 40rem;
+}
+
+/* Hero: warm orange wash + readable dark base; teal micro-accent on label only */
 .tee-portfolio-body .tee-portfolio-hero-overlay {
     background:
-        linear-gradient(165deg, rgba(20, 184, 166, 0.08) 0%, transparent 45%),
+        linear-gradient(155deg, rgba(255, 77, 0, 0.14) 0%, rgba(255, 120, 40, 0.06) 32%, transparent 52%),
         linear-gradient(
             165deg,
-            rgba(10, 10, 10, 0.55) 0%,
-            rgba(10, 10, 10, 0.72) 40%,
-            rgba(10, 10, 10, 0.94) 100%
+            rgba(10, 10, 10, 0.58) 0%,
+            rgba(10, 10, 10, 0.74) 42%,
+            rgba(10, 10, 10, 0.93) 100%
         );
 }
 
 .tee-portfolio-body .tee-portfolio-hero .section-label {
     color: var(--tee-teal);
+    letter-spacing: 0.22em;
+    opacity: 0.95;
 }
 
 .tee-portfolio-body .tee-portfolio-title::after {
     content: '';
     display: block;
-    width: 4.5rem;
+    width: 5rem;
     height: 2px;
     margin: var(--space-md) auto 0;
-    background: linear-gradient(90deg, transparent, var(--tee-teal), transparent);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 77, 0, 0.95) 35%,
+        rgba(20, 184, 166, 0.65) 100%
+    );
     opacity: 0.9;
 }
 
 .tee-portfolio-body .tee-portfolio-role {
-    color: rgba(226, 232, 240, 0.88);
+    color: rgba(255, 235, 220, 0.9);
 }
 
-/* Section dividers */
+/* Section dividers — subtle teal lines only */
 .tee-portfolio-body .tee-portfolio-about {
-    border-bottom: 1px solid var(--tee-teal-soft);
+    border-bottom: 1px solid var(--tee-teal-line);
 }
 
 .tee-portfolio-body .tee-portfolio-experience {
-    border-bottom: 1px solid var(--tee-teal-soft);
+    border-bottom: 1px solid var(--tee-teal-line);
 }
 
 .tee-portfolio-body .tee-portfolio-work.work {
-    border-top: 1px solid var(--tee-teal-soft);
+    border-top: 1px solid var(--tee-teal-line);
 }
 
 .tee-portfolio-body .tee-portfolio-strategist {
-    border-top: 1px solid var(--tee-teal-soft);
+    border-top: 1px solid var(--tee-teal-line);
 }
 
-/* Section labels & titles — restrained */
-.tee-portfolio-body .section-header .section-label {
+/* Non-split section headers: small teal label, title unchanged */
+.tee-portfolio-body .section-header:not(.tee-section-heading-split) .section-label {
     color: var(--tee-teal);
 }
 
-.tee-portfolio-body .section-header .section-title {
+.tee-portfolio-body .section-header:not(.tee-section-heading-split) .section-title {
     position: relative;
     display: inline-block;
     padding-bottom: var(--space-sm);
 }
 
-.tee-portfolio-body .section-header .section-title::after {
+.tee-portfolio-body .section-header:not(.tee-section-heading-split) .section-title::after {
     content: '';
     position: absolute;
     left: 50%;
@@ -3336,27 +3391,27 @@ section {
     transform: translateX(-50%);
     width: min(5rem, 28vw);
     height: 2px;
-    background: var(--tee-teal);
-    opacity: 0.55;
+    background: linear-gradient(90deg, rgba(255, 77, 0, 0.5), var(--tee-teal));
+    opacity: 0.65;
     border-radius: 1px;
 }
 
 .tee-portfolio-body .tee-portfolio-work .portfolio-section-title {
     color: rgba(255, 255, 255, 0.96);
-    box-shadow: inset 0 -1px 0 var(--tee-teal-soft);
+    box-shadow: inset 0 -2px 0 rgba(255, 77, 0, 0.28);
     padding-bottom: var(--space-xs);
     display: inline-block;
 }
 
 .tee-portfolio-body .tee-portfolio-work .portfolio-section-count {
-    color: rgba(20, 184, 166, 0.75);
+    color: rgba(255, 255, 255, 0.45);
 }
 
 .tee-portfolio-body .tee-portfolio-work .work-item-category {
-    color: var(--tee-teal);
+    color: rgba(255, 120, 72, 0.92);
 }
 
-/* Partnership block accent */
+/* Partnership block accent — warm bar + teal center pin */
 .tee-portfolio-body .tee-strategist-body {
     position: relative;
     padding-top: var(--space-lg);
@@ -3368,63 +3423,52 @@ section {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 3.5rem;
+    width: 4rem;
     height: 3px;
     border-radius: 2px;
-    background: var(--tee-teal);
-    opacity: 0.75;
+    background: linear-gradient(90deg, rgba(255, 77, 0, 0.85), var(--tee-teal));
+    opacity: 0.8;
 }
 
-/* Nav & primary CTAs */
+/* Nav CTA: neutral default, teal on hover */
 .tee-portfolio-body .nav-cta {
-    background: transparent !important;
-    color: var(--tee-teal) !important;
-    border: 1px solid var(--tee-teal-soft) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #fff !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
     box-shadow: none !important;
     transition:
         background var(--transition-fast),
         color var(--transition-fast),
         border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
         transform var(--transition-fast) !important;
 }
 
 .tee-portfolio-body .nav-cta:hover {
-    background: var(--tee-teal) !important;
+    background: rgba(20, 184, 166, 0.14) !important;
     color: #fff !important;
     border-color: var(--tee-teal) !important;
+    box-shadow: 0 0 28px var(--tee-teal-glow);
     transform: translateY(-1px);
 }
 
-.tee-portfolio-body .btn.btn-primary {
-    background: transparent;
-    color: #fff;
-    border: 1px solid var(--tee-teal);
-    box-shadow: 0 0 0 1px rgba(20, 184, 166, 0.08);
-}
-
-.tee-portfolio-body .btn.btn-primary:hover {
-    background: var(--tee-teal);
-    color: #fff;
-    border-color: var(--tee-teal);
-    box-shadow: 0 8px 28px var(--tee-teal-glow);
-    transform: translateY(-2px);
-}
-
+/* Primary = brand orange (inherit global); teal focus ring optional */
 .tee-portfolio-body .btn.btn-primary:focus-visible {
     outline: 2px solid var(--tee-teal);
     outline-offset: 3px;
 }
 
 .tee-portfolio-body .btn.btn-outline {
-    border-color: var(--tee-teal-soft);
-    color: var(--tee-teal);
-    background: rgba(20, 184, 166, 0.04);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.9);
+    background: transparent;
 }
 
 .tee-portfolio-body .btn.btn-outline:hover {
-    background: var(--tee-teal);
-    color: #fff;
     border-color: var(--tee-teal);
+    color: #fff;
+    background: rgba(20, 184, 166, 0.1);
+    box-shadow: 0 0 20px var(--tee-teal-glow);
 }
 
 .tee-portfolio-body .btn.btn-outline:focus-visible {
@@ -3432,30 +3476,31 @@ section {
     outline-offset: 3px;
 }
 
-/* Filter chips */
+/* Filter chips: neutral → teal hover; active = orange (primary selection) */
 .tee-portfolio-body .work-filters .filter-btn {
-    border-color: var(--tee-teal-soft);
-    color: rgba(255, 255, 255, 0.82);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.78);
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .tee-portfolio-body .work-filters .filter-btn:hover {
     color: var(--tee-teal);
     border-color: var(--tee-teal);
-    background: rgba(20, 184, 166, 0.08);
+    background: var(--tee-teal-faint);
 }
 
 .tee-portfolio-body .work-filters .filter-btn.active {
-    background: var(--tee-teal);
-    color: #fff;
-    border-color: var(--tee-teal);
+    background: var(--color-accent);
+    color: var(--color-text);
+    border-color: var(--color-accent);
     font-weight: 600;
-    box-shadow: 0 4px 20px var(--tee-teal-glow);
+    box-shadow: 0 4px 24px var(--color-accent-glow);
 }
 
 .tee-portfolio-body .work-filters .filter-btn.active:hover {
-    background: var(--tee-teal-hover);
-    border-color: var(--tee-teal-hover);
-    color: #fff;
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+    color: var(--color-text);
 }
 
 .tee-portfolio-body .work-filters .filter-btn:focus-visible {
@@ -3463,17 +3508,17 @@ section {
     outline-offset: 2px;
 }
 
-/* Video cards */
+/* Video cards: thin teal edge on hover; play = warm orange */
 .tee-portfolio-body .tee-portfolio-work .work-item:hover {
     box-shadow:
         0 0 0 1px var(--tee-teal-soft),
-        0 25px 50px rgba(0, 0, 0, 0.35);
+        0 25px 50px rgba(0, 0, 0, 0.38);
 }
 
 .tee-portfolio-body .tee-portfolio-work .work-item-play {
-    background: var(--tee-teal);
-    color: #fff;
-    box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.35);
+    background: var(--color-accent);
+    color: var(--color-text);
+    box-shadow: 0 0 0 2px rgba(255, 77, 0, 0.35);
     transition:
         background var(--transition-fast),
         transform var(--transition-fast),
@@ -3481,32 +3526,32 @@ section {
 }
 
 .tee-portfolio-body .tee-portfolio-work .work-item:hover .work-item-play {
-    background: var(--tee-teal-hover);
-    box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.45);
+    background: var(--color-accent-hover);
+    box-shadow: 0 0 0 2px rgba(255, 77, 0, 0.45);
     transform: scale(1);
 }
 
-/* Closing CTA band — cooler undertone */
+/* Closing CTA — warm radial (site language) + faint teal cool edge */
 .tee-portfolio-body .tee-portfolio-close-cta {
     background:
-        radial-gradient(circle at 22% 28%, rgba(20, 184, 166, 0.12), transparent 48%),
+        radial-gradient(circle at 18% 26%, rgba(255, 77, 0, 0.14), transparent 46%),
+        radial-gradient(circle at 88% 12%, rgba(20, 184, 166, 0.06), transparent 38%),
         var(--color-bg);
 }
 
-/* Inline links */
 .tee-portfolio-body .tee-portfolio-footer-bottom a {
-    color: var(--tee-teal);
+    color: rgba(255, 140, 90, 0.95);
     text-decoration: none;
     border-bottom: 1px solid transparent;
     transition: color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .tee-portfolio-body .tee-portfolio-footer-bottom a:hover {
-    color: var(--tee-teal-hover);
-    border-bottom-color: var(--tee-teal-hover);
+    color: var(--color-accent-hover);
+    border-bottom-color: rgba(255, 107, 43, 0.6);
 }
 
-/* Inline copy links (descriptions, prose, CTAs) */
+/* Inline copy links — teal (precision / interaction) */
 .tee-portfolio-body .work-item-description a,
 .tee-portfolio-body .section-description a,
 .tee-portfolio-body .tee-portfolio-prose a,
@@ -3516,7 +3561,7 @@ section {
 .tee-portfolio-body .tee-portfolio-hero-intro a {
     color: var(--tee-teal);
     text-decoration: none;
-    border-bottom: 1px solid var(--tee-teal-soft);
+    border-bottom: 1px solid var(--tee-teal-line);
     transition: color var(--transition-fast), border-color var(--transition-fast);
 }
 
@@ -3532,17 +3577,17 @@ section {
 }
 
 .tee-portfolio-body .mobile-menu-links a {
-    color: var(--tee-teal);
+    color: rgba(255, 255, 255, 0.92);
     transition: color var(--transition-fast);
 }
 
 .tee-portfolio-body .mobile-menu-links a:hover {
-    color: var(--tee-teal-hover);
+    color: var(--tee-teal);
 }
 
-/* Collaborator cells — light teal frame on hover only */
+/* Collaborator cells — teal hover hint */
 .tee-portfolio-body .tee-collab-cell:hover {
-    border-color: var(--tee-teal-soft);
+    border-color: var(--tee-teal-line);
     box-shadow: 0 0 0 1px var(--tee-teal-faint);
 }
 
