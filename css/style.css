@@ -77,6 +77,11 @@ body {
     }
 }
 
+/* Tee Sama portfolio: no custom cursor elements — keep system cursor visible */
+body.tee-portfolio-body {
+    cursor: auto;
+}
+
 a {
     color: inherit;
     text-decoration: none;
@@ -896,7 +901,7 @@ section {
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
     gap: var(--space-2xl);
-    align-items: center;
+    align-items: start;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: 12px;
@@ -911,11 +916,24 @@ section {
     border-radius: 10px;
 }
 
+.business-feature-content {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-wrap: break-word;
+}
+
 .business-feature-content h2 {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: clamp(1.45rem, 3.8vw, 2.65rem);
     letter-spacing: 0.02em;
+    line-height: 1.12;
     margin-bottom: var(--space-md);
+}
+
+.business-feature-content p {
+    font-size: clamp(0.875rem, 1.35vw, 1rem);
+    line-height: 1.55;
+    margin-bottom: var(--space-sm);
 }
 
 .business-feature-context {
@@ -1006,6 +1024,7 @@ section {
 @media (max-width: 1024px) {
     .business-feature-card {
         grid-template-columns: 1fr;
+        padding: var(--space-xl);
     }
 
     .business-audience-grid,
@@ -1334,6 +1353,7 @@ section {
 
 .work-item-content {
     padding: var(--space-lg);
+    min-width: 0;
 }
 
 .work-item-category {
@@ -1347,9 +1367,11 @@ section {
 
 .work-item-title {
     font-family: var(--font-display);
-    font-size: 1.75rem;
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
     letter-spacing: 0.02em;
     margin-bottom: var(--space-xs);
+    overflow-wrap: anywhere;
+    line-height: 1.2;
 }
 
 .work-item-result {
@@ -1372,6 +1394,7 @@ section {
     font-size: 0.9rem;
     color: var(--color-text-muted);
     line-height: 1.6;
+    overflow-wrap: anywhere;
 }
 
 /* ============================================

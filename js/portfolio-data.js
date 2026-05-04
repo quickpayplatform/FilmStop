@@ -159,6 +159,14 @@ window.PORTFOLIO_DATA = [
         description: "Early-bird campaign video built to drive urgency and preorders."
     },
     {
+        category: "Business Impact",
+        title: "How One Film Helped Raise $250,000 in One Night",
+        thumbnail: "/assets/thumbnails/border-patrol-foundation.jpg",
+        link: "/videos/border-patrol-foundation.mp4",
+        linkType: "video/mp4",
+        description: "<strong>Client:</strong> Border Patrol Foundation (Washington, DC Fundraiser). <strong>Goal:</strong> Drive urgent giving with a clear, mission-driven story. <strong>Result:</strong> Generated over $250,000 in a single night."
+    },
+    {
         category: "Documentary",
         title: "Real Stories",
         thumbnail: "/assets/thumbnails/documentary-sample.jpg",
@@ -213,22 +221,6 @@ window.PORTFOLIO_DATA = [
         link: "/assets/videos/julie-new-wide.mp4",
         linkType: "video/mp4",
         description: "<strong>Goal:</strong> Promote Julie Williams' 2022 tour with a cinematic live-event cut. <strong>Result:</strong> Sold tickets for the upcoming concert tour."
-    },
-    {
-        category: "Reels",
-        title: "Sample Reel",
-        thumbnail: "/assets/thumbnails/sample-reel.jpg",
-        link: "/assets/videos/sample-reel.mp4",
-        linkType: "video/mp4",
-        description: "Signature reel showcasing the visual range across Film Stop productions."
-    },
-    {
-        category: "Reels",
-        title: "Music Videos Reel",
-        thumbnail: "/assets/thumbnails/music-videos-reel.jpg",
-        link: "/assets/videos/music-videos-reel.mp4",
-        linkType: "video/mp4",
-        description: "A highlight reel that showcases the visual tone and storytelling we bring to every project."
     },
     {
         category: "Reels",

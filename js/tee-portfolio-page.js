@@ -13,23 +13,22 @@
     }
 
     const TEE_SECTION_ORDER = [
+        'Business Impact',
         'Branded Work',
         'Music Videos',
         'Events & Live Coverage',
         'Documentary / Storytelling',
-        'Social Content',
-        'Sports / Motion Work'
+        'Social Content'
     ];
 
     function mapToTeeCategory(item) {
         const cat = item.category;
+        if (cat === 'Business Impact') return 'Business Impact';
         if (cat === 'Commercials') return 'Branded Work';
         if (cat === 'Music Videos') return 'Music Videos';
         if (cat === 'Events') return 'Events & Live Coverage';
         if (cat === 'Documentary') return 'Documentary / Storytelling';
-        if (cat === 'Reels') {
-            return item.title === 'Sample Reel' ? 'Sports / Motion Work' : 'Social Content';
-        }
+        if (cat === 'Reels') return 'Social Content';
         return 'Branded Work';
     }
 
@@ -52,17 +51,18 @@
         if (list) list.push(item);
     });
 
+    const activeLabels = TEE_SECTION_ORDER.filter((label) => (buckets.get(label) || []).length > 0);
+
     const fragFilters = document.createDocumentFragment();
     fragFilters.appendChild(createFilterButton('All', 'all', true));
-    TEE_SECTION_ORDER.forEach((label) => {
-        const slug = PR.slugify(label);
-        fragFilters.appendChild(createFilterButton(label, slug, false));
+    activeLabels.forEach((label) => {
+        fragFilters.appendChild(createFilterButton(label, PR.slugify(label), false));
     });
     filtersContainer.appendChild(fragFilters);
 
     const fragment = document.createDocumentFragment();
 
-    TEE_SECTION_ORDER.forEach((label) => {
+    activeLabels.forEach((label) => {
         const items = buckets.get(label) || [];
         const key = PR.slugify(label);
 
