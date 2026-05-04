@@ -1334,6 +1334,48 @@ section {
     opacity: 1;
 }
 
+/* Portrait / vertical cards — grid footprint + inline expand (no modal) */
+.work-item--portrait .work-item-media--portrait {
+    aspect-ratio: 9 / 16;
+    max-width: min(300px, 85vw);
+    max-height: min(480px, 68vh);
+    margin-left: auto;
+    margin-right: auto;
+    background: var(--color-bg);
+    overflow: hidden;
+}
+
+.work-item--portrait .work-item-media--portrait video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transition: transform var(--transition-slow);
+}
+
+.work-item--portrait:hover .work-item-media--portrait video,
+.work-item--portrait.work-item--inline-playing .work-item-media--portrait video {
+    transform: none;
+}
+
+.work-item--portrait.work-item--inline-playing {
+    overflow: visible;
+    z-index: 6;
+}
+
+.work-item--portrait.work-item--inline-playing .work-item-overlay {
+    opacity: 0 !important;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .work-item--portrait .work-item-media--portrait {
+        max-height: min(360px, 56vh);
+        max-width: min(260px, 90vw);
+    }
+}
+
 .work-item-play {
     width: 80px;
     height: 80px;
@@ -3044,8 +3086,37 @@ section {
 .tee-portfolio-collab .tee-collab-cell:nth-child(8) { transition-delay: 0.15s; }
 .tee-portfolio-collab .tee-collab-cell:nth-child(9) { transition-delay: 0.21s; }
 
-.tee-portfolio-hero-media video {
+/* Hero background: poster visible until video fades in after `playing` */
+.tee-portfolio-hero-media .tee-hero-poster {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.03);
+    pointer-events: none;
+}
+
+.tee-portfolio-hero-media .tee-hero-video,
+.tee-portfolio-hero-media .tee-portfolio-hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.85s ease-out;
     filter: saturate(1.06) contrast(1.05);
+}
+
+.tee-portfolio-hero-media.tee-hero-media--ready .tee-hero-video,
+.tee-portfolio-hero-media.tee-hero-media--ready .tee-portfolio-hero-video {
+    opacity: 1;
+}
+
+.tee-portfolio-hero-media .tee-portfolio-hero-overlay {
+    z-index: 2;
 }
 
 .tee-portfolio-hero-overlay {
@@ -3206,26 +3277,7 @@ section {
     border-top: 1px solid var(--color-border);
 }
 
-/* Tee portfolio: portrait / vertical promo spots */
-.tee-portfolio-work .work-item--portrait .work-item-media--portrait {
-    aspect-ratio: 9 / 16;
-    max-width: min(300px, 82%);
-    max-height: min(72vh, 640px);
-    margin-left: auto;
-    margin-right: auto;
-    background: var(--color-bg);
-}
-
-.tee-portfolio-work .work-item--portrait .work-item-media--portrait video {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
-}
-
-.tee-portfolio-work .work-item--portrait:hover .work-item-media--portrait video {
-    transform: none;
-}
+/* Tee portfolio: portrait sizing inherits global .work-item--portrait rules above */
 
 .tee-portfolio-close-cta {
     background:

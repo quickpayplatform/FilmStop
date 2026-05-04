@@ -349,15 +349,17 @@ window.PortfolioRender = PortfolioRender;
 const VideoHover = {
     init() {
         const workItems = document.querySelectorAll('.work-item');
-        
-        workItems.forEach(item => {
+
+        workItems.forEach((item) => {
+            if (item.classList.contains('work-item--portrait')) return;
+
             const video = item.querySelector('video');
             if (!video) return;
-            
+
             item.addEventListener('mouseenter', () => {
                 video.play().catch(() => {});
             });
-            
+
             item.addEventListener('mouseleave', () => {
                 video.pause();
                 video.currentTime = 0;
@@ -437,6 +439,78 @@ const VideoModal = {
     modal: null,
     modalVideo: null,
 
+    isPortraitWorkItem(workItem) {
+        if (!workItem) return false;
+        if (workItem.classList.contains('work-item--portrait')) return true;
+        const video = workItem.querySelector('video');
+        if (
+            video &&
+            video.readyState >= 1 &&
+            video.videoWidth > 0 &&
+            video.videoHeight > video.videoWidth
+        ) {
+            return true;
+        }
+        return false;
+    },
+
+    stopAllInlinePortrait() {
+        document.querySelectorAll('.work-item--inline-playing').forEach((el) => {
+            this.stopInlinePortrait(el);
+        });
+    },
+
+    stopInlinePortrait(workItem) {
+        if (!workItem) return;
+        workItem.classList.remove('work-item--inline-playing');
+        const video = workItem.querySelector('video');
+        if (!video) return;
+        video.removeAttribute('controls');
+        video.pause();
+        video.currentTime = 0;
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+    },
+
+    startInlinePortrait(workItem) {
+        const video = workItem.querySelector('video');
+        if (!video) return;
+
+        this.stopAllInlinePortrait();
+        if (this.modal && this.modal.classList.contains('active')) {
+            this.close();
+        }
+
+        workItem.classList.add('work-item--inline-playing');
+
+        let started = false;
+        const tryPlay = () => {
+            if (started) return;
+            started = true;
+            video.muted = false;
+            video.loop = true;
+            video.playsInline = true;
+            video.setAttribute('controls', '');
+            const p = video.play();
+            if (p && typeof p.catch === 'function') {
+                p.catch(() => {
+                    video.muted = true;
+                    video.play().catch(() => {});
+                });
+            }
+        };
+
+        if (video.readyState >= 2) {
+            tryPlay();
+        } else {
+            const kick = () => tryPlay();
+            video.addEventListener('loadeddata', kick, { once: true });
+            video.addEventListener('canplay', kick, { once: true });
+            window.setTimeout(() => tryPlay(), 2500);
+        }
+    },
+
     handleOverlayClick(e) {
         const btn = e.target.closest('.work-item-overlay');
         if (!btn) return;
@@ -444,48 +518,68 @@ const VideoModal = {
         e.stopPropagation();
         const workItem = btn.closest('.work-item');
         if (!workItem) return;
+
+        if (this.isPortraitWorkItem(workItem)) {
+            this.startInlinePortrait(workItem);
+            return;
+        }
+
         const sourceEl = workItem.querySelector('video source');
         if (sourceEl && sourceEl.src) {
             this.open(sourceEl.src);
         }
     },
-    
+
     init() {
         this.modal = document.getElementById('video-modal');
         this.modalVideo = document.getElementById('modal-video');
 
         if (!this.modal || !this.modalVideo) return;
-        
+
         const closeBtn = this.queryModalClose();
 
         if (!closeBtn) return;
 
         document.body.addEventListener('click', this.handleOverlayClick.bind(this));
-        
+
+        document.addEventListener('click', (e) => {
+            const inline = document.querySelector('.work-item--inline-playing');
+            if (!inline) return;
+            if (inline.contains(e.target)) return;
+            VideoModal.stopInlinePortrait(inline);
+        });
+
         closeBtn.addEventListener('click', () => this.close());
-        
+
         this.modal.addEventListener('click', (e) => {
             if (e.target === this.modal) {
                 this.close();
             }
         });
-        
-        // ESC key to close
+
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+            if (e.key !== 'Escape') return;
+            const inline = document.querySelector('.work-item--inline-playing');
+            if (inline) {
+                e.preventDefault();
+                this.stopInlinePortrait(inline);
+                return;
+            }
+            if (this.modal.classList.contains('active')) {
                 this.close();
             }
         });
     },
-    
+
     open(src) {
+        this.stopAllInlinePortrait();
         this.modalVideo.querySelector('source').src = src;
         this.modalVideo.load();
         this.modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         this.modalVideo.play();
     },
-    
+
     close() {
         this.modal.classList.remove('active');
         document.body.style.overflow = '';

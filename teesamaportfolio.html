@@ -46,8 +46,17 @@
     <!-- Hero -->
     <header class="page-hero tee-portfolio-hero">
         <div class="page-hero-media tee-portfolio-hero-media" aria-hidden="true">
-            <video autoplay muted loop playsinline preload="metadata" poster="/assets/thumbnails/artist-showcase.jpg">
-                <source src="/assets/videos/artist-showcase.mp4" type="video/mp4">
+            <div class="tee-hero-poster" role="presentation" style="background-image: url('/assets/thumbnails/seed.jpg');"></div>
+            <video
+                id="tee-hero-video"
+                class="tee-hero-video tee-portfolio-hero-video"
+                muted
+                loop
+                playsinline
+                preload="auto"
+                poster="/assets/thumbnails/seed.jpg"
+            >
+                <source src="/assets/videos/seed-music-video.mp4" type="video/mp4">
             </video>
             <div class="page-hero-overlay tee-portfolio-hero-overlay"></div>
         </div>
@@ -182,6 +191,7 @@
 
     <script src="/js/portfolio-data.js"></script>
     <script src="/js/main.js"></script>
+    <script src="/js/tee-portfolio-hero.js"></script>
     <script src="/js/tee-portfolio-page.js"></script>
 </body>
 </html>

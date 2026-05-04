@@ -29,7 +29,7 @@ window.PORTFOLIO_DATA = [
     {
         category: "Music Videos",
         title: "Licy",
-        thumbnail: "/assets/thumbnails/artist-showcase.jpg",
+        thumbnail: "/assets/thumbnails/on-your-way.jpg",
         link: "/assets/videos/licy-music-video-2.mp4",
         linkType: "video/mp4",
         description: "<strong>Goal:</strong> Deliver a cinematic artist visual with strong performance coverage. <strong>Result:</strong> Polished music video ready for release and social rollout."
@@ -49,14 +49,6 @@ window.PORTFOLIO_DATA = [
         link: "/assets/videos/the-one.mp4",
         linkType: "video/mp4",
         description: "<strong>Goal:</strong> Build anticipation for an upcoming album release. <strong>Result:</strong> Tripled streams."
-    },
-    {
-        category: "Music Videos",
-        title: "Artist Showcase",
-        thumbnail: "/assets/thumbnails/artist-showcase.jpg",
-        link: "/assets/videos/artist-showcase.mp4",
-        linkType: "video/mp4",
-        description: "<strong>Result:</strong> Created cinematic visuals and music videos for our artists."
     },
     {
         category: "Music Videos",
@@ -152,7 +144,7 @@ window.PORTFOLIO_DATA = [
     },
     {
         category: "Commercials",
-        title: "Paid Ad 4",
+        title: "MPOWER Financing Ad",
         thumbnail: "/assets/thumbnails/paid-ad-4.jpg",
         link: "/assets/videos/mpower-financing.mp4",
         linkType: "video/mp4",
@@ -220,7 +212,7 @@ window.PORTFOLIO_DATA = [
         category: "Documentary",
         title: "Juan: Half Marathon",
         thumbnail: "/assets/thumbnails/juan-half-marathon.jpg",
-        link: "/assets/videos/juan-half-marathon.mp4",
+        link: "/assets/videos/Juan marathon - low res.mp4",
         linkType: "video/mp4",
         description: "<strong>Goal:</strong> Capture a personal endurance story with real emotion. <strong>Result:</strong> Increased social engagement."
     },
