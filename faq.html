@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17861960284"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'AW-17861960284');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ | Film Stop - Video Production Studio</title>
+    <meta name="description" content="Frequently asked questions about Film Stop video production services, pricing, process, and more.">
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* FAQ Page Specific Styles */
+        .faq-hero {
+            padding: calc(var(--nav-height) + var(--space-3xl)) 0 var(--space-2xl);
+            background: linear-gradient(180deg, var(--color-bg-elevated) 0%, var(--color-bg) 100%);
+            text-align: center;
+        }
+
+        .faq-hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 8vw, 5rem);
+            letter-spacing: 0.02em;
+            margin-bottom: var(--space-md);
+        }
+
+        .faq-hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--color-text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .faq-section {
+            padding: var(--space-2xl) 0 var(--space-3xl);
+        }
+
+        .faq-grid {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-lg) 0;
+        }
+
+        .faq-item:first-child {
+            border-top: 1px solid var(--color-border);
+        }
+
+        .faq-question {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            letter-spacing: 0.01em;
+            color: var(--color-text);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--space-md);
+            transition: color var(--transition-fast);
+        }
+
+        .faq-question:hover {
+            color: var(--color-accent);
+        }
+
+        .faq-question-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            color: var(--color-accent);
+            transition: transform var(--transition-fast);
+        }
+
+        .faq-item.active .faq-question-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding-top: var(--space-md);
+        }
+
+        .faq-answer p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-md);
+        }
+
+        .faq-answer p:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-answer strong {
+            color: var(--color-text);
+        }
+
+        .faq-answer ul {
+            list-style: none;
+            padding: 0;
+            margin: var(--space-sm) 0;
+        }
+
+        .faq-answer li {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--color-text-muted);
+            padding-left: var(--space-md);
+            position: relative;
+            margin-bottom: var(--space-xs);
+        }
+
+        .faq-answer li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 6px;
+            height: 6px;
+            background: var(--color-accent);
+            border-radius: 50%;
+        }
+
+        .faq-cta {
+            text-align: center;
+            padding: var(--space-2xl) 0;
+            background: var(--color-bg-elevated);
+            border-top: 1px solid var(--color-border);
+        }
+
+        .faq-cta-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .faq-cta-text {
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-lg);
+            font-size: 1.1rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+            margin-bottom: var(--space-lg);
+            transition: color var(--transition-fast);
+        }
+
+        .back-link:hover {
+            color: var(--color-accent);
+        }
+
+        .back-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .faq-question {
+                font-size: 1.25rem;
+            }
+
+            .faq-answer p,
+            .faq-answer li {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="/" class="nav-logo">
+            <img src="assets/images/logo.png" alt="Film Stop">
+        </a>
+        <button class="nav-toggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links">
+            <li><a href="/#work">Work</a></li>
+            <li><a href="/#services">Services</a></li>
+            <li><a href="/#about">About</a></li>
+            <li><a href="https://calendar.app.google/SfpoyramqV5vaUvP6" class="nav-cta" target="_blank" rel="noopener">Book a Strategy Call</a></li>
+        </ul>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <ul class="mobile-menu-links">
+            <li><a href="/#work">Work</a></li>
+            <li><a href="/#services">Services</a></li>
+            <li><a href="/#about">About</a></li>
+            <li><a href="/#contact">Contact</a></li>
+            <li><a href="https://calendar.app.google/SfpoyramqV5vaUvP6" target="_blank" rel="noopener">Book a Strategy Call</a></li>
+        </ul>
+    </div>
+
+    <!-- FAQ Hero -->
+    <section class="faq-hero">
+        <div class="container">
+            <a href="/" class="back-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Home
+            </a>
+            <h1 class="faq-hero-title">Frequently Asked Questions</h1>
+            <p class="faq-hero-subtitle">Everything you need to know about working with Film Stop.</p>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="faq-grid">
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What types of projects does Film Stop specialize in?</span>
+                        <svg class="faq-question-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Film Stop specializes in <strong>story-driven video production</strong> for artists, brands, and organizations. Our core work includes music videos, commercials, brand content, documentaries, and event coverage. We focus on projects where story, authenticity, and intention matter.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Where are you located, and do you travel?</span>
+                        <svg class="faq-question-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We're based in <strong>Baltimore, Maryland</strong>, and regularly work throughout <strong>DC, Maryland, and Virginia</strong>. We also travel for the right projects. If your story takes us elsewhere, we're open to the conversation.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What does a typical project cost?</span>
+                        <svg class="faq-question-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Every project is different, but most Film Stop projects fall within these ranges:</p>
+                        <ul>
+                            <li><strong>Music Videos:</strong> $2,000–$6,000+</li>
+                            <li><strong>Commercials & Brand Content:</strong> $2,500–$10,000+</li>
+                            <li><strong>Documentaries:</strong> $3,500+</li>
+                            <li><strong>Event Coverage:</strong> starting at $1,500</li>
+                        </ul>
+                        <p>Final pricing depends on scope, crew size, locations, and post-production needs. We'll build a package that fits your goals and budget.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Do you offer packages or custom pricing?</span>
+                        <svg class="faq-question-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes. All projects are <strong>custom-built</strong> based on your needs. We don't believe in one-size-fits-all pricing. After an initial consultation, we'll recommend an approach that makes sense creatively and financially.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What's included in your production services?</span>
+                        <svg class="faq-question-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our services typically include <strong>creative development, pre-production planning, production day coverage, and post-production</strong> (editing, color grading, and sound design). Specific inclusions vary by project and are clearly outlined before production begins.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How long does a project take?</span>
+                        <svg class="faq-question-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Timelines depend on project scope, but most projects follow this general range:</p>
+                        <ul>
+                            <li><strong>Music Videos & Brand Content:</strong> 2–4 weeks</li>
+                            <li><strong>Commercials:</strong> 3–6 weeks</li>
+                            <li><strong>Documentaries:</strong> timeline varies based on depth and length</li>
+                        </ul>
+                        <p>Rush options may be available when needed.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Do you help with creative direction or concepts?</span>
+                        <svg class="faq-question-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely. Many clients come to us with an idea, not a fully formed concept. We help shape the story, develop visuals, and guide creative decisions so the final product feels intentional and cohesive.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How does the process start?</span>
+                        <svg class="faq-question-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>It starts with a <strong>free creative consultation</strong>. We'll talk through your goals, audience, and vision. From there, we outline scope, timeline, and next steps—no pressure, no obligation.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How many revisions are included?</span>
+                        <svg class="faq-question-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Each project includes a <strong>set number of revision rounds</strong>, agreed upon upfront. Our goal is to get it right early through clear planning, so revisions are focused and efficient.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Do you work with first-time artists or small brands?</span>
+                        <svg class="faq-question-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes. We work with both <strong>emerging creatives and established organizations</strong>. What matters most is that you care about your story and are serious about making something meaningful.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Do you offer ongoing or retainer-based work?</span>
+                        <svg class="faq-question-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>For brands and artists releasing content consistently, we offer <strong>ongoing content packages and retainers</strong>. These are ideal for social content, campaigns, and long-term storytelling.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How do we book Film Stop?</span>
+                        <svg class="faq-question-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>You can book a consultation directly through the website or reach out via email or phone. Once we align on scope and vision, we'll secure your date and move into pre-production.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What makes Film Stop different from other production studios?</span>
+                        <svg class="faq-question-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We don't chase trends or recycle concepts. Film Stop is built on <strong>intentional storytelling, clear communication, and respect for the craft</strong>. We care about what the video does—not just how it looks.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ CTA -->
+    <section class="faq-cta">
+        <div class="container">
+            <h2 class="faq-cta-title">Still Have Questions?</h2>
+            <p class="faq-cta-text">We’ll answer everything and tell you the right next step in one call.</p>
+            <a href="https://calendar.app.google/SfpoyramqV5vaUvP6" class="btn btn-primary btn-large" target="_blank" rel="noopener">
+                <span>See If We’re a Fit</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                </svg>
+            </a>
+            <ul class="reassurance-list">
+                <li>No long-term contracts</li>
+                <li>No surprise fees</li>
+                <li>Clear pricing after discovery</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="assets/images/logo.png" alt="Film Stop" class="footer-logo">
+                    <p>Story-driven video production for artists and brands who want to be remembered.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Navigation</h4>
+                        <ul>
+                            <li><a href="/#work">Work</a></li>
+                            <li><a href="/#services">Services</a></li>
+                            <li><a href="/#about">About</a></li>
+                            <li><a href="/#contact">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="/#services">Music Videos</a></li>
+                            <li><a href="/#services">Commercials</a></li>
+                            <li><a href="/#services">Documentary</a></li>
+                            <li><a href="/#services">Events</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Get Started</h4>
+                        <ul>
+                            <li><a href="/portfolio">Portfolio</a></li>
+                            <li><a href="/form">Contact Form</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Film Stop. All rights reserved.</p>
+                <p>Built in Baltimore. Focused on story.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ Accordion
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                const isActive = item.classList.contains('active');
+                
+                // Close all other items
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                
+                // Toggle current item
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Mobile Menu Toggle
+        const navToggle = document.querySelector('.nav-toggle');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        
+        if (navToggle && mobileMenu) {
+            navToggle.addEventListener('click', () => {
+                navToggle.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+                document.body.classList.toggle('menu-open');
+            });
+        }
+    </script>
+</body>
+</html>
+

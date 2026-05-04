@@ -1,0 +1,7 @@
+# Local Netlify folder
+.netlify
+
+# Local package cache (not part of site)
+.npm-cache
+
+.DS_Store
