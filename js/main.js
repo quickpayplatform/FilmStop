@@ -185,12 +185,21 @@ const Navigation = {
    ============================================ */
 const PortfolioRender = {
     init() {
-        const data = window.PORTFOLIO_DATA;
-        if (!Array.isArray(data) || data.length === 0) return;
+        const raw = window.PORTFOLIO_DATA;
+        if (!Array.isArray(raw) || raw.length === 0) return;
 
         const filtersContainer = document.getElementById('portfolio-filters');
         const sectionsContainer = document.getElementById('portfolio-sections');
         if (!filtersContainer || !sectionsContainer) return;
+
+        const excludedFromMain = (item) => {
+            if (item.omitFromMainPortfolio) return true;
+            if (item.title === 'Sample Reel') return true;
+            const url = typeof item.link === 'string' ? item.link.trim() : '';
+            if (!url) return false;
+            return /(?:\/|^)(music-videos-reel|sample-reel)\.mp4(?:\?|$)/i.test(url);
+        };
+        const data = raw.filter((item) => !excludedFromMain(item));
 
         const categoryMap = new Map();
         data.forEach(item => {
@@ -442,21 +451,6 @@ const VideoModal = {
     modal: null,
     modalVideo: null,
 
-    isPortraitWorkItem(workItem) {
-        if (!workItem) return false;
-        if (workItem.classList.contains('work-item--portrait')) return true;
-        const video = workItem.querySelector('video');
-        if (
-            video &&
-            video.readyState >= 1 &&
-            video.videoWidth > 0 &&
-            video.videoHeight > video.videoWidth
-        ) {
-            return true;
-        }
-        return false;
-    },
-
     stopAllInlinePortrait() {
         document.querySelectorAll('.work-item--inline-playing').forEach((el) => {
             this.stopInlinePortrait(el);
@@ -476,44 +470,6 @@ const VideoModal = {
         video.playsInline = true;
     },
 
-    startInlinePortrait(workItem) {
-        const video = workItem.querySelector('video');
-        if (!video) return;
-
-        this.stopAllInlinePortrait();
-        if (this.modal && this.modal.classList.contains('active')) {
-            this.close();
-        }
-
-        workItem.classList.add('work-item--inline-playing');
-
-        let started = false;
-        const tryPlay = () => {
-            if (started) return;
-            started = true;
-            video.muted = false;
-            video.loop = true;
-            video.playsInline = true;
-            video.setAttribute('controls', '');
-            const p = video.play();
-            if (p && typeof p.catch === 'function') {
-                p.catch(() => {
-                    video.muted = true;
-                    video.play().catch(() => {});
-                });
-            }
-        };
-
-        if (video.readyState >= 2) {
-            tryPlay();
-        } else {
-            const kick = () => tryPlay();
-            video.addEventListener('loadeddata', kick, { once: true });
-            video.addEventListener('canplay', kick, { once: true });
-            window.setTimeout(() => tryPlay(), 2500);
-        }
-    },
-
     handleOverlayClick(e) {
         const btn = e.target.closest('.work-item-overlay');
         if (!btn) return;
@@ -521,11 +477,6 @@ const VideoModal = {
         e.stopPropagation();
         const workItem = btn.closest('.work-item');
         if (!workItem) return;
-
-        if (this.isPortraitWorkItem(workItem)) {
-            this.startInlinePortrait(workItem);
-            return;
-        }
 
         const sourceEl = workItem.querySelector('video source');
         if (sourceEl && sourceEl.src) {

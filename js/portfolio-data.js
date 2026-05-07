@@ -24,6 +24,7 @@ window.PORTFOLIO_DATA = [
         thumbnail: "/assets/thumbnails/sample-work.jpg",
         link: "/assets/videos/sample-work.mp4",
         linkType: "video/mp4",
+        omitFromMainPortfolio: true,
         description: "<strong>Project:</strong> Film Stop range reel. <strong>Objective:</strong> Give stakeholders a concise view of execution across brand and artist work. <strong>Outcome:</strong> One asset for pitches, hiring conversations, and partner outreach."
     },
     {
@@ -80,7 +81,7 @@ window.PORTFOLIO_DATA = [
         thumbnail: "/assets/thumbnails/seed.jpg",
         link: "/assets/videos/seed-music-video.mp4",
         linkType: "video/mp4",
-        description: "<strong>Project:</strong> Seed — Baltimore nonprofit fundraiser. <strong>Objective:</strong> Pair a moody track with cinematic visuals to drive giving. <strong>Outcome:</strong> Fundraising support for the live campaign event."
+        description: "<strong>Goal:</strong> Pair a moody track with cinematic visuals. <strong>Result:</strong> Raised funds for a Baltimore nonprofit fundraiser."
     },
     {
         category: "Music Videos",
@@ -132,24 +133,24 @@ window.PORTFOLIO_DATA = [
         thumbnail: "/assets/thumbnails/swahili.jpg",
         link: "/assets/videos/swahili.mp4",
         linkType: "video/mp4",
-        description: "<strong>Client:</strong> Swahili (Washington, D.C.). <strong>Objective:</strong> Drive foot traffic and sales with bold, cinematic restaurant storytelling. <strong>Outcome:</strong> Measurable lift in sales and web traffic."
+        description: "<strong>Client:</strong> Swahili (Washington, D.C.). <strong>Goal:</strong> Spotlight a business with bold, cinematic storytelling. <strong>Result:</strong> Increased sales and traffic to the Washington, D.C. restaurant."
     },
     {
         category: "Commercials",
         title: "Essoka French Bilingual New Comer's Help Center",
         thumbnail: "/assets/thumbnails/mom-video.jpg",
-        link: "/assets/videos/mom-video.mp4",
+        link: "/assets/videos/ngo-low-res-2.mp4",
         linkType: "video/mp4",
-        description: "<strong>Client:</strong> Canadian nonprofit (Essoka / newcomer support). <strong>Objective:</strong> Communicate credibility and care for bilingual newcomer services. <strong>Outcome:</strong> 4× lift in traffic and conversions tied to the campaign."
+        description: "<strong>Client:</strong> Canadian nonprofit. <strong>Goal:</strong> Tell a heartfelt brand story with warmth and credibility. <strong>Result:</strong> 4x sales and traffic."
     },
     {
         category: "Commercials",
-        title: "MPOWER Financing Ad",
+        title: "Paid Ad 4",
         thumbnail: "/assets/thumbnails/paid-ad-4.jpg",
         link: "/assets/videos/mpower-financing.mp4",
         linkType: "video/mp4",
         portraitCard: true,
-        description: "<strong>Client:</strong> MPOWER Financing. <strong>Objective:</strong> Earn attention and response in paid social with a tight product story. <strong>Outcome:</strong> Vertical spot tuned for conversion and platform specs."
+        description: "A punchy paid spot designed for fast impact and a clear call-to-action."
     },
     {
         category: "Commercials",
@@ -158,7 +159,7 @@ window.PORTFOLIO_DATA = [
         link: "/assets/videos/good-things-come-in-3s.mp4",
         linkType: "video/mp4",
         portraitCard: true,
-        description: "<strong>Client:</strong> RBP (preorder campaign). <strong>Objective:</strong> Drive urgency and preorders before launch. <strong>Outcome:</strong> Vertical campaign cut built for social funnel and early commits."
+        description: "Early-bird campaign video built to drive urgency and preorders."
     },
     {
         category: "Business Impact",
@@ -170,12 +171,12 @@ window.PORTFOLIO_DATA = [
         description: "<strong>Client:</strong> Border Patrol Foundation (Washington, DC Fundraiser). <strong>Objective:</strong> Drive immediate donations through a clear, emotionally grounded story. <strong>Outcome:</strong> Raised over $250,000 in a single night."
     },
     {
-        category: "Documentary",
+        category: "Music Videos",
         title: "Be More",
         thumbnail: "/assets/thumbnails/be-more.webp",
         link: "/assets/videos/be-more.mp4",
         linkType: "video/mp4",
-        description: "<strong>Project:</strong> Film Stop — Be More (Tee Forest, year-one Baltimore). <strong>Objective:</strong> Translate a personal city narrative into a film that drives audience connection and downstream action. <strong>Outcome:</strong> Increased social reach and attributable sales lift."
+        description: "<strong>Project:</strong> Film Stop-produced short film by Tee Forest. <strong>Goal:</strong> Capture Tee Forest's first-year Baltimore story through a narrated city film. <strong>Result:</strong> Increased socials and brought in sales."
     },
     {
         category: "Documentary",
@@ -215,7 +216,7 @@ window.PORTFOLIO_DATA = [
         thumbnail: "/assets/thumbnails/juan-half-marathon.jpg",
         link: "/assets/videos/juan-marathon-low-res.mp4",
         linkType: "video/mp4",
-        description: "<strong>Project:</strong> Juan — half marathon documentary short. <strong>Objective:</strong> Capture an endurance story with authentic emotion for social and brand channels. <strong>Outcome:</strong> Strong engagement and reusable narrative assets."
+        description: "<strong>Goal:</strong> Capture a personal endurance story with real emotion. <strong>Result:</strong> Increased social engagement."
     },
     {
         category: "Events",
@@ -229,7 +230,7 @@ window.PORTFOLIO_DATA = [
         category: "Events",
         title: "Julie's Concert Teaser",
         thumbnail: "/assets/thumbnails/julie-new-wide.jpg",
-        link: "/assets/videos/julie-new-wide.mp4",
+        link: "/assets/videos/julie-low-res.mp4",
         linkType: "video/mp4",
         description: "<strong>Client:</strong> Julie Williams (live tour). <strong>Objective:</strong> Promote the 2022 tour with a cinematic live-event cut for ticket conversion. <strong>Outcome:</strong> Ticket sales momentum for the announced run."
     }
