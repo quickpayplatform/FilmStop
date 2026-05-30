@@ -3194,6 +3194,42 @@ section {
     margin-right: auto;
 }
 
+.tee-portfolio-intro .section-header {
+    text-align: center;
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tee-portfolio-intro .section-description {
+    max-width: 38rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    line-height: 1.65;
+    color: var(--color-text-muted);
+    font-family: var(--font-serif);
+}
+
+.tee-portfolio-intro-player {
+    max-width: 960px;
+    margin: var(--space-2xl) auto 0;
+}
+
+.tee-portfolio-intro-video {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    box-shadow:
+        0 4px 24px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.04);
+    background: #0a0a0a;
+}
+
 .tee-portfolio-strategist .section-header {
     text-align: center;
     max-width: 48rem;
@@ -3444,6 +3480,10 @@ section {
 }
 
 /* Section dividers — subtle teal lines only */
+.tee-portfolio-body .tee-portfolio-intro {
+    border-bottom: 1px solid var(--tee-teal-line);
+}
+
 .tee-portfolio-body .tee-portfolio-about {
     border-bottom: 1px solid var(--tee-teal-line);
 }
