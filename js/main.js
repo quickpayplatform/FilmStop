@@ -285,8 +285,12 @@ const PortfolioRender = {
         article.className =
             "work-item" +
             (item.portraitCard ? " work-item--portrait" : "") +
+            (item.inlinePlayback ? " work-item--inline-playback" : "") +
             (item.impactLead ? " work-item--impact-lead" : "");
         article.dataset.category = this.slugify(item.category);
+        if (item.inlinePlayback) {
+            article.dataset.inlinePlayback = "true";
+        }
 
         const media = document.createElement("div");
         media.className = "work-item-media" + (item.portraitCard ? " work-item-media--portrait" : "");
@@ -470,6 +474,57 @@ const VideoModal = {
         video.playsInline = true;
     },
 
+    usesInlinePlayback(workItem) {
+        if (!workItem) return false;
+        return (
+            workItem.classList.contains('work-item--inline-playback') ||
+            workItem.dataset.inlinePlayback === 'true'
+        );
+    },
+
+    startInlinePortrait(workItem) {
+        const video = workItem.querySelector('video');
+        if (!video) return;
+
+        if (workItem.classList.contains('work-item--inline-playing')) {
+            this.stopInlinePortrait(workItem);
+            return;
+        }
+
+        this.stopAllInlinePortrait();
+        if (this.modal && this.modal.classList.contains('active')) {
+            this.close();
+        }
+
+        workItem.classList.add('work-item--inline-playing');
+
+        let started = false;
+        const tryPlay = () => {
+            if (started) return;
+            started = true;
+            video.muted = false;
+            video.loop = true;
+            video.playsInline = true;
+            video.setAttribute('controls', '');
+            const p = video.play();
+            if (p && typeof p.catch === 'function') {
+                p.catch(() => {
+                    video.muted = true;
+                    video.play().catch(() => {});
+                });
+            }
+        };
+
+        if (video.readyState >= 2) {
+            tryPlay();
+        } else {
+            const kick = () => tryPlay();
+            video.addEventListener('loadeddata', kick, { once: true });
+            video.addEventListener('canplay', kick, { once: true });
+            window.setTimeout(() => tryPlay(), 2500);
+        }
+    },
+
     handleOverlayClick(e) {
         const btn = e.target.closest('.work-item-overlay');
         if (!btn) return;
@@ -477,6 +532,11 @@ const VideoModal = {
         e.stopPropagation();
         const workItem = btn.closest('.work-item');
         if (!workItem) return;
+
+        if (this.usesInlinePlayback(workItem)) {
+            this.startInlinePortrait(workItem);
+            return;
+        }
 
         const sourceEl = workItem.querySelector('video source');
         if (sourceEl && sourceEl.src) {

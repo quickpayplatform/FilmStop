@@ -150,6 +150,7 @@ window.PORTFOLIO_DATA = [
         link: "/assets/videos/mpower-financing.mp4",
         linkType: "video/mp4",
         portraitCard: true,
+        inlinePlayback: true,
         description: "A punchy paid spot designed for fast impact and a clear call-to-action."
     },
     {
@@ -159,6 +160,7 @@ window.PORTFOLIO_DATA = [
         link: "/assets/videos/good-things-come-in-3s.mp4",
         linkType: "video/mp4",
         portraitCard: true,
+        inlinePlayback: true,
         description: "Early-bird campaign video built to drive urgency and preorders."
     },
     {

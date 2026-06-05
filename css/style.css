@@ -1358,15 +1358,35 @@ section {
     transform: none;
 }
 
-.work-item--portrait.work-item--inline-playing {
-    overflow: visible;
-    z-index: 6;
+.work-item--portrait.work-item--inline-playing,
+.work-item--inline-playback.work-item--inline-playing {
+    overflow: hidden;
 }
 
-.work-item--portrait.work-item--inline-playing .work-item-overlay {
+.work-item--inline-playback.work-item--inline-playing:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.work-item--portrait.work-item--inline-playing .work-item-overlay,
+.work-item--inline-playback.work-item--inline-playing .work-item-overlay {
     opacity: 0 !important;
     visibility: hidden;
     pointer-events: none;
+}
+
+.work-item--inline-playback.work-item--inline-playing .work-item-media--portrait {
+    aspect-ratio: 9 / 16;
+    max-width: min(300px, 85vw);
+    max-height: min(480px, 68vh);
+}
+
+.work-item--inline-playback.work-item--inline-playing .work-item-media--portrait video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transform: none;
 }
 
 /* Tee portfolio: spotlight primary business-impact case study */
@@ -1396,7 +1416,8 @@ section {
 }
 
 @media (max-width: 768px) {
-    .work-item--portrait .work-item-media--portrait {
+    .work-item--portrait .work-item-media--portrait,
+    .work-item--inline-playback.work-item--inline-playing .work-item-media--portrait {
         max-height: min(360px, 56vh);
         max-width: min(260px, 90vw);
     }
