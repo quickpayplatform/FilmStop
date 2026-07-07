@@ -7,477 +7,1047 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'AW-17861960284');
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get a Quote | Film Stop</title>
-    <meta name="description" content="Request a custom video production quote from Film Stop. Tell us about your project and we'll build a package that fits your vision.">
+    <meta name="description" content="Estimate your video production budget with Film Stop's production calculator. Music videos, commercials, documentaries, events, and more.">
     <link rel="icon" type="image/png" href="assets/images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .quote-page {
+            min-height: 100vh;
+            background: var(--color-bg);
+        }
+
+        .quote-page .cursor,
+        .quote-page .cursor-follower {
+            display: none !important;
+        }
+
+        .quote-page * {
+            cursor: auto !important;
+        }
+
+        /* Navigation */
+        .quote-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--nav-height);
+            padding: 0 var(--space-xl);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .quote-nav-logo {
+            height: 40px;
+            filter: invert(1);
+        }
+
+        .quote-nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xl);
+            list-style: none;
+        }
+
+        .quote-nav-links a {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color var(--transition-fast);
+            position: relative;
+        }
+
+        .quote-nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--color-accent);
+            transition: width var(--transition-normal);
+        }
+
+        .quote-nav-links a:hover,
+        .quote-nav-links a.active {
+            color: var(--color-text);
+        }
+
+        .quote-nav-links a:hover::after,
+        .quote-nav-links a.active::after {
+            width: 100%;
+        }
+
+        .quote-nav-cta {
+            padding: 0.75rem 1.5rem !important;
+            background: var(--color-accent) !important;
+            color: var(--color-text) !important;
+            border-radius: 4px;
+        }
+
+        .quote-nav-cta::after {
+            display: none !important;
+        }
+
+        .quote-nav-cta:hover {
+            background: var(--color-accent-hover) !important;
+        }
+
+        .quote-nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            width: 30px;
+            height: 24px;
+            justify-content: center;
+            z-index: 1001;
+        }
+
+        .quote-nav-toggle span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: var(--color-text);
+            transition: transform var(--transition-fast), opacity var(--transition-fast);
+        }
+
+        .quote-nav-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .quote-nav-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .quote-nav-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        @media (max-width: 968px) {
+            .quote-nav-links {
+                display: none;
+            }
+
+            .quote-nav-toggle {
+                display: flex;
+            }
+        }
+
+        .quote-mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--color-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-normal), visibility var(--transition-normal);
+        }
+
+        .quote-mobile-menu.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .quote-mobile-menu-links {
+            text-align: center;
+            list-style: none;
+        }
+
+        .quote-mobile-menu-links li {
+            margin-bottom: var(--space-lg);
+        }
+
+        .quote-mobile-menu-links a {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            letter-spacing: 0.05em;
+            color: var(--color-text-muted);
+            transition: color var(--transition-fast);
+        }
+
+        .quote-mobile-menu-links a:hover,
+        .quote-mobile-menu-links a.active {
+            color: var(--color-accent);
+        }
+
+        /* Hero */
+        .quote-hero {
+            position: relative;
+            min-height: 55vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            padding-top: var(--nav-height);
+        }
+
+        .quote-hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            transform: rotate(-3deg) scale(1.15);
+            transform-origin: center;
+            opacity: 0.35;
+        }
+
+        @media (max-width: 768px) {
+            .quote-hero-bg {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .quote-hero-bg video {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            filter: grayscale(30%);
+        }
+
+        .quote-hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(10,10,10,0.97) 0%, rgba(10,10,10,0.8) 50%, rgba(10,10,10,0.97) 100%);
+        }
+
+        .quote-hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            padding: var(--space-2xl) var(--space-lg);
+        }
+
+        .quote-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--color-accent);
+            margin-bottom: var(--space-lg);
+        }
+
+        .quote-eyebrow::before,
+        .quote-eyebrow::after {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: var(--color-accent);
+        }
+
+        .quote-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            line-height: 1.05;
+            letter-spacing: 0.02em;
+            margin-bottom: var(--space-lg);
+        }
+
+        .quote-subtitle {
+            font-size: 1.1rem;
+            color: var(--color-text-muted);
+            max-width: 620px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Calculator */
+        .quote-calculator-section {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-bg-elevated);
+        }
+
+        .quote-calculator-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: var(--space-xl);
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .quote-calculator-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .calculator-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xl);
+        }
+
+        .calculator-group {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: var(--space-lg);
+        }
+
+        .calculator-group-label {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            letter-spacing: 0.04em;
+            margin-bottom: var(--space-md);
+            color: var(--color-text);
+        }
+
+        .calculator-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: var(--space-sm);
+        }
+
+        .calculator-options.cols-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .calculator-options.cols-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media (max-width: 500px) {
+            .calculator-options.cols-3,
+            .calculator-options.cols-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .calculator-option {
+            position: relative;
+        }
+
+        .calculator-option input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .calculator-option label {
+            display: block;
+            padding: 0.875rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center;
+            color: var(--color-text-muted);
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            line-height: 1.4;
+        }
+
+        .calculator-option input:checked + label {
+            color: var(--color-text);
+            border-color: var(--color-accent);
+            background: rgba(255, 77, 0, 0.08);
+            box-shadow: 0 0 0 1px var(--color-accent);
+        }
+
+        .calculator-option input:focus-visible + label {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+
+        .calculator-option label:hover {
+            border-color: var(--color-border-hover);
+            color: var(--color-text);
+        }
+
+        .calculator-addons {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-sm);
+        }
+
+        .calculator-addon input:checked + label {
+            color: var(--color-text);
+            border-color: var(--color-accent);
+            background: rgba(255, 77, 0, 0.08);
+        }
+
+        .calculator-addon label {
+            text-align: left;
+            padding-left: 2.25rem;
+            position: relative;
+        }
+
+        .calculator-addon label::before {
+            content: '';
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--color-border-hover);
+            border-radius: 3px;
+            transition: all var(--transition-fast);
+        }
+
+        .calculator-addon input:checked + label::before {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+        }
+
+        .calculator-addon input:checked + label::after {
+            content: '';
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-60%) rotate(45deg);
+            width: 5px;
+            height: 9px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+        }
+
+        .calculator-addon.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* Estimate Panel */
+        .estimate-panel {
+            position: sticky;
+            top: calc(var(--nav-height) + var(--space-lg));
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            padding: var(--space-xl);
+        }
+
+        .estimate-panel-header {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--color-text-subtle);
+            margin-bottom: var(--space-sm);
+        }
+
+        .estimate-range {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 2.75rem);
+            color: var(--color-accent);
+            letter-spacing: 0.02em;
+            line-height: 1.1;
+            margin-bottom: var(--space-md);
+        }
+
+        .estimate-note {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .estimate-disclaimer {
+            font-size: 0.8rem;
+            color: var(--color-text-subtle);
+            line-height: 1.6;
+            margin-bottom: var(--space-lg);
+            font-style: italic;
+        }
+
+        .estimate-ctas {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .estimate-ctas .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .estimate-ctas .btn-outline {
+            border: 1px solid var(--color-border-hover);
+            color: var(--color-text);
+        }
+
+        .estimate-ctas .btn-outline:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+        }
+
+        /* Pricing Overview */
+        .quote-pricing {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-bg);
+        }
+
+        .quote-pricing-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto var(--space-2xl);
+        }
+
+        .quote-pricing-header h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: var(--space-sm);
+        }
+
+        .quote-pricing-header p {
+            color: var(--color-text-muted);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 1024px) {
+            .pricing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pricing-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: var(--space-xl);
+            text-align: center;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--color-accent);
+            transform: scaleX(0);
+            transition: transform var(--transition-normal);
+        }
+
+        .pricing-card:hover {
+            border-color: var(--color-accent);
+            transform: translateY(-4px);
+        }
+
+        .pricing-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .pricing-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto var(--space-md);
+            background: rgba(255, 77, 0, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pricing-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--color-accent);
+        }
+
+        .pricing-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            margin-bottom: var(--space-xs);
+        }
+
+        .pricing-range {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            margin-bottom: var(--space-md);
+        }
+
+        .pricing-card p {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .quote-footer {
+            text-align: center;
+            padding: var(--space-xl) var(--space-lg);
+            border-top: 1px solid var(--color-border);
+            background: var(--color-bg-elevated);
+        }
+
+        .quote-footer p {
+            font-size: 0.85rem;
+            color: var(--color-text-subtle);
+        }
+
+        .quote-footer a {
+            color: var(--color-accent);
+        }
+    </style>
 </head>
-<body>
+<body class="quote-page">
     <!-- Navigation -->
-    <nav class="nav">
-        <a href="/" class="nav-logo">
-            <img src="assets/images/logo.png" alt="Film Stop">
+    <nav class="quote-nav">
+        <a href="/">
+            <img src="assets/images/logo.png" alt="Film Stop" class="quote-nav-logo">
         </a>
-        <button class="nav-toggle" aria-label="Toggle menu">
+        <ul class="quote-nav-links">
+            <li><a href="/#work">Work</a></li>
+            <li><a href="/#services">Services</a></li>
+            <li><a href="/#about">About</a></li>
+            <li><a href="/quote" class="active">Quote</a></li>
+            <li><a href="/#contact" class="quote-nav-cta">Book a Strategy Call</a></li>
+        </ul>
+        <button class="quote-nav-toggle" aria-label="Toggle menu">
             <span></span>
             <span></span>
             <span></span>
         </button>
-        <ul class="nav-links">
-            <li><a href="/#work">Work</a></li>
-            <li><a href="/#services">Services</a></li>
-            <li><a href="/#about">About</a></li>
-            <li><a href="https://calendar.app.google/SfpoyramqV5vaUvP6" class="nav-cta" target="_blank" rel="noopener">Book a Strategy Call</a></li>
-        </ul>
     </nav>
 
     <!-- Mobile Menu -->
-    <div class="mobile-menu">
-        <ul class="mobile-menu-links">
+    <div class="quote-mobile-menu">
+        <ul class="quote-mobile-menu-links">
             <li><a href="/#work">Work</a></li>
             <li><a href="/#services">Services</a></li>
             <li><a href="/#about">About</a></li>
-            <li><a href="/#contact">Contact</a></li>
-            <li><a href="https://calendar.app.google/SfpoyramqV5vaUvP6" target="_blank" rel="noopener">Book a Strategy Call</a></li>
+            <li><a href="/quote" class="active">Quote</a></li>
+            <li><a href="/#contact">Book a Strategy Call</a></li>
         </ul>
     </div>
 
-    <!-- Quote Hero -->
-    <section class="page-hero">
-        <div class="page-hero-media">
-            <video autoplay muted loop playsinline preload="metadata" poster="assets/thumbnails/sample-reel.jpg">
-                <source src="assets/videos/sample-reel.mp4" type="video/mp4">
+    <!-- Hero -->
+    <section class="quote-hero">
+        <div class="quote-hero-bg">
+            <video autoplay muted loop playsinline poster="assets/thumbnails/wedding.jpg">
+                <source src="assets/videos/wedding.mp4" type="video/mp4">
             </video>
-            <div class="page-hero-overlay"></div>
+            <video autoplay muted loop playsinline poster="assets/thumbnails/documentary-sample.jpg">
+                <source src="assets/videos/documentary-sample.mp4" type="video/mp4">
+            </video>
+            <video autoplay muted loop playsinline poster="assets/thumbnails/luna-new-year.jpg">
+                <source src="assets/videos/luna-new-year.mp4" type="video/mp4">
+            </video>
+            <video autoplay muted loop playsinline poster="assets/thumbnails/the-one.jpg">
+                <source src="assets/videos/the-one.mp4" type="video/mp4">
+            </video>
+            <video autoplay muted loop playsinline poster="assets/thumbnails/on-your-way.jpg">
+                <source src="assets/videos/on-your-way.mp4" type="video/mp4">
+            </video>
+            <video autoplay muted loop playsinline poster="assets/thumbnails/dear-future-me.jpg">
+                <source src="assets/videos/dear-future-me.mp4" type="video/mp4">
+            </video>
+            <video autoplay muted loop playsinline poster="assets/thumbnails/sunshine.jpg">
+                <source src="assets/videos/sunshine.mp4" type="video/mp4">
+            </video>
+            <video autoplay muted loop playsinline poster="assets/thumbnails/united-way.jpg">
+                <source src="assets/videos/united-way.mp4" type="video/mp4">
+            </video>
         </div>
-        <div class="container page-hero-content">
-            <span class="section-label">Custom Quote</span>
-            <h1 class="page-hero-title">Get an Instant Quote</h1>
-            <p class="page-hero-subtitle">Answer a few questions. See your estimate instantly. Then book a call.</p>
+        <div class="quote-hero-overlay"></div>
+        <div class="quote-hero-content">
+            <span class="quote-eyebrow">Production Estimator</span>
+            <h1 class="quote-title">Get a Realistic Video Production Estimate</h1>
+            <p class="quote-subtitle">Answer a few quick questions and get a realistic starting range for your project. Final pricing depends on scope, timeline, crew, locations, and post-production needs.</p>
         </div>
     </section>
 
-    <!-- Quote Form -->
-    <section class="page-section quote-builder-section" id="quote-builder">
-        <div class="container quote-layout">
-            <div class="quote-main">
-                <div class="page-panel quote-info-panel">
-                    <div class="page-panel-title">What You’ll Get</div>
-                    <p class="page-panel-text">We keep things clear, cinematic, and on schedule — with a plan that respects your goals and your budget.</p>
-                    <ul class="page-list">
-                        <li>Creative direction + concept development</li>
-                        <li>Production planning, crew, and logistics</li>
-                        <li>Professional editing, color, and sound</li>
-                        <li>Deliverables for social and web platforms</li>
-                    </ul>
-                    <div class="page-panel-title">Typical Ranges</div>
-                    <p class="page-panel-text">Most Film Stop projects fall within these ranges:</p>
-                    <ul class="page-list">
-                        <li>Music Videos: $2,000 – $6,000+</li>
-                        <li>Commercials & Brand Content: $2,500 – $10,000+</li>
-                        <li>Documentaries: $3,500+</li>
-                        <li>Event Coverage: Starting at $1,500</li>
-                    </ul>
+    <!-- Budget Calculator -->
+    <section class="quote-calculator-section">
+        <div class="quote-calculator-layout">
+            <form class="calculator-form" id="budget-calculator">
+                <div class="calculator-group">
+                    <div class="calculator-group-label">1. Project Type</div>
+                    <div class="calculator-options">
+                        <div class="calculator-option">
+                            <input type="radio" name="project-type" id="type-music" value="music-video" checked>
+                            <label for="type-music">Music Video</label>
+                        </div>
+                        <div class="calculator-option">
+                            <input type="radio" name="project-type" id="type-commercial" value="commercial">
+                            <label for="type-commercial">Commercial / Brand Video</label>
+                        </div>
+                        <div class="calculator-option">
+                            <input type="radio" name="project-type" id="type-documentary" value="documentary">
+                            <label for="type-documentary">Documentary</label>
+                        </div>
+                        <div class="calculator-option">
+                            <input type="radio" name="project-type" id="type-event" value="event">
+                            <label for="type-event">Event Coverage</label>
+                        </div>
+                        <div class="calculator-option">
+                            <input type="radio" name="project-type" id="type-brand" value="brand-content">
+                            <label for="type-brand">Brand Content / Social</label>
+                        </div>
+                        <div class="calculator-option">
+                            <input type="radio" name="project-type" id="type-drone" value="drone">
+                            <label for="type-drone">Drone Work</label>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="page-panel quote-form-panel">
-                    <div class="page-card-header quote-form-header">
-                        <div>
-                            <div class="page-card-title">Get Your Estimate</div>
-                            <div class="page-card-note">Answer a few quick questions. Your estimate updates instantly.</div>
+                <div class="calculator-group">
+                    <div class="calculator-group-label">2. Production Scope</div>
+                    <div class="calculator-options cols-3">
+                        <div class="calculator-option">
+                            <input type="radio" name="scope" id="scope-basic" value="basic" checked>
+                            <label for="scope-basic">Basic</label>
                         </div>
-                        <div class="quote-stepper">
-                            <span class="quote-step-label">Step <span id="quote-step-current">1</span> of <span id="quote-step-total">5</span></span>
-                            <span class="quote-step-title" id="quote-step-title">Project Type</span>
+                        <div class="calculator-option">
+                            <input type="radio" name="scope" id="scope-standard" value="standard">
+                            <label for="scope-standard">Standard</label>
                         </div>
-                    </div>
-
-                    <form id="quote-builder-form" name="quote-builder" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
-                        <input type="hidden" name="form-name" value="quote-builder">
-                        <input type="hidden" name="pricingPath" id="pricing-path-hidden">
-                        <input type="hidden" name="computedTotal" id="computed-total-hidden">
-                        <input type="hidden" name="lineItems" id="line-items-hidden">
-                        <input type="hidden" name="quoteText" id="quote-text-hidden">
-                        <p class="hidden"><label>Don't fill this out: <input name="bot-field"></label></p>
-
-                        <div class="quote-step is-active" data-step-key="project" data-title="Project Type">
-                            <div class="quote-option-grid">
-                                <label class="quote-option">
-                                    <input type="radio" name="projectType" value="Commercial / Brand Content" required>
-                                    <span class="quote-option-content">
-                                        <span class="quote-option-title">Commercial / Brand Content</span>
-                                        <span class="quote-option-note">Campaigns, brand stories, product launches.</span>
-                                    </span>
-                                </label>
-                                <label class="quote-option">
-                                    <input type="radio" name="projectType" value="Music Video" required>
-                                    <span class="quote-option-content">
-                                        <span class="quote-option-title">Music Video</span>
-                                        <span class="quote-option-note">Performance, story-driven, or cinematic visuals.</span>
-                                    </span>
-                                </label>
-                                <label class="quote-option">
-                                    <input type="radio" name="projectType" value="Documentary" required>
-                                    <span class="quote-option-content">
-                                        <span class="quote-option-title">Documentary</span>
-                                        <span class="quote-option-note">Short docs, interviews, and impact stories.</span>
-                                    </span>
-                                </label>
-                                <label class="quote-option">
-                                    <input type="radio" name="projectType" value="Event Coverage" required>
-                                    <span class="quote-option-content">
-                                        <span class="quote-option-title">Event Coverage</span>
-                                        <span class="quote-option-note">Highlight films, recaps, and live moments.</span>
-                                    </span>
-                                </label>
-                                <label class="quote-option">
-                                    <input type="radio" name="projectType" value="Other" required>
-                                    <span class="quote-option-content">
-                                        <span class="quote-option-title">Other</span>
-                                        <span class="quote-option-note">Tell us more in the notes.</span>
-                                    </span>
-                                </label>
-                            </div>
+                        <div class="calculator-option">
+                            <input type="radio" name="scope" id="scope-premium" value="premium">
+                            <label for="scope-premium">Premium</label>
                         </div>
-
-                        <div class="quote-step" data-step-key="pricing" data-title="Pricing Path">
-                            <div class="quote-option-grid">
-                                <label class="quote-option">
-                                    <input type="radio" name="pricingPathChoice" value="standard" checked required>
-                                    <span class="quote-option-content">
-                                        <span class="quote-option-title">Standard Project</span>
-                                        <span class="quote-option-note">Custom scope with line items and add-ons.</span>
-                                    </span>
-                                </label>
-                                <label class="quote-option">
-                                    <input type="radio" name="pricingPathChoice" value="retainer" required>
-                                    <span class="quote-option-content">
-                                        <span class="quote-option-title">Monthly Retainer</span>
-                                        <span class="quote-option-note">Ongoing content with a predictable monthly plan.</span>
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="quote-step" data-step-key="scope" data-title="Shoot Scope" data-requires="standard">
-                            <div class="quote-field-grid">
-                                <div class="form-group">
-                                    <label for="shoot-duration">Shoot duration</label>
-                                    <select id="shoot-duration" name="shootDuration" required>
-                                        <option value="">Select duration</option>
-                                        <option value="half-day">Half day (up to 4 hours)</option>
-                                        <option value="full-day">Full day (up to 8 hours)</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="location-count">Location count</label>
-                                    <select id="location-count" name="locationCount" required>
-                                        <option value="">Select locations</option>
-                                        <option value="1">1 location</option>
-                                        <option value="2">2 locations</option>
-                                        <option value="3-plus">3+ locations</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="crew-level">Crew level</label>
-                                    <select id="crew-level" name="crewLevel" required>
-                                        <option value="">Select crew size</option>
-                                        <option value="solo">Solo shooter</option>
-                                        <option value="small">Small crew (2–3)</option>
-                                        <option value="full">Full crew (4+)</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="quote-field-grid">
-                                <div class="form-group">
-                                    <label for="video-length">Final video length</label>
-                                    <select id="video-length" name="videoLength" required>
-                                        <option value="">Select length</option>
-                                        <option value="30-60">30–60s</option>
-                                        <option value="60-90">60–90s</option>
-                                        <option value="2-3">2–3 min</option>
-                                        <option value="3-5">3–5 min</option>
-                                        <option value="5-plus">5+ min</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="deliverables-count">Number of deliverables</label>
-                                    <select id="deliverables-count" name="deliverablesCount" required>
-                                        <option value="">Select count</option>
-                                        <option value="1">1 deliverable</option>
-                                        <option value="2-3">2–3 deliverables</option>
-                                        <option value="4-6">4–6 deliverables</option>
-                                        <option value="7-plus">7+ deliverables</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="social-cutdowns">Social cutdowns</label>
-                                    <select id="social-cutdowns" name="socialCutdowns" required>
-                                        <option value="">Select quantity</option>
-                                        <option value="0">0</option>
-                                        <option value="3">3</option>
-                                        <option value="6">6</option>
-                                        <option value="10">10</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Add-ons</label>
-                                <div class="quote-option-grid quote-option-grid-compact">
-                                    <label class="quote-option quote-option-checkbox">
-                                        <input type="checkbox" name="addOns" value="Drone">
-                                        <span class="quote-option-content">
-                                            <span class="quote-option-title">Drone</span>
-                                            <span class="quote-option-note">Aerial coverage.</span>
-                                        </span>
-                                    </label>
-                                    <label class="quote-option quote-option-checkbox">
-                                        <input type="checkbox" name="addOns" value="Captions">
-                                        <span class="quote-option-content">
-                                            <span class="quote-option-title">Captions</span>
-                                            <span class="quote-option-note">On-screen text and subtitles.</span>
-                                        </span>
-                                    </label>
-                                    <label class="quote-option quote-option-checkbox">
-                                        <input type="checkbox" name="addOns" value="Voiceover">
-                                        <span class="quote-option-content">
-                                            <span class="quote-option-title">Voiceover</span>
-                                            <span class="quote-option-note">Professional VO recording.</span>
-                                        </span>
-                                    </label>
-                                    <label class="quote-option quote-option-checkbox">
-                                        <input type="checkbox" name="addOns" value="Scriptwriting">
-                                        <span class="quote-option-content">
-                                            <span class="quote-option-title">Scriptwriting</span>
-                                            <span class="quote-option-note">Messaging and story development.</span>
-                                        </span>
-                                    </label>
-                                    <label class="quote-option quote-option-checkbox">
-                                        <input type="checkbox" name="addOns" value="Location scouting">
-                                        <span class="quote-option-content">
-                                            <span class="quote-option-title">Location scouting</span>
-                                            <span class="quote-option-note">Find the right locations.</span>
-                                        </span>
-                                    </label>
-                                    <label class="quote-option quote-option-checkbox">
-                                        <input type="checkbox" name="addOns" value="Rush edit">
-                                        <span class="quote-option-content">
-                                            <span class="quote-option-title">Rush edit (48–72 hrs)</span>
-                                            <span class="quote-option-note">Fast turnaround.</span>
-                                        </span>
-                                    </label>
-                                    <label class="quote-option quote-option-checkbox">
-                                        <input type="checkbox" name="addOns" value="Photography add-on">
-                                        <span class="quote-option-content">
-                                            <span class="quote-option-title">Photography add-on</span>
-                                            <span class="quote-option-note">Stills during the shoot.</span>
-                                        </span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="timeline-urgency">Timeline urgency</label>
-                                <select id="timeline-urgency" name="timelineUrgency" required>
-                                    <option value="">Select urgency</option>
-                                    <option value="flexible">Flexible (2–4 weeks)</option>
-                                    <option value="standard">Standard (1–2 weeks)</option>
-                                    <option value="rush">Rush (&lt; 7 days)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="quote-step" data-step-key="retainer" data-title="Retainer Details" data-requires="retainer">
-                            <div class="quote-option-grid">
-                                <label class="quote-option">
-                                    <input type="radio" name="retainerTier" value="Foundation" required>
-                                    <span class="quote-option-content">
-                                        <span class="quote-option-title">Foundation — $2,000 / month</span>
-                                        <span class="quote-option-note">Baseline content support.</span>
-                                    </span>
-                                </label>
-                                <label class="quote-option">
-                                    <input type="radio" name="retainerTier" value="Growth" required>
-                                    <span class="quote-option-content">
-                                        <span class="quote-option-title">Growth — $3,500 / month</span>
-                                        <span class="quote-option-note">Expanded monthly coverage.</span>
-                                    </span>
-                                </label>
-                                <label class="quote-option">
-                                    <input type="radio" name="retainerTier" value="Full Spectrum" required>
-                                    <span class="quote-option-content">
-                                        <span class="quote-option-title">Full Spectrum — $6,000 / month</span>
-                                        <span class="quote-option-note">Full-scale monthly production.</span>
-                                    </span>
-                                </label>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="retainer-commitment">Commitment length</label>
-                                <select id="retainer-commitment" name="retainerCommitment" required>
-                                    <option value="">Select commitment</option>
-                                    <option value="month-to-month">Month-to-month</option>
-                                    <option value="3-months">3 months</option>
-                                    <option value="6-months">6 months (10% discount)</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="retainer-notes">What do you need monthly? (optional)</label>
-                                <textarea id="retainer-notes" name="retainerNotes" rows="4" placeholder="Share deliverables, cadence, or key goals."></textarea>
-                            </div>
-                        </div>
-
-                        <div class="quote-step" data-step-key="contact" data-title="Contact + Delivery">
-                            <div class="quote-field-grid">
-                                <div class="form-group">
-                                    <label for="quote-name">Name</label>
-                                    <input type="text" id="quote-name" name="name" required placeholder="Your name">
-                                </div>
-                                <div class="form-group">
-                                    <label for="quote-email">Email</label>
-                                    <input type="email" id="quote-email" name="email" required placeholder="your@email.com">
-                                </div>
-                            </div>
-                            <div class="quote-field-grid">
-                                <div class="form-group">
-                                    <label for="quote-company">Company (optional)</label>
-                                    <input type="text" id="quote-company" name="company" placeholder="Company or artist name">
-                                </div>
-                                <div class="form-group">
-                                    <label for="quote-phone">Phone (optional)</label>
-                                    <input type="tel" id="quote-phone" name="phone" placeholder="(555) 000-0000">
-                                </div>
-                            </div>
-                            <div class="quote-field-grid">
-                                <div class="form-group">
-                                    <label for="quote-location">Project city/state (optional)</label>
-                                    <input type="text" id="quote-location" name="projectLocation" placeholder="Baltimore, MD">
-                                </div>
-                                <div class="form-group">
-                                    <label for="quote-notes">Notes (optional)</label>
-                                    <input type="text" id="quote-notes" name="notes" placeholder="Any must-haves or context">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="quote-details">Additional details (optional)</label>
-                                <textarea id="quote-details" name="details" rows="4" placeholder="Tell us about the vision, goals, or timeline."></textarea>
-                            </div>
-                        </div>
-
-                        <div class="quote-navigation">
-                            <button type="button" class="btn btn-outline quote-prev" disabled>Back</button>
-                            <button type="button" class="btn btn-primary quote-next">Next</button>
-                            <button type="submit" class="btn btn-primary quote-submit" hidden>
-                                <span>Submit Quote</span>
-                            </button>
-                        </div>
-                    </form>
-
-                    <div class="quote-confirmation hidden" id="quote-confirmation">
-                        <div class="quote-confirmation-title">Quote Submitted</div>
-                        <p>Thanks for the details! We’ll review your scope and follow up within 24–48 hours.</p>
-                        <div class="quote-confirmation-actions">
-                            <a href="https://calendar.app.google/SfpoyramqV5vaUvP6" class="btn btn-primary" target="_blank" rel="noopener">See If We’re a Fit</a>
-                            <button type="button" class="btn btn-outline quote-copy-btn">Copy Quote</button>
-                        </div>
-                    <ul class="reassurance-list reassurance-list-left">
-                        <li>No long-term contracts</li>
-                        <li>No surprise fees</li>
-                        <li>You keep full usage rights</li>
-                    </ul>
                     </div>
                 </div>
-            </div>
 
-            <aside class="quote-summary">
-                <div class="quote-summary-card quote-summary-desktop">
-                    <div class="quote-summary-header">
-                        <span class="quote-summary-title">Estimated Quote</span>
-                        <span class="quote-summary-total">$0</span>
+                <div class="calculator-group">
+                    <div class="calculator-group-label">3. Shoot Length</div>
+                    <div class="calculator-options cols-3">
+                        <div class="calculator-option">
+                            <input type="radio" name="shoot" id="shoot-half" value="half" checked>
+                            <label for="shoot-half">Half Day</label>
+                        </div>
+                        <div class="calculator-option">
+                            <input type="radio" name="shoot" id="shoot-full" value="full">
+                            <label for="shoot-full">Full Day</label>
+                        </div>
+                        <div class="calculator-option">
+                            <input type="radio" name="shoot" id="shoot-multi" value="multi">
+                            <label for="shoot-multi">Multi-Day</label>
+                        </div>
                     </div>
-                    <ul class="quote-summary-items"></ul>
-                    <p class="quote-summary-disclaimer">Final pricing confirmed after discovery call.</p>
-                    <div class="quote-summary-actions">
-                        <a href="https://calendar.app.google/SfpoyramqV5vaUvP6" class="btn btn-primary" target="_blank" rel="noopener">See If We’re a Fit</a>
-                        <button type="button" class="btn btn-outline quote-copy-btn">Copy Quote</button>
-                    </div>
-                    <ul class="reassurance-list reassurance-list-left">
-                        <li>No long-term contracts</li>
-                        <li>No surprise fees</li>
-                        <li>You keep full usage rights</li>
-                    </ul>
                 </div>
 
-                <details class="quote-summary-card quote-summary-mobile">
-                    <summary>Estimate</summary>
-                    <div class="quote-summary-body">
-                        <div class="quote-summary-header">
-                            <span class="quote-summary-title">Estimated Quote</span>
-                            <span class="quote-summary-total">$0</span>
+                <div class="calculator-group">
+                    <div class="calculator-group-label">4. Crew Size</div>
+                    <div class="calculator-options cols-3">
+                        <div class="calculator-option">
+                            <input type="radio" name="crew" id="crew-solo" value="solo" checked>
+                            <label for="crew-solo">Solo Filmmaker</label>
                         </div>
-                        <ul class="quote-summary-items"></ul>
-                        <p class="quote-summary-disclaimer">Final pricing confirmed after discovery call.</p>
-                        <div class="quote-summary-actions">
-                            <a href="https://calendar.app.google/SfpoyramqV5vaUvP6" class="btn btn-primary" target="_blank" rel="noopener">See If We’re a Fit</a>
-                            <button type="button" class="btn btn-outline quote-copy-btn">Copy Quote</button>
+                        <div class="calculator-option">
+                            <input type="radio" name="crew" id="crew-small" value="small">
+                            <label for="crew-small">Small Crew</label>
                         </div>
-                    <ul class="reassurance-list reassurance-list-left">
-                        <li>No long-term contracts</li>
-                        <li>No surprise fees</li>
-                        <li>You keep full usage rights</li>
-                    </ul>
+                        <div class="calculator-option">
+                            <input type="radio" name="crew" id="crew-full" value="full">
+                            <label for="crew-full">Full Crew</label>
+                        </div>
                     </div>
-                </details>
+                </div>
+
+                <div class="calculator-group">
+                    <div class="calculator-group-label">5. Editing Needs</div>
+                    <div class="calculator-options cols-4">
+                        <div class="calculator-option">
+                            <input type="radio" name="editing" id="edit-basic" value="basic" checked>
+                            <label for="edit-basic">Basic Edit</label>
+                        </div>
+                        <div class="calculator-option">
+                            <input type="radio" name="editing" id="edit-cinematic" value="cinematic">
+                            <label for="edit-cinematic">Cinematic Edit</label>
+                        </div>
+                        <div class="calculator-option">
+                            <input type="radio" name="editing" id="edit-multi" value="multi">
+                            <label for="edit-multi">Multiple Platform Cuts</label>
+                        </div>
+                        <div class="calculator-option">
+                            <input type="radio" name="editing" id="edit-advanced" value="advanced">
+                            <label for="edit-advanced">Advanced Color / Sound</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculator-group">
+                    <div class="calculator-group-label">6. Add-Ons</div>
+                    <div class="calculator-addons">
+                        <div class="calculator-option calculator-addon" id="addon-drone-wrap">
+                            <input type="checkbox" name="addon" id="addon-drone" value="drone">
+                            <label for="addon-drone">Drone Footage</label>
+                        </div>
+                        <div class="calculator-option calculator-addon">
+                            <input type="checkbox" name="addon" id="addon-revisions" value="revisions">
+                            <label for="addon-revisions">Extra Revisions</label>
+                        </div>
+                        <div class="calculator-option calculator-addon">
+                            <input type="checkbox" name="addon" id="addon-rush" value="rush">
+                            <label for="addon-rush">Rush Delivery</label>
+                        </div>
+                        <div class="calculator-option calculator-addon">
+                            <input type="checkbox" name="addon" id="addon-social" value="social">
+                            <label for="addon-social">Social Media Cutdowns</label>
+                        </div>
+                        <div class="calculator-option calculator-addon">
+                            <input type="checkbox" name="addon" id="addon-script" value="script">
+                            <label for="addon-script">Script / Storyboard</label>
+                        </div>
+                        <div class="calculator-option calculator-addon">
+                            <input type="checkbox" name="addon" id="addon-location" value="location">
+                            <label for="addon-location">Additional Location</label>
+                        </div>
+                        <div class="calculator-option calculator-addon">
+                            <input type="checkbox" name="addon" id="addon-teaser" value="teaser">
+                            <label for="addon-teaser">Same-Day Teaser</label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <aside class="estimate-panel">
+                <div class="estimate-panel-header">Your Estimate</div>
+                <div class="estimate-range" id="estimate-range">Estimated Range: $2,000 – $6,000</div>
+                <p class="estimate-note">Final pricing depends on scope, locations, crew, timeline, and post-production needs.</p>
+                <p class="estimate-disclaimer">This estimate is not a final quote. It is a starting point to help plan your budget before a strategy call.</p>
+                <div class="estimate-ctas">
+                    <a href="/#contact" class="btn btn-primary">Book a Strategy Call</a>
+                    <a href="/form" class="btn btn-outline">Send Project Details</a>
+                </div>
             </aside>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <img src="assets/images/logo.png" alt="Film Stop" class="footer-logo">
-                    <p>Story-driven video production for artists and brands who want to be remembered.</p>
+    <!-- Pricing Overview -->
+    <section class="quote-pricing">
+        <div class="quote-pricing-header">
+            <h2>Investment Ranges</h2>
+            <p>Most Film Stop projects fall within these ranges. Your estimate above is tailored to your specific selections.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/>
+                    </svg>
                 </div>
-                <div class="footer-links">
-                    <div class="footer-column">
-                        <h4>Navigation</h4>
-                        <ul>
-                            <li><a href="/#work">Work</a></li>
-                            <li><a href="/#services">Services</a></li>
-                            <li><a href="/#about">About</a></li>
-                            <li><a href="/#contact">Contact</a></li>
-                            <li><a href="/faq.html">FAQ</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-column">
-                        <h4>Get Started</h4>
-                        <ul>
-                            <li><a href="/portfolio">Portfolio</a></li>
-                            <li><a href="/form">Contact Form</a></li>
-                        </ul>
-                    </div>
-                </div>
+                <h3>Music Videos</h3>
+                <div class="pricing-range">$2K – $6K+</div>
+                <p>Concept to delivery. Creative direction included.</p>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Film Stop. All rights reserved.</p>
-                <p>Built in Baltimore. Focused on story.</p>
+            <div class="pricing-card">
+                <div class="pricing-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="7" width="20" height="15" rx="2"/>
+                        <path d="M17 2L12 7L7 2"/>
+                    </svg>
+                </div>
+                <h3>Commercials</h3>
+                <div class="pricing-range">$2.5K – $10K+</div>
+                <p>Strategy, production, platform-ready cuts.</p>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M2 12C2 12 5.5 5 12 5s10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </div>
+                <h3>Documentary</h3>
+                <div class="pricing-range">$3.5K+</div>
+                <p>Research, interviews, narrative editing.</p>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <h3>Events</h3>
+                <div class="pricing-range">From $1.5K</div>
+                <p>Full coverage and highlight reels.</p>
             </div>
         </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="quote-footer">
+        <p>© 2026 Film Stop. <a href="/">Home</a> · <a href="/portfolio">Portfolio</a> · <a href="/form">Contact Form</a> · <a href="/faq">FAQ</a></p>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script>
+        const PROJECT_BASE = {
+            'music-video':    { min: 2000, max: 6000 },
+            'commercial':     { min: 2500, max: 10000 },
+            'documentary':    { min: 3500, max: 8000 },
+            'event':          { min: 1500, max: 4000 },
+            'brand-content':  { min: 2500, max: 8000 },
+            'drone':          { min: 800, max: 2500 }
+        };
+
+        const SCOPE_MULT = { basic: [1, 1], standard: [1.15, 1.28], premium: [1.32, 1.5] };
+        const SHOOT_ADD = { half: [0, 0], full: [400, 1100], multi: [1100, 3200] };
+        const CREW_ADD = { solo: [0, 0], small: [500, 1500], full: [1300, 3800] };
+        const EDIT_ADD = { basic: [0, 0], cinematic: [300, 800], multi: [500, 1200], advanced: [800, 2000] };
+
+        const ADDON_COSTS = {
+            drone: 500,
+            revisions: 350,
+            rush: 0.15,
+            social: 400,
+            script: 650,
+            location: 500,
+            teaser: 800
+        };
+
+        function formatCurrency(amount) {
+            return '$' + amount.toLocaleString('en-US');
+        }
+
+        function roundToHundred(n) {
+            return Math.round(n / 100) * 100;
+        }
+
+        function getSelectedValue(name) {
+            const el = document.querySelector(`input[name="${name}"]:checked`);
+            return el ? el.value : null;
+        }
+
+        function getSelectedAddons() {
+            return Array.from(document.querySelectorAll('input[name="addon"]:checked')).map(el => el.value);
+        }
+
+        function calculateEstimate() {
+            const projectType = getSelectedValue('project-type');
+            const scope = getSelectedValue('scope');
+            const shoot = getSelectedValue('shoot');
+            const crew = getSelectedValue('crew');
+            const editing = getSelectedValue('editing');
+            const addons = getSelectedAddons();
+
+            const base = PROJECT_BASE[projectType];
+
+            let min = base.min * SCOPE_MULT[scope][0];
+            let max = base.max * SCOPE_MULT[scope][1];
+
+            min += SHOOT_ADD[shoot][0] + CREW_ADD[crew][0] + EDIT_ADD[editing][0];
+            max += SHOOT_ADD[shoot][1] + CREW_ADD[crew][1] + EDIT_ADD[editing][1];
+
+            addons.forEach(addon => {
+                if (addon === 'rush') return;
+                if (addon === 'drone' && projectType === 'drone') return;
+                const cost = ADDON_COSTS[addon];
+                min += cost * 0.9;
+                max += cost * 1.1;
+            });
+
+            if (addons.includes('rush')) {
+                min *= 1 + ADDON_COSTS.rush;
+                max *= 1 + ADDON_COSTS.rush * 1.2;
+            }
+
+            min = roundToHundred(min);
+            max = roundToHundred(max);
+
+            if (min >= max) {
+                max = min + 500;
+            }
+
+            return { min, max };
+        }
+
+        function updateEstimate() {
+            const { min, max } = calculateEstimate();
+            const rangeEl = document.getElementById('estimate-range');
+            const suffix = max >= 10000 ? '+' : '';
+            rangeEl.textContent = `Estimated Range: ${formatCurrency(min)} – ${formatCurrency(max)}${suffix}`;
+        }
+
+        function toggleDroneAddon() {
+            const isDroneProject = getSelectedValue('project-type') === 'drone';
+            const droneWrap = document.getElementById('addon-drone-wrap');
+            const droneCheckbox = document.getElementById('addon-drone');
+
+            if (isDroneProject) {
+                droneWrap.classList.add('disabled');
+                droneCheckbox.checked = false;
+            } else {
+                droneWrap.classList.remove('disabled');
+            }
+        }
+
+        document.getElementById('budget-calculator').addEventListener('change', function() {
+            toggleDroneAddon();
+            updateEstimate();
+        });
+
+        toggleDroneAddon();
+        updateEstimate();
+
+        // Mobile menu
+        const navToggle = document.querySelector('.quote-nav-toggle');
+        const mobileMenu = document.querySelector('.quote-mobile-menu');
+
+        navToggle.addEventListener('click', () => {
+            navToggle.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+        });
+
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navToggle.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Stagger video playback
+        document.querySelectorAll('.quote-hero-bg video').forEach((video, i) => {
+            video.currentTime = i * 3;
+        });
+    </script>
 </body>
 </html>
