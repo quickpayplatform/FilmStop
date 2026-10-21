@@ -396,6 +396,28 @@ ul {
     color: var(--color-accent);
 }
 
+@media (max-width: 968px) {
+    .mobile-menu {
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: calc(var(--nav-height) + 1.25rem) 1.5rem 2rem;
+        overflow-y: auto;
+    }
+
+    .mobile-menu-links {
+        width: 100%;
+    }
+
+    .mobile-menu-links li {
+        margin-bottom: 1.15rem;
+    }
+
+    .mobile-menu-links a {
+        font-size: clamp(2.1rem, 12vw, 3rem);
+        line-height: 0.95;
+    }
+}
+
 /* ============================================
    HERO SECTION
    ============================================ */
@@ -1860,6 +1882,7 @@ section {
 
 .business-hero-visual img {
     width: 100%;
+    height: auto;
     aspect-ratio: 16 / 9;
     object-fit: cover;
     border-radius: 8px;
@@ -1874,8 +1897,10 @@ section {
     margin-bottom: 1.5rem;
 }
 
-.business-page .section-header .section-title {
+.business-page .section-header .section-title,
+.business-page .section-title {
     margin-bottom: 0.5rem;
+    line-height: 0.95;
 }
 
 .business-more {
@@ -1944,6 +1969,7 @@ section {
 .project-play img,
 .project-media img {
     width: 100%;
+    height: auto;
     aspect-ratio: 16 / 9;
     object-fit: cover;
     display: block;
@@ -2201,6 +2227,13 @@ a.project-card {
     font-size: 1.05rem;
 }
 
+.business-close .btn {
+    justify-content: center;
+    text-align: center;
+    text-wrap: balance;
+    line-height: 1.2;
+}
+
 .visually-hidden {
     position: absolute;
     width: 1px;
@@ -2251,6 +2284,30 @@ a.project-card {
 
     .business-hero-title {
         max-width: none;
+        font-size: clamp(2.7rem, 13vw, 3.6rem);
+    }
+
+    .business-hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .business-hero-actions .btn,
+    .business-page .btn {
+        justify-content: center;
+        text-align: center;
+        text-wrap: balance;
+        line-height: 1.2;
+    }
+
+    .business-close-panel {
+        padding: 2.2rem 1rem;
+    }
+
+    .business-close .btn {
+        width: 100%;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
     }
 
     .business-page section {
@@ -2259,6 +2316,16 @@ a.project-card {
 
     .business-page section.work {
         padding-top: 0.75rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .business-page .btn {
+        padding-left: 0.7rem;
+        padding-right: 0.7rem;
+        font-size: 0.78rem;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
     }
 }
 
