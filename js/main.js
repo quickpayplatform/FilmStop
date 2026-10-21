@@ -132,6 +132,7 @@ const Navigation = {
         this.nav = document.querySelector('.nav');
         this.toggle = document.querySelector('.nav-toggle');
         this.mobileMenu = document.querySelector('.mobile-menu');
+        if (!this.nav || !this.toggle || !this.mobileMenu) return;
         
         // Scroll effect
         window.addEventListener('scroll', this.onScroll.bind(this));
@@ -162,7 +163,9 @@ const Navigation = {
     toggleMenu() {
         this.toggle.classList.toggle('active');
         this.mobileMenu.classList.toggle('active');
-        document.body.style.overflow = this.mobileMenu.classList.contains('active') ? 'hidden' : '';
+        const open = this.mobileMenu.classList.contains('active');
+        this.toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        document.body.style.overflow = open ? 'hidden' : '';
     },
     
     smoothScroll(e) {
@@ -172,7 +175,7 @@ const Navigation = {
             const target = document.querySelector(href);
             if (target) {
                 target.scrollIntoView({
-                    behavior: 'smooth',
+                    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
                     block: 'start'
                 });
             }
@@ -364,6 +367,7 @@ window.PortfolioRender = PortfolioRender;
    ============================================ */
 const VideoHover = {
     init() {
+        if (document.body.classList.contains('business-page')) return;
         const workItems = document.querySelectorAll('.work-item');
 
         workItems.forEach((item) => {
@@ -454,6 +458,7 @@ const WorkFilter = {
 const VideoModal = {
     modal: null,
     modalVideo: null,
+    lastFocus: null,
 
     stopAllInlinePortrait() {
         document.querySelectorAll('.work-item--inline-playing').forEach((el) => {
@@ -556,6 +561,17 @@ const VideoModal = {
 
         document.body.addEventListener('click', this.handleOverlayClick.bind(this));
 
+        document.querySelectorAll('[data-video]').forEach((btn) => {
+            if (btn.classList.contains('work-item-overlay')) return;
+            if (btn.dataset.videoBound === 'true') return;
+            btn.dataset.videoBound = 'true';
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const src = btn.dataset.video;
+                if (src) this.open(src, btn);
+            });
+        });
+
         document.addEventListener('click', (e) => {
             const inline = document.querySelector('.work-item--inline-playing');
             if (!inline) return;
@@ -572,6 +588,10 @@ const VideoModal = {
         });
 
         document.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab' && this.modal.classList.contains('active')) {
+                this.trapFocus(e);
+                return;
+            }
             if (e.key !== 'Escape') return;
             const inline = document.querySelector('.work-item--inline-playing');
             if (inline) {
@@ -580,25 +600,66 @@ const VideoModal = {
                 return;
             }
             if (this.modal.classList.contains('active')) {
+                e.preventDefault();
                 this.close();
             }
         });
     },
 
-    open(src) {
+    focusable() {
+        return [...this.modal.querySelectorAll('button, video, a[href], [tabindex]:not([tabindex="-1"])')]
+            .filter((el) => !el.disabled && el.getAttribute('aria-hidden') !== 'true');
+    },
+
+    trapFocus(e) {
+        const items = this.focusable();
+        if (!items.length) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    },
+
+    open(src, trigger) {
         this.stopAllInlinePortrait();
-        this.modalVideo.querySelector('source').src = src;
+        this.lastFocus = trigger || document.activeElement;
+        const source = this.modalVideo.querySelector('source');
+        if (source) source.src = src;
+        else this.modalVideo.src = src;
         this.modalVideo.load();
+        const title = document.getElementById('video-modal-title');
+        if (title && trigger && trigger.dataset.title) {
+            title.textContent = trigger.dataset.title;
+        }
         this.modal.classList.add('active');
+        this.modal.setAttribute('aria-hidden', 'false');
+        this.modal.removeAttribute('inert');
         document.body.style.overflow = 'hidden';
-        this.modalVideo.play();
+        const closeBtn = this.queryModalClose();
+        if (closeBtn) closeBtn.focus();
+        const playAttempt = this.modalVideo.play();
+        if (playAttempt && typeof playAttempt.catch === 'function') playAttempt.catch(() => {});
     },
 
     close() {
         this.modal.classList.remove('active');
+        this.modal.setAttribute('aria-hidden', 'true');
+        this.modal.setAttribute('inert', '');
         document.body.style.overflow = '';
         this.modalVideo.pause();
         this.modalVideo.currentTime = 0;
+        const source = this.modalVideo.querySelector('source');
+        if (source) source.removeAttribute('src');
+        this.modalVideo.removeAttribute('src');
+        this.modalVideo.load();
+        if (this.lastFocus && typeof this.lastFocus.focus === 'function') {
+            this.lastFocus.focus();
+        }
     },
 
     queryModalClose() {
