@@ -56,7 +56,28 @@
             } else if (url.protocol !== 'https:' && url.protocol !== 'http:') {
                 return;
             }
-            track('film_stop_cta', type, label, placement(element), target);
+            const leavesPage = url.origin === location.origin &&
+                (url.pathname !== location.pathname || url.search !== location.search);
+            const regularNavigation = event.type === 'click' && event.button === 0 &&
+                !event.defaultPrevented && !event.metaKey && !event.ctrlKey && !event.shiftKey &&
+                !event.altKey && (!element.target || element.target === '_self') &&
+                !element.hasAttribute('download');
+            if (leavesPage && regularNavigation && window.google_tag_manager?.['GTM-T33FCN4H']) {
+                // Keep the current page alive briefly so GTM can process the click.
+                event.preventDefault();
+                let navigated = false;
+                const finish = () => {
+                    if (navigated) return;
+                    navigated = true;
+                    location.assign(url.href);
+                };
+                window.setTimeout(finish, 400);
+                track('film_stop_cta', type, label, placement(element), target, {
+                    eventCallback: finish, eventTimeout: 350
+                });
+            } else {
+                track('film_stop_cta', type, label, placement(element), target);
+            }
             return;
         }
 
