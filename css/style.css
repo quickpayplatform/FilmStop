@@ -1147,6 +1147,23 @@ section {
     margin-bottom: 0;
 }
 
+.founder-film {
+    max-width: 900px;
+    margin: var(--space-2xl) auto 0;
+    text-align: center;
+}
+
+.founder-film video {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    margin-top: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: #000;
+    cursor: auto;
+}
+
 @media (max-width: 768px) {
     .founder-image img {
         width: 220px;
