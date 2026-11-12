@@ -55,7 +55,7 @@ def cta(title, detail, label="Tell us about your project", url="/form", secondar
             <p>{escape(detail)}</p>
             <div class="blog-actions">
                 <a class="blog-button" href="{escape(url)}">{escape(label)}</a>
-                <a class="blog-link" href="{secondary_url}">{secondary_label} &rarr;</a>
+                <a class="blog-link" href="{escape(secondary_url)}">{escape(secondary_label)} &rarr;</a>
             </div>
         </section>"""
 
@@ -99,6 +99,9 @@ def render():
             "\n".join(f"            <p>{escape(paragraph)}</p>" for paragraph in paragraphs)
             for heading, *paragraphs in post["sections"]
         )
+        secondary = post.get("secondary")
+        if post["cta"][3] == "/quote":
+            secondary = ("Tell us about your project", "/form")
         article = f"""        <article>
             <header class="blog-intro">
                 <a class="blog-link" href="/blog/">&larr; All articles</a>
@@ -112,7 +115,7 @@ def render():
 {sections}
             </div>
         </article>
-{cta(*post['cta'], secondary=("Tell us about your project", "/form") if post['cta'][3] == "/quote" else None)}"""
+{cta(*post['cta'], secondary=secondary)}"""
         output = ROOT / path.lstrip("/")
         output.mkdir(parents=True, exist_ok=True)
         (output / "index.html").write_text(page(title, description, path, article, image), encoding="utf-8")
