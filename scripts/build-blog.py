@@ -28,7 +28,7 @@ def page(title, description, path, body, image):
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/blog.css?v=2">
+    <link rel="stylesheet" href="/css/blog.css?v={3 if path == '/blog/' else 2}">
 </head>
 <body>
     <nav class="blog-nav blog-shell" aria-label="Main navigation">
@@ -79,14 +79,20 @@ def render():
                 </div>
             </a>""" for post in POSTS
     )
-    listing = f'        <section class="blog-grid" aria-label="Articles">\n{cards}\n        </section>' if cards else ""
+    listing = f'        <section class="blog-grid" id="blog-articles" aria-label="Articles">\n{cards}\n        </section>' if cards else ""
+    search = """        <div class="blog-search" role="search" aria-label="Blog" hidden>
+            <label for="blog-search">Search articles</label>
+            <input id="blog-search" type="search" placeholder="Try corporate video or event coverage" aria-controls="blog-articles">
+            <p class="blog-search-status" role="status"></p>
+        </div>
+        <script defer src="/js/blog-search.js"></script>""" if cards else ""
     intro = """        <header class="blog-intro">
             <h1>Film Stop Blog</h1>
             <p>Practical guides to planning video projects, from the first brief to the final cut.</p>
         </header>"""
     project = cta("Have a video in mind?", "Tell us who you want to reach, what you want them to do, and when you need the video.")
     (ROOT / "blog/index.html").write_text(page("Video Production Blog", description, "/blog/", "\n".join(
-        [intro, f"        {cover(hero)}", listing, project]
+        [intro, f"        {cover(hero)}", search, listing, project]
     ), hero), encoding="utf-8")
 
     for post in POSTS:

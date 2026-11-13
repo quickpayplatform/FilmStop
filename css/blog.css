@@ -34,3 +34,19 @@ a:focus-visible { outline: 2px solid #ff824e; outline-offset: 4px; }
 article .blog-cover { aspect-ratio: 16 / 9; max-height: 550px; }
 .blog-figure figcaption { margin-top: .5rem; color: #b0b0b0; font-size: .82rem; }
 .blog-cta { text-align: left; }
+
+.blog-search { margin-top: 2rem; max-width: 36rem; }
+.blog-search label { display: block; margin-bottom: .45rem; font-weight: 700; }
+.blog-search input {
+    width: 100%;
+    padding: .8rem 1rem;
+    border: 1px solid #777;
+    border-radius: .35rem;
+    background: var(--color-bg-elevated);
+    color: inherit;
+    color-scheme: dark;
+    font: inherit;
+}
+.blog-search input:focus-visible { outline: 2px solid #ff824e; outline-offset: 3px; }
+.blog-search-status:not(:empty) { margin-top: .5rem; color: #c4c4c4; }
+.blog-card[hidden], .blog-grid[hidden] { display: none; }
