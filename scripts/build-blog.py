@@ -28,7 +28,7 @@ def page(title, description, path, body, image):
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/blog.css">
+    <link rel="stylesheet" href="/css/blog.css?v=2">
 </head>
 <body>
     <nav class="blog-nav blog-shell" aria-label="Main navigation">
@@ -60,9 +60,9 @@ def cta(title, detail, label="Tell us about your project", url="/form", secondar
         </section>"""
 
 
-def cover(image, lazy=False):
+def cover(image, lazy=False, alt=""):
     loading = ' loading="lazy"' if lazy else ' class="blog-cover"'
-    return f'<img{loading} src="{escape(image)}" alt="">'
+    return f'<img{loading} src="{escape(image)}" alt="{escape(alt)}">'
 
 
 def render():
@@ -109,8 +109,14 @@ def render():
                 <h1>{escape(title)}</h1>
                 <p>{escape(description)}</p>
                 <p><time datetime="{post['date']}">{post['displayDate']}</time> · Film Stop</p>
+                <div class="blog-actions">
+                    <a class="blog-button" href="{escape(post["cta"][3])}">{escape(post["cta"][2])}</a>
+                </div>
             </header>
-            {cover(image)}
+            <figure class="blog-figure">
+                {cover(image, alt=post["imageAlt"])}
+                <figcaption>AI-generated editorial image.</figcaption>
+            </figure>
             <div class="blog-reading">
 {sections}
             </div>

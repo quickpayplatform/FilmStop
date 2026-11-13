@@ -53,3 +53,43 @@ status = 200
   from = "/teesamaportfolio"
   to = "/teesamaportfolio.html"
   status = 200
+
+[[redirects]]
+  from = "/blog/video-production-brief"
+  to = "/blog/corporate-video-production-process/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/brand-film-vs-commercial"
+  to = "/blog/types-of-corporate-videos/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/customer-testimonial-video"
+  to = "/blog/types-of-corporate-videos/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/music-video-planning"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/event-recap-video-checklist"
+  to = "/blog/hire-event-videographer/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/nonprofit-documentary-fundraising"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/social-video-cutdowns"
+  to = "/blog/corporate-video-deliverables/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/video-production-timeline"
+  to = "/blog/corporate-video-production-process/"
+  status = 301
