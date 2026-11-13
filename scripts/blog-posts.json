@@ -1,5 +1,53 @@
 [
   {
+    "slug": "microsoft-365-outage-film-production",
+    "title": "Is Microsoft 365 still down? What film crews can do when Outlook stops working",
+    "description": "Check the November 12 Microsoft 365 outage update and learn how to keep a film shoot moving when Outlook goes down.",
+    "category": "Production planning",
+    "image": "/assets/blog/microsoft-365-outage-film-production.jpg",
+    "imageAlt": "A printed call sheet on a production case at a loading dock",
+    "date": "2026-11-12",
+    "displayDate": "November 12, 2026",
+    "cta": [
+      "Planning a corporate video or event?",
+      "Send us your shoot date, location, and the moments you need to capture. We’ll help you plan the day.",
+      "Plan your shoot with Film Stop",
+      "/form"
+    ],
+    "sources": [
+      [
+        "Microsoft service health",
+        "https://status.cloud.microsoft/m365/"
+      ],
+      [
+        "Microsoft incident reports published by Penn",
+        "https://mailservices.isc.upenn.edu/computing/email/penno365/alerts/ms-incidents.html"
+      ]
+    ],
+    "sections": [
+      [
+        "What Microsoft reported on November 12",
+        "Microsoft’s 7:45 p.m. ET update on November 12 still listed a disruption affecting some Microsoft 365 features that depend on Exchange Online. Affected users could have trouble opening Outlook mailboxes or receiving email, and some links in Outlook and Teams could fail to open. Use the Microsoft service health link below for the latest status."
+      ],
+      [
+        "What an email outage looks like on shoot day",
+        "It’s 7:30 a.m. The crew is at the loading dock, the first interview is at 8, and the venue contact’s number is buried in an Outlook thread. The crew has everything it needs to film. What it needs right now is someone who can open the door."
+      ],
+      [
+        "Save the call sheet somewhere you can open offline",
+        "Download the final call sheet to your phone. Include the address, parking and load-in instructions, call times, and a direct number for the venue contact. Have your department leads open the PDF before they leave for the shoot. A saved link is easy to mistake for a saved file."
+      ],
+      [
+        "Give the crew one place to get changes",
+        "Agree on who sends schedule changes and how they’ll reach people if email is unavailable. That might be a group text for crew updates and a direct call for the client or venue contact. If an interview moves from 9 to 10, ask the people affected to confirm they got the message."
+      ],
+      [
+        "Decide what can move while you wait for approval",
+        "If the client’s approval is stuck in email, the producer can check in by phone using the approval process you agreed on. In the meantime, film anything that’s already cleared, such as room details or exterior footage. Keep any scene that still needs a decision on hold and work around it."
+      ]
+    ]
+  },
+  {
     "slug": "choose-baltimore-video-production-company",
     "title": "How to choose a video production company in Baltimore",
     "description": "What to look for before you book a crew, from finished work to how the team handles changes.",

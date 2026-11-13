@@ -105,6 +105,12 @@ def render():
             "\n".join(f"            <p>{escape(paragraph)}</p>" for paragraph in paragraphs)
             for heading, *paragraphs in post["sections"]
         )
+        sources = " · ".join(
+            f'<a href="{escape(url)}">{escape(label)}</a>'
+            for label, url in post.get("sources", [])
+        )
+        if sources:
+            sections = sections.replace("\n            <h2>", f"\n            <p>{sources}</p>\n            <h2>", 1)
         secondary = post.get("secondary")
         if post["cta"][3] == "/quote":
             secondary = ("Tell us about your project", "/form")
