@@ -127,7 +127,6 @@ def render():
             </header>
             <figure class="blog-figure">
                 {cover(image, alt=post["imageAlt"])}
-                <figcaption>AI-generated editorial image.</figcaption>
             </figure>
             <div class="blog-reading">
 {sections}
