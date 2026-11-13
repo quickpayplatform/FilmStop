@@ -35,12 +35,16 @@ article .blog-cover { aspect-ratio: 16 / 9; max-height: 550px; }
 .blog-figure figcaption { margin-top: .5rem; color: #b0b0b0; font-size: .82rem; }
 .blog-cta { text-align: left; }
 
+.blog-index-intro { text-align: center; }
+.blog-index-intro h1, .blog-index-intro p { margin-inline: auto; }
+
 .blog-search { margin-top: 2rem; max-width: 36rem; }
-.blog-search label { display: block; margin-bottom: .45rem; font-weight: 700; }
+.blog-search label { color: #ff824e; display: block; margin-bottom: .45rem; font-weight: 700; }
 .blog-search input {
     width: 100%;
     padding: .8rem 1rem;
-    border: 1px solid #777;
+    border: 1px solid #a66348;
+    border-inline-start: 3px solid #ff824e;
     border-radius: .35rem;
     background: var(--color-bg-elevated);
     color: inherit;

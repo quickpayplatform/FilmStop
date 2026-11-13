@@ -28,7 +28,7 @@ def page(title, description, path, body, image):
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/blog.css?v={3 if path == '/blog/' else 2}">
+    <link rel="stylesheet" href="/css/blog.css?v={4 if path == '/blog/' else 2}">
 </head>
 <body>
     <nav class="blog-nav blog-shell" aria-label="Main navigation">
@@ -86,7 +86,7 @@ def render():
             <p class="blog-search-status" role="status"></p>
         </div>
         <script defer src="/js/blog-search.js"></script>""" if cards else ""
-    intro = """        <header class="blog-intro">
+    intro = """        <header class="blog-intro blog-index-intro">
             <h1>Film Stop Blog</h1>
             <p>Practical guides to planning video projects, from the first brief to the final cut.</p>
         </header>"""
