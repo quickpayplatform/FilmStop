@@ -1,5 +1,43 @@
 [
   {
+    "slug": "friday-the-13th-how-filmmakers-build-suspense",
+    "title": "Friday the 13th: How filmmakers build suspense before anything happens",
+    "description": "Learn how framing, offscreen sound, and editing build suspense in a film, even before the door opens.",
+    "category": "Filmmaking",
+    "image": "/assets/blog/friday-the-13th-suspense.jpg",
+    "imageAlt": "A person pauses in a dim hallway near a closed door",
+    "date": "2026-11-13",
+    "displayDate": "November 13, 2026",
+    "cta": [
+      "Planning a short film, commercial, or brand video?",
+      "Send us the scene you have in mind and tell us what you want the audience to feel.",
+      "Plan your shoot with Film Stop",
+      "/form"
+    ],
+    "sections": [
+      [
+        "Start with what the audience can’t see",
+        "A person walks down a hallway. They stop at a closed door. Somewhere on the other side, a chair scrapes across the floor.",
+        "That’s enough to make you lean in. On Friday the 13th, it’s easy to think about the moment that makes you jump. For filmmakers, the more interesting question is what makes you dread opening the door in the first place."
+      ],
+      [
+        "Give the audience somewhere to look",
+        "Frame the person on one side and leave the door visible on the other. Once the audience hears the scrape, they’ll start watching the empty space near the door. If you cut straight to the handle, you tell them exactly where to look. If you stay wide, they get to decide what in the frame feels wrong.",
+        "On set, shoot both. Get a wide shot that holds long enough for the actor to stop and listen, then get a close shot of their hand approaching the handle. Give the editor enough time on either side of the action to choose when to cut."
+      ],
+      [
+        "Record the sound that makes the room feel real",
+        "Before the scrape, let us hear the room. Maybe there’s a vent humming or a refrigerator running down the hall. Then introduce a sound the character can’t explain. A scrape from behind the door works because we can place it without seeing what caused it.",
+        "Record some room tone while everyone is quiet, then capture the scrape on its own. In the edit, try it once before the actor stops and once after. In the first version, the sound makes them stop. In the second, the audience has a moment to wonder what the actor already noticed."
+      ],
+      [
+        "Hold the shot a little longer",
+        "Once the hand reaches the handle, give the audience a beat to wonder whether the person will turn it. Try one cut where the door opens right away and another where the actor pauses. Watch both without music. See whether the pause makes you wait for something or just slows the scene down.",
+        "The same technique works outside horror. In a product film, you can hold on someone attempting a difficult task before showing how the product helps. In a documentary, you can stay with someone for a beat before they answer a hard question. In each case, the shot gives the viewer a reason to want to see what happens next."
+      ]
+    ]
+  },
+  {
     "slug": "microsoft-365-outage-film-production",
     "title": "Is Microsoft 365 still down? What film crews can do when Outlook stops working",
     "description": "Check the November 12 Microsoft 365 outage update and learn how to keep a film shoot moving when Outlook goes down.",
