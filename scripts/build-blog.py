@@ -23,16 +23,16 @@ def page(title, description, path, body, image):
     <meta property="og:url" content="{canonical}">
     <meta property="og:image" content="{ORIGIN}{image}">
     <meta property="og:type" content="{'website' if path == '/blog/' else 'article'}">
-    <link rel="icon" href="/assets/images/logo.png">
+    <link rel="icon" href="/assets/images/filmstop-logo-white.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.css?v=white-logo">
     <link rel="stylesheet" href="/css/blog.css?v={4 if path == '/blog/' else 2}">
 </head>
 <body>
     <nav class="blog-nav blog-shell" aria-label="Main navigation">
-        <a href="/"><img src="/assets/images/logo.png" alt="Film Stop home"></a>
+        <a href="/"><img src="/assets/images/filmstop-logo-white.png" alt="Film Stop home"></a>
         <div>
             <a href="/portfolio">Work</a>
             <a href="/blog/"{' aria-current="page"' if path == '/blog/' else ''}>Blog</a>

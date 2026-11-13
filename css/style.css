@@ -140,7 +140,6 @@ ul {
     height: auto;
     margin-bottom: var(--space-lg);
     animation: pulse 1.5s infinite;
-    filter: invert(1);
 }
 
 .loader-bar {
@@ -240,7 +239,6 @@ ul {
 .nav-logo img {
     height: 50px;
     width: auto;
-    filter: invert(1);
     transition: transform var(--transition-fast);
 }
 
@@ -1602,7 +1600,6 @@ section {
 .footer-logo {
     height: 60px;
     width: auto;
-    filter: invert(1);
     margin-bottom: var(--space-md);
 }
 
