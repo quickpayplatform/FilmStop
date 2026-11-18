@@ -78,7 +78,7 @@ test('video byte ranges cap response size and support seeking and suffixes', () 
 });
 test('video lifecycle supports private playback, resumable chunks and timestamped comments', async () => {
   const owner=cookie(await request('owner-login',{data:{password:secret}}));
-  const created=await request('create',{cookie:owner,data:{kind:'video',client:'Linkind',title:'Rough cut V1',limit:12,passcode:'Linkkind'}});
+  const created=await request('create',{cookie:owner,data:{kind:'video',client:'Linkind',title:'Rough cut V1',limit:12,passcode:'test-client-pass'}});
   const {id}=await created.json();
   const bytes=Buffer.concat([Buffer.from([0,0,0,24]),Buffer.from('ftypisom00000000')]);
   const meta={filename:'review.mp4',size:bytes.length,duration:150,fingerprint:'a'.repeat(64)};
@@ -90,7 +90,7 @@ test('video lifecycle supports private playback, resumable chunks and timestampe
   assert.equal((await request('video-init',{id,cookie:owner,data:{...meta,fingerprint:'b'.repeat(64)}})).status,409);
   assert.equal((await request('video-publish',{id,cookie:owner,data:{}})).status,200);
   assert.equal((await request('video',{id})).status,401);
-  const viewer=cookie(await request('unlock',{id,data:{passcode:'Linkkind'}}));
+  const viewer=cookie(await request('unlock',{id,data:{passcode:'test-client-pass'}}));
   const streamed=await handler(new Request(`https://filmstopcreate.com/.netlify/functions/photo-review?action=video&gallery=${id}`,{headers:{cookie:viewer,range:'bytes=4-7'}}));
   assert.equal(streamed.status,206);assert.equal(streamed.headers.get('Content-Range'),`bytes 4-7/${bytes.length}`);assert.equal(await streamed.text(),'ftyp');
   const comment={id:'f'.repeat(32),time:65,author:'Client',text:'Shorten this section.'};
@@ -103,7 +103,7 @@ test('video lifecycle supports private playback, resumable chunks and timestampe
 
 test('batch feedback validates every row and prepares a complete Netlify form submission', async () => {
   const id='1'.repeat(32);
-  records.set(`gallery/${id}`,{data:{id,title:'Linkkind Mini documentary commercial',kind:'video',limit:12,published:false,created:new Date().toISOString()}});
+  records.set(`gallery/${id}`,{data:{id,title:'Linkind Mini documentary commercial',kind:'video',limit:12,published:false,created:new Date().toISOString()}});
   records.set(`published/${id}`,{data:{video:{duration:150,size:100}}});
   const owner=cookie(await request('owner-login',{data:{password:secret}}));
   const data={id:'2'.repeat(32),author:'Client reviewer',notes:[{time:15,text:'Shorten this shot.'},{time:70,text:'Raise the music here.'}],general:'Use a warmer overall grade.'};
@@ -114,7 +114,7 @@ test('batch feedback validates every row and prepares a complete Netlify form su
   const result=await request('feedback',{id,cookie:owner,data});assert.equal(result.status,200);
   const {fields}=await result.json();
   assert.equal(fields['form-name'],'feedback-notes');
-  assert.equal(fields['video-title'],'Linkkind Mini documentary commercial');
+  assert.equal(fields['video-title'],'Linkind Mini documentary commercial');
   assert.equal(fields['feedback-notes'],'00:15\nShorten this shot.\n\n01:10\nRaise the music here.');
   assert.equal(fields['general-request'],data.general);
   assert.equal((await request('feedback',{id,cookie:owner,data})).status,200);
