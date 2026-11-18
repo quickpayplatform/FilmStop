@@ -1,3 +1,4 @@
+import {fitSignature,signatureSize} from '../../review/signature-layout.mjs';
 import { PDFDocument, PDFSignature, rgb } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import fontBytes from './document-font.mjs';
@@ -42,8 +43,14 @@ export function validateSignature(strokes, check) {
   checked(check, Math.max(...all.map(p=>p[0]))-Math.min(...all.map(p=>p[0])) > .03, 'Draw your signature across the signature pad.');
   return strokes;
 }
-function drawSignature(page, strokes, box) {
-  for (const stroke of strokes) for(let i=1;i<stroke.length;i++) page.drawLine({start:{x:box.x+stroke[i-1][0]*box.w,y:box.y+(1-stroke[i-1][1])*box.h},end:{x:box.x+stroke[i][0]*box.w,y:box.y+(1-stroke[i][1])*box.h},thickness:1.2,color:rgb(.05,.05,.05)});
+function drawSignature(page, strokes, box, size=1) {
+  const fitted=fitSignature(strokes,box.w,box.h,signatureSize(size));
+  for(const stroke of fitted)for(let i=1;i<stroke.length;i++)page.drawLine({start:{x:box.x+stroke[i-1][0],y:box.y+box.h-stroke[i-1][1]},end:{x:box.x+stroke[i][0],y:box.y+box.h-stroke[i][1]},thickness:1,color:rgb(.05,.05,.05)});
+}
+async function producerSource(store,id,draft,fields){
+  const source=await store.get(`document-source/${id}`,{type:'arrayBuffer'});const pdf=await PDFDocument.load(source);
+  for(const f of fields.filter(f=>f.type==='owner-signature')){const mark=draft.ownerSignatures[f.id],page=pdf.getPage(f.page),{width,height}=page.getSize();drawSignature(page,mark.signature,{x:f.x*width,y:(1-f.y-f.h)*height,w:f.w*width,h:f.h*height},mark.size??1);}
+  const bytes=await pdf.save(),sourceHash=digest(bytes);await store.set(`document-published-source/${id}/${sourceHash}`,new Blob([bytes],{type:'application/pdf'}),{onlyIfNew:true,metadata:{type:'application/pdf'}});return sourceHash;
 }
 export async function completedPDF(source, config, data, title, id, time, check, {receipt:includeReceipt=true}={}) {
   const doc=await PDFDocument.load(source); doc.registerFontkit(fontkit);
@@ -60,7 +67,7 @@ export async function completedPDF(source, config, data, title, id, time, check,
     if(field.type==='owner-signature')continue;
     const page=doc.getPage(field.page), {width,height}=page.getSize();
     const box={x:field.x*width,y:(1-field.y-field.h)*height,w:field.w*width,h:field.h*height};
-    if(field.type==='signature') { drawSignature(page,data.signature,box); continue; }
+    if(field.type==='signature') { drawSignature(page,data.signature,box,data.signatureSizes?.[field.id]??1); continue; }
     const value=data.values[field.id];
     if(['checkbox','radio'].includes(field.type)) { check(typeof value==='boolean','Check each required box.'); check(field.type==='radio'||!field.required||value,`${field.label} is required.`); cleaned[field.id]=value; if(value) page.drawText('X',{x:box.x+2,y:box.y+2,size:Math.min(box.h-3,14),font}); continue; }
     check(typeof value==='string' && value.length<=300 && !/[\r\n\x00-\x1f]/.test(value),`${field.label}: enter a single line, up to 300 characters.`);
@@ -110,18 +117,22 @@ export async function documentAction({action,request,url,id,gallery,owner,store,
     await store.setJSON(draftKey,config);return json(config);
   }
   if(action==='document-config' && request.method==='GET') {
-    const config=gallery.document || (owner && await store.get(draftKey,{type:'json'}));
+    let config=gallery.document || (owner && await store.get(draftKey,{type:'json'}));
+    if(owner && gallery.published){const draft=await store.get(draftKey,{type:'json'});if(draft)config={...config,fields:[...config.fields,...draft.fields.filter(f=>f.type==='owner-signature')],ownerSignatures:draft.ownerSignatures};}
     const completed=await store.get(completedKey,{type:'json'});
     return json({config:config||null,completed:completed?{submitted:completed.submitted,name:completed.name,email:completed.email,hash:completed.hash}:null});
   }
   if(action==='document-owner-signature' && request.method==='POST') {
-    check(owner && !gallery.published,'Sign your document while it is a draft.',403);
+    check(owner,'Owner access required.',403);
+    check(!await store.get(completedKey,{type:'json'}),'This document has been completed; create a new version to change signatures.',409);
     const draft=await store.get(draftKey,{type:'json'});check(draft,'Upload a PDF first.');
     const data=await body(request);const field=draft.fields.find(f=>f.id===data.fieldId && f.type==='owner-signature');
     check(field,'Choose a Film Stop signature field.');
     check(typeof data.name==='string' && data.name.trim().length>0 && data.name.length<=100,'Enter your full name.');
-    const signature=validateSignature(data.signature,check);
-    await store.setJSON(draftKey,{...draft,ownerSignatures:{...draft.ownerSignatures,[field.id]:{signature,name:data.name.trim(),submitted:new Date().toISOString()}}});
+    const signature=validateSignature(data.signature,check),size=signatureSize(data.size??1);
+    const updated={...draft,ownerSignatures:{...draft.ownerSignatures,[field.id]:{signature,size,name:data.name.trim(),submitted:new Date().toISOString()}}};
+    if(gallery.published){const previous=await store.get(`published/${id}`,{type:'json'});await store.setJSON(`document-version/${id}/${previous.document.sourceHash}`,previous,{onlyIfNew:true});const sourceHash=await producerSource(store,id,updated,draft.fields);await store.setJSON(`published/${id}`,{...previous,document:{...previous.document,producerSigned:true,sourceHash}});}
+    await store.setJSON(draftKey,updated);
     return json({saved:true});
   }
   if(action==='document-layout' && request.method==='POST') {
@@ -142,10 +153,7 @@ export async function documentAction({action,request,url,id,gallery,owner,store,
     let sourceHash=draft.sourceHash;
     if(ownerFields.length){
       for(const f of ownerFields)check(draft.ownerSignatures?.[f.id],'Add your signature before publishing.');
-      const source=await store.get(sourceKey,{type:'arrayBuffer'});const pdf=await PDFDocument.load(source);
-      for(const f of ownerFields){const page=pdf.getPage(f.page),{width,height}=page.getSize();drawSignature(page,draft.ownerSignatures[f.id].signature,{x:f.x*width,y:(1-f.y-f.h)*height,w:f.w*width,h:f.h*height});}
-      const bytes=await pdf.save();sourceHash=digest(bytes);
-      await store.set(`document-published-source/${id}/${sourceHash}`,new Blob([bytes],{type:'application/pdf'}),{onlyIfNew:true,metadata:{type:'application/pdf'}});
+      sourceHash=await producerSource(store,id,draft,fields);
     }
     const {ownerSignatures,...publicDraft}=draft;
     await store.setJSON(`published/${id}`,{document:{...publicDraft,sourceHash,signing:Boolean(data.signing),fields:fields.filter(f=>f.type!=='owner-signature'),producerSigned:ownerFields.length>0}},{onlyIfNew:true});return json({published:true});
@@ -163,9 +171,9 @@ export async function documentAction({action,request,url,id,gallery,owner,store,
       const source=await store.get(gallery.document?.producerSigned?`document-published-source/${id}/${gallery.document.sourceHash}`:sourceKey,{type:'arrayBuffer'});check(source,'PDF not found.',404);
       bytes=editable.length?(await completedPDF(source,{fields:editable},{name:'',email:'',values},gallery.title,id,new Date().toISOString(),check,{receipt:false})).bytes:new Uint8Array(source);
       const signatures=[];
-      if(owner && !gallery.published)for(const field of config.fields.filter(f=>f.type==='owner-signature')){const mark=config.ownerSignatures?.[field.id];if(mark)signatures.push({field,strokes:mark.signature});}
-      if(data.signature?.length){const strokes=validateSignature(data.signature,check);for(const field of config.fields.filter(f=>f.type==='signature'))signatures.push({field,strokes});}
-      if(signatures.length){const pdf=await PDFDocument.load(bytes);for(const{field,strokes}of signatures){const page=pdf.getPage(field.page),{width,height}=page.getSize();drawSignature(page,strokes,{x:field.x*width,y:(1-field.y-field.h)*height,w:field.w*width,h:field.h*height});}bytes=await pdf.save();}
+      if(owner && !gallery.published)for(const field of config.fields.filter(f=>f.type==='owner-signature')){const mark=config.ownerSignatures?.[field.id];if(mark)signatures.push({field,strokes:mark.signature,size:mark.size??1});}
+      if(data.signature?.length){const strokes=validateSignature(data.signature,check);for(const field of config.fields.filter(f=>f.type==='signature'))signatures.push({field,strokes,size:signatureSize(data.signatureSizes?.[field.id]??1)});}
+      if(signatures.length){const pdf=await PDFDocument.load(bytes);for(const{field,strokes,size}of signatures){const page=pdf.getPage(field.page),{width,height}=page.getSize();drawSignature(page,strokes,{x:field.x*width,y:(1-field.y-field.h)*height,w:field.w*width,h:field.h*height},size);}bytes=await pdf.save();}
     }
     return new Response(bytes,{headers:{...headers,'Content-Type':'application/pdf','Content-Disposition':`attachment; filename="filmstop-${saved?'signed':'filled'}-${id}.pdf"`}});
   }
@@ -189,7 +197,7 @@ export async function documentAction({action,request,url,id,gallery,owner,store,
     const submitted=new Date().toISOString();
     const source=await store.get(gallery.document.producerSigned?`document-published-source/${id}/${gallery.document.sourceHash}`:sourceKey,{type:'arrayBuffer'});check(source,'PDF not found.',404);
     const {bytes,values}=await completedPDF(source,gallery.document,data,gallery.title,id,submitted,check);
-    const saved={requestId:data.requestId,submitted,name:data.name.trim(),email:data.email.trim(),values,hash:digest(bytes),sourceHash:gallery.document.sourceHash,pdf:Buffer.from(bytes).toString('base64')};
+    const saved={requestId:data.requestId,submitted,name:data.name.trim(),email:data.email.trim(),values,signatureSizes:data.signatureSizes||{},hash:digest(bytes),sourceHash:gallery.document.sourceHash,pdf:Buffer.from(bytes).toString('base64')};
     const result=await store.setJSON(completedKey,saved,{onlyIfNew:true});
     check(result.modified || (await store.get(completedKey,{type:'json'})).requestId===data.requestId,'This document has already been completed.',409);
     return json({submitted});

@@ -266,3 +266,23 @@ test('filled export includes partial draft entries and owner signature without f
  await writeFile('/tmp/filmstop-filled-export-test.pdf',output);
  assert.equal((await request('document-export',{id,cookie:owner,data:{values:{['a'.repeat(32)]:'x'.repeat(301)}}})).status,400);
 });
+
+import {fitSignature,signatureSize} from '../review/signature-layout.mjs';
+test('signature fitting preserves drawing proportions in wide and tall boxes',()=>{
+ const strokes=[[[.1,.1],[.2,.9],[.4,.5],[.6,.3],[.9,.9]]];
+ const bounds=lines=>{const p=lines.flat();return{w:Math.max(...p.map(p=>p[0]))-Math.min(...p.map(p=>p[0])),h:Math.max(...p.map(p=>p[1]))-Math.min(...p.map(p=>p[1]))};};
+ for(const[w,h]of[[335,24],[80,100]]){const full=bounds(fitSignature(strokes,w,h));const small=bounds(fitSignature(strokes,w,h,.5));assert.ok(Math.abs(full.w/full.h-(.8*900)/(.8*240))<1e-9);assert.ok(full.w<=w&&full.h<=h);assert.ok(Math.abs(small.w/full.w-.5)<1e-9);assert.ok(Math.abs(small.h/full.h-.5)<1e-9);}
+ for(const size of[0,NaN,2,-1])assert.throws(()=>signatureSize(size));
+});
+test('published producer signature resizing keeps prior source and locks completed copies',async()=>{
+ const owner=cookie(await request('owner-login',{data:{password:secret}}));const{id}=await(await request('create',{cookie:owner,data:{kind:'document',title:'TEST ONLY — resize',client:'Test',limit:12,passcode:'resize-test'}})).json();
+ const pdf=await PDFDocument.create();pdf.addPage();await request('document-upload',{id,cookie:owner,bytes:await pdf.save()});
+ const fields=[field('owner-signature','a'),field('signature','b',{y:.6,h:.1})];await request('document-layout',{id,cookie:owner,data:{fields,signing:true}});const mark={fieldId:'a'.repeat(32),signature,name:'TEST producer',size:1};await request('document-owner-signature',{id,cookie:owner,data:mark});await request('document-publish',{id,cookie:owner,data:{fields,signing:true}});
+ const before=records.get(`published/${id}`).data.document.sourceHash;
+ assert.equal((await request('document-owner-signature',{id,cookie:owner,data:{...mark,size:.5}})).status,200);
+ const after=records.get(`published/${id}`).data.document.sourceHash;assert.notEqual(after,before);assert.ok(records.has(`document-version/${id}/${before}`));
+ const config=await(await request('document-config',{id,cookie:owner})).json();assert.equal(config.config.ownerSignatures[mark.fieldId].size,.5);
+ const client=cookie(await request('unlock',{id,data:{passcode:'resize-test'}}));assert.equal((await request('document-owner-signature',{id,cookie:client,data:mark})).status,403);
+ assert.equal((await request('document-submit',{id,cookie:client,data:{requestId:'8'.repeat(32),name:'TEST client',email:'test@example.com',consent:true,signature,signatureSizes:{['b'.repeat(32)]:.75},values:{}}})).status,200);
+ assert.equal((await request('document-owner-signature',{id,cookie:owner,data:mark})).status,409);
+});

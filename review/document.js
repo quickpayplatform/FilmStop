@@ -1,9 +1,10 @@
+import {fitSignature} from './signature-layout.mjs?v=1';
 import {profileLink,$,api,endpoint,status,text} from './shared.js';
 import {getDocument,GlobalWorkerOptions} from './vendor/pdf.mjs';
 GlobalWorkerOptions.workerSrc='/review/vendor/pdf.worker.mjs';
 const id=new URLSearchParams(location.search).get('gallery');
 let gallery,config,completed,fields=[],values={},signature=[],active=null,saving=false,pdf;
-let signatureTarget=null,signatureBefore=[],previewSignatures={};
+let signatureSizes={},previewSignatureSizes={},signatureTarget=null,signatureBefore=[],previewSignatures={};
 let requestId=crypto.randomUUID().replaceAll('-','');
 const isSetup=()=>gallery?.owner&&!gallery.published;
 let addingField=false,draftRevision=0,savedRevision=0,saveTimer,saveQueue=Promise.resolve();
@@ -21,16 +22,26 @@ $('layout-controls').addEventListener('toggle',()=>{if(!$('layout-controls').ope
 document.addEventListener('keydown',e=>{if(e.key==='Escape')setAddingField(false);});
 const report=e=>status(e.message);
 function configureSignature(){const canvas=$('signature-pad'),ctx=canvas.getContext('2d');ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#111';}
-function redraw(){const c=$('signature-pad'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);configureSignature();for(const stroke of signature){ctx.beginPath();stroke.forEach((p,i)=>ctx[i?'lineTo':'moveTo'](p[0]*c.width,p[1]*c.height));ctx.stroke();}}
+function redraw(){const c=$('signature-pad'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);configureSignature();for(const stroke of signature){ctx.beginPath();stroke.forEach((p,i)=>ctx[i?'lineTo':'moveTo'](p[0]*c.width,p[1]*c.height));ctx.stroke();}renderSignaturePreview();}
 function updateFieldList(){ $('field-list').replaceChildren();for(const f of fields){const li=text('li',`Page ${f.page+1} · ${f.label} · ${f.type}${f.required?' · Required':''}`);const remove=text('button','Remove','secondary');remove.type='button';remove.onclick=()=>{fields=fields.filter(x=>x.id!==f.id);delete values[f.id];changed();updateFieldList();renderFields();};li.append(remove);$('field-list').append(li);} }
-function paintSignature(canvas,strokes){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.lineWidth=3;ctx.lineCap='round';ctx.strokeStyle='#111';for(const stroke of strokes){ctx.beginPath();stroke.forEach((p,i)=>ctx[i?'lineTo':'moveTo'](p[0]*canvas.width,p[1]*canvas.height));ctx.stroke();}}
+function paintSignature(canvas,strokes,size=1){
+  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.lineWidth=3;ctx.lineCap='round';ctx.strokeStyle='#111';
+  for(const stroke of fitSignature(strokes,canvas.width/3,canvas.height/3,size)){ctx.beginPath();stroke.forEach((p,i)=>ctx[i?'lineTo':'moveTo'](p[0]*3,p[1]*3));ctx.stroke();}
+}
+function renderSignaturePreview(){
+  const f=signatureTarget,page=f&&config?.pages[f.page],canvas=$('signature-preview');if(!page)return;
+  const width=f.w*page.width,height=f.h*page.height;canvas.width=Math.round(width*3);canvas.height=Math.round(height*3);canvas.style.aspectRatio=`${width}/${height}`;paintSignature(canvas,signature,Number($('signature-size').value)/100);
+  $('signature-size-value').textContent=$('signature-size').value+'%';
+}
+$('signature-size').oninput=renderSignaturePreview;
 function openSignature(field){
   if(saving)return;signatureTarget=field;signatureBefore=structuredClone(signature);
   signature=structuredClone(field?.type==='owner-signature'?config.ownerSignatures?.[field.id]?.signature||[]:isSetup()?previewSignatures[field?.id]||[]:signature);
   $('owner-signer-label').hidden=field?.type!=='owner-signature';
   $('owner-signer-name').value=field?.type==='owner-signature'?config.ownerSignatures?.[field.id]?.name||'':'';
   $('signature-title').textContent=field?.type==='owner-signature'?'Your Film Stop signature':isSetup()?'Preview client signature':'Draw your signature';
-  $('signature-help').textContent=field?.type==='owner-signature'?'Draw your signature. Use signature saves it to this draft; publishing places it on the shared PDF.':isSetup()?'Preview how clients will draw here. This preview does not sign the agency’s line.':'Use your finger, mouse, or stylus. Then choose Use signature to place it on the document.';
+  $('signature-help').textContent=field?.type==='owner-signature'?'Draw your signature and adjust its size below. Use signature saves your changes to this document.':isSetup()?'Preview how clients will draw here. This preview does not sign the agency’s line.':'Use your finger, mouse, or stylus. Then choose Use signature to place it on the document.';
+  $('signature-size').value=Math.round(100*(field?.type==='owner-signature'?config.ownerSignatures?.[field.id]?.size??1:isSetup()?previewSignatureSizes[field?.id]??1:signatureSizes[field?.id]??1));
   $('signature-error').textContent='';$('signature-dialog').showModal();redraw();
 }
 function renderFields(){
@@ -39,7 +50,7 @@ function renderFields(){
     if(['signature','owner-signature'].includes(f.type) && !completed){
       el=text('button',f.type==='owner-signature'?'Sign here · Film Stop':isSetup()?'Preview client signature':'Click to sign','signature-trigger');el.type='button';el.setAttribute('aria-label',f.label+' — draw signature');el.onclick=e=>{e.stopPropagation();openSignature(f);};
       const strokes=f.type==='owner-signature'?config.ownerSignatures?.[f.id]?.signature:isSetup()?previewSignatures[f.id]:signature;
-      if(strokes?.length){el.textContent='';const canvas=document.createElement('canvas');canvas.width=900;canvas.height=240;el.append(canvas);paintSignature(canvas,strokes);el.setAttribute('aria-label',f.label+' — edit signature');}
+      if(strokes?.length){el.textContent='';const canvas=document.createElement('canvas');canvas.width=Math.round(f.w*config.pages[f.page].width*3);canvas.height=Math.round(f.h*config.pages[f.page].height*3);el.append(canvas);paintSignature(canvas,strokes,f.type==='owner-signature'?config.ownerSignatures?.[f.id]?.size??1:isSetup()?previewSignatureSizes[f.id]??1:signatureSizes[f.id]??1);el.setAttribute('aria-label',f.label+' — edit signature');}
     }else if(completed){el=text('div',completed?f.type==='signature'?'':String(values[f.id]||''):f.label,'field-marker');}
     else {el=document.createElement('input');el.type=f.type==='radio'?'radio':f.type==='checkbox'?'checkbox':f.type==='date'?'date':'text';el.required=f.required;el.maxLength=300;el.setAttribute('aria-label',`${f.label}${f.required?' (required)':''}`);if(!isSetup())el.setAttribute('form','complete-document');el.placeholder=f.label;el.title=f.label;if(f.type==='radio')el.name=`choice-${f.group}`;
       if(['checkbox','radio'].includes(f.type)){el.checked=values[f.id]===true;values[f.id]=el.checked;}else{el.value=values[f.id]||'';values[f.id]=el.value;}el.oninput=()=>{if(f.type==='radio'){for(const other of fields.filter(x=>x.type==='radio' && x.group===f.group))values[other.id]=other.id===f.id;}else values[f.id]=f.type==='checkbox'?el.checked:el.value;changed();};}
@@ -85,7 +96,7 @@ $('download-filled').onclick=async()=>{
   const button=$('download-filled');button.disabled=true;
   try{
     if(isSetup())await saveDraft();
-    const response=await fetch(endpoint('document-export',id),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({values,signature:isSetup()?[]:signature})});
+    const response=await fetch(endpoint('document-export',id),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({values,signature:isSetup()?[]:signature,signatureSizes})});
     if(!response.ok){const result=await response.json();throw new Error(result.error||'Unable to download the filled PDF.');}
     const blob=await response.blob(),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`filmstop-${completed?'signed':'filled'}-${id}.pdf`;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);status('Downloaded the PDF with your current entries and saved signatures.');
   }catch(e){report(e);}finally{button.disabled=false;}
@@ -112,14 +123,14 @@ $('apply-signature').onclick=async()=>{
   if(signatureTarget?.type==='owner-signature'){
     const name=$('owner-signer-name').value.trim();if(!name){$('signature-error').textContent='Enter your full name.';return;}
     saving=true;$('apply-signature').disabled=true;$('cancel-signature').disabled=true;
-    try{await saveDraft();await api('document-owner-signature',id,{fieldId:signatureTarget.id,signature,name});signature=signatureBefore;$('signature-dialog').close();await load();status('Your signature is saved to the draft. Publishing will place it on the shared PDF.');}
+    try{await saveDraft();await api('document-owner-signature',id,{fieldId:signatureTarget.id,signature,name,size:Number($('signature-size').value)/100});signature=signatureBefore;$('signature-dialog').close();await load();status(gallery.published?'Your signature proportions and size have been updated.':'Your signature is saved to the draft. Publishing will place it on the shared PDF.');}
     catch(e){$('signature-error').textContent=e.message;}finally{saving=false;$('apply-signature').disabled=false;$('cancel-signature').disabled=false;}
   }else{
-    if(isSetup()){previewSignatures[signatureTarget.id]=structuredClone(signature);signature=signatureBefore;}
-    else{$('signature-summary').textContent='Signature added. Click the signature box to change it.';$('open-signature').textContent='Edit signature';}
+    if(isSetup()){previewSignatureSizes[signatureTarget.id]=Number($('signature-size').value)/100;previewSignatures[signatureTarget.id]=structuredClone(signature);signature=signatureBefore;}
+    else{signatureSizes[signatureTarget.id]=Number($('signature-size').value)/100;$('signature-summary').textContent='Signature added. Click the signature box to change it.';$('open-signature').textContent='Edit signature';}
     $('signature-dialog').close();renderFields();
   }
 };
-$('complete-document').onsubmit=async e=>{e.preventDefault();if(saving)return;if(signature.flat().length<5){openSignature(fields.find(f=>f.type==='signature'));return;}saving=true;e.submitter.disabled=true;status('Saving your completed document…');const data=new FormData(e.target);try{await api('document-submit',id,{requestId,name:data.get('name'),email:data.get('email'),consent:data.get('consent')==='on',signature,values});await load();status('Your completed document has been saved.');$('completion').scrollIntoView({behavior:'smooth'});}catch(e){report(e);}finally{saving=false;$('submit-document').disabled=false;}};
+$('complete-document').onsubmit=async e=>{e.preventDefault();if(saving)return;if(signature.flat().length<5){openSignature(fields.find(f=>f.type==='signature'));return;}saving=true;e.submitter.disabled=true;status('Saving your completed document…');const data=new FormData(e.target);try{await api('document-submit',id,{requestId,name:data.get('name'),email:data.get('email'),consent:data.get('consent')==='on',signature,signatureSizes,values});await load();status('Your completed document has been saved.');$('completion').scrollIntoView({behavior:'smooth'});}catch(e){report(e);}finally{saving=false;$('submit-document').disabled=false;}};
 window.addEventListener('beforeunload',e=>{if(saving||(!completed&&(isSetup()?draftRevision!==savedRevision:signature.length||Object.values(values).some(Boolean)))){e.preventDefault();e.returnValue='';}});
 load().catch(e=>{if(e.status!==401)report(e);});
