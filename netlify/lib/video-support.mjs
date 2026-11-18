@@ -18,7 +18,7 @@ export async function videoAction({ action, request, url, id, gallery, owner, st
     check(Number.isSafeInteger(data.size) && data.size > 0 && data.size <= 1024 ** 3, 'Maximum video size is 1 GB.');
     check(Number.isFinite(data.duration) && data.duration > 0 && data.duration <= 14400, 'Video must be shorter than four hours.');
     check(/^[a-f0-9]{64}$/.test(data.fingerprint || ''), 'Video fingerprint required.');
-    const meta = { fingerprint: data.fingerprint, filename: data.filename, size: data.size, duration: data.duration, chunkSize, chunks: Math.ceil(data.size / chunkSize) };
+    const meta = { watermarked: data.watermarked === true, fingerprint: data.fingerprint, filename: data.filename, size: data.size, duration: data.duration, chunkSize, chunks: Math.ceil(data.size / chunkSize) };
     const result = await store.setJSON(`${videoKey}/meta`, meta, { onlyIfNew: true });
     if (!result.modified) {
       const previous = await store.get(`${videoKey}/meta`, { type: 'json' });

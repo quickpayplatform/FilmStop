@@ -150,7 +150,7 @@ $('video-file').onchange = async event => {
     const duration = await videoMetadata(file);
     const fingerprintBytes = await new Blob([file.slice(0, 1024 ** 2), file.slice(Math.max(0, file.size - 1024 ** 2)), String(file.size)]).arrayBuffer();
     const fingerprint = [...new Uint8Array(await crypto.subtle.digest('SHA-256', fingerprintBytes))].map(b => b.toString(16).padStart(2, '0')).join('');
-    const meta = await api('video-init', gallery.id, { filename: file.name, size: file.size, duration, fingerprint });
+    const meta = await api('video-init', gallery.id, { filename: file.name, size: file.size, duration, fingerprint, watermarked: $('watermarked').checked });
     const draft = await api('video-draft', gallery.id);
     const uploaded = new Set(draft.uploaded);
     for (let chunk = 0; chunk < meta.chunks; chunk++) {

@@ -34,6 +34,7 @@ async function load() {
   if (gallery.kind !== 'video' || !gallery.published) throw new Error('This video review is not ready to view.');
   $('video-title').textContent = gallery.title; $('client-name').textContent = gallery.client;
   $('export-notes').hidden = !gallery.owner;
+  $('video-shell').classList.toggle('burned-watermark', Boolean(gallery.video.watermarked));
   player.src = endpoint('video', id);
   $('access').hidden = true; $('video-review').hidden = false;
   await refresh();
