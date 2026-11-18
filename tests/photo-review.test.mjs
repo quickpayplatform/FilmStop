@@ -232,3 +232,22 @@ test('profiles isolate projects, hide drafts, share access, and revoke old sessi
   assert.equal((await request('document-file',{id:first,cookie:fresh})).status,401);
   const ownerDetail=await(await request('profile-detail',{profile:a.id,cookie:owner})).json();assert.ok(ownerDetail.items.find(i=>i.id===draft));
 });
+
+test('draft entries persist, retain signatures, and carry into client completion',async()=>{
+  const owner=cookie(await request('owner-login',{data:{password:secret}}));
+  const {id}=await(await request('create',{cookie:owner,data:{kind:'document',client:'Test',title:'TEST ONLY — editable draft',limit:12,passcode:'draft-test'}})).json();
+  const pdf=await PDFDocument.create();pdf.addPage();await request('document-upload',{id,cookie:owner,bytes:await pdf.save()});
+  const fields=[field('text','a'),field('date','b',{y:.4}),field('signature','c',{y:.5})];
+  assert.equal((await request('document-layout',{id,cookie:owner,data:{fields,signing:true,values:{['a'.repeat(32)]:'Saved draft entry',['b'.repeat(32)]:''}}})).status,200);
+  let draft=await(await request('document-config',{id,cookie:owner})).json();assert.equal(draft.config.prefill['a'.repeat(32)],'Saved draft entry');assert.equal(draft.config.fields.length,3);
+  assert.equal((await request('document-layout',{id,cookie:owner,data:{fields,signing:true,values:{['a'.repeat(32)]:false}}})).status,400);
+  await request('document-layout',{id,cookie:owner,data:{fields,signing:true}});
+  draft=await(await request('document-config',{id,cookie:owner})).json();assert.equal(draft.config.prefill['a'.repeat(32)],'Saved draft entry');
+  await request('document-publish',{id,cookie:owner,data:{fields,signing:true}});
+  const client=cookie(await request('unlock',{id,data:{passcode:'draft-test'}}));
+  const published=await(await request('document-config',{id,cookie:client})).json();assert.equal(published.config.prefill['a'.repeat(32)],'Saved draft entry');
+  assert.equal((await request('document-layout',{id,cookie:client,data:{fields,signing:true,values:{}}})).status,403);
+  const data={requestId:'9'.repeat(32),name:'Workflow Test',email:'test@example.com',consent:true,signature,values:{...published.config.prefill,['b'.repeat(32)]:'2026-11-18'}};
+  assert.equal((await request('document-submit',{id,cookie:client,data})).status,200);
+  assert.equal(records.get(`document-completed/${id}`).data.values['a'.repeat(32)],'Saved draft entry');
+});

@@ -17,6 +17,18 @@ export function validateFields(fields, pages, check) {
     return { ...(f.type==='radio'?{group:f.group}:{}), id:f.id, type:f.type, label:f.label.trim(), required:Boolean(f.required), page:f.page, x:f.x, y:f.y, w:f.w, h:f.h };
   });
 }
+export function validateDraftValues(values, fields, check) {
+  check(values && typeof values==='object' && !Array.isArray(values),'Invalid draft entries.');
+  const clean={};
+  for(const field of fields){
+    if(['signature','owner-signature'].includes(field.type) || !(field.id in values))continue;
+    const value=values[field.id];
+    if(['checkbox','radio'].includes(field.type)){check(typeof value==='boolean',`${field.label}: choose a valid option.`);clean[field.id]=value;}
+    else {check(typeof value==='string' && value.length<=300 && !/[\r\n\x00-\x1f]/.test(value),`${field.label}: use a single line of up to 300 characters.`);if(field.type==='date' && value)check(/^\d{4}-\d{2}-\d{2}$/.test(value)&&!Number.isNaN(Date.parse(value)),`${field.label}: enter a valid date.`);clean[field.id]=value;}
+  }
+  for(const group of new Set(fields.filter(f=>f.type==='radio').map(f=>f.group)))check(fields.filter(f=>f.type==='radio'&&f.group===group&&clean[f.id]===true).length<=1,`Choose only one option for ${group}.`);
+  return clean;
+}
 function checked(check, condition, message) { check(condition, message); }
 export function validateSignature(strokes, check) {
   checked(check, Array.isArray(strokes) && strokes.length > 0 && strokes.length <= 100, 'Draw your signature.');
@@ -114,7 +126,8 @@ export async function documentAction({action,request,url,id,gallery,owner,store,
     check(owner && !gallery.published,'Only owner drafts can change fields.',403);
     const draft=await store.get(draftKey,{type:'json'});check(draft,'Upload a PDF first.');
     const data=await body(request);const fields=validateFields(data.fields,draft.pages,check);
-    await store.setJSON(draftKey,{...draft,fields,signing:Boolean(data.signing)});return json({saved:true});
+    const prefill=validateDraftValues(data.values===undefined?draft.prefill||{}:data.values,fields,check);
+    await store.setJSON(draftKey,{...draft,fields,prefill,signing:Boolean(data.signing)});return json({saved:true});
   }
   if(action==='document-publish' && request.method==='POST') {
     check(owner,'Owner access required.',403);
