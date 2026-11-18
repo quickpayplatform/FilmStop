@@ -93,3 +93,13 @@ status = 200
   from = "/blog/video-production-timeline"
   to = "/blog/corporate-video-production-process/"
   status = 301
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/review/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
