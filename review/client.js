@@ -16,7 +16,7 @@ function toggle(photo) {
   if (gallery.selection) return;
   if (picks.has(photo.id)) picks.delete(photo.id);
   else {
-    if (picks.size >= gallery.limit) { status(`You can choose up to ${gallery.limit} photos. Deselect one to choose another.`); $('viewer-count').textContent = 'Selection limit reached. Deselect a photo first.'; return; }
+    if (picks.size >= gallery.limit) { status(`You can choose up to ${gallery.limit} ${gallery.limit === 1 ? 'photo' : 'photos'}. Deselect one to choose another.`); $('viewer-count').textContent = 'Selection limit reached. Deselect a photo first.'; return; }
     picks.add(photo.id);
   }
   status(''); save(); render();
@@ -58,9 +58,9 @@ async function load() {
   }
   $('access').hidden = true; $('gallery').hidden = false;
   $('title').textContent = gallery.title;
-  $('instructions').textContent = `Choose up to ${gallery.limit} photos for editing. Tap a photo to view it larger, then select your favorites.`;
+  $('instructions').textContent = `Choose up to ${gallery.limit} ${gallery.limit === 1 ? 'photo' : 'photos'} for editing. Tap a photo to view it larger, then select your favorites.`;
   $('submitted').hidden = !gallery.selection;
-  if (gallery.selection) $('submitted').textContent = `Your ${picks.size} selections were submitted to Film Stop. Thank you!`;
+  if (gallery.selection) $('submitted').textContent = `Your ${picks.size} ${picks.size === 1 ? 'selection was' : 'selections were'} submitted to Film Stop. Thank you!`;
   render();
 }
 $('unlock').onsubmit = async event => {
@@ -75,7 +75,7 @@ $('viewer').onkeydown = e => { if(e.key === 'ArrowLeft') view(current-1); if(e.k
 let touchX;
 $('large').ontouchstart = e => { touchX = e.changedTouches[0].clientX; };
 $('large').ontouchend = e => { const dx = e.changedTouches[0].clientX - touchX; if(Math.abs(dx)>60) view(current + (dx<0 ? 1 : -1)); };
-$('submit').onclick = () => { $('confirm-text').textContent = `You have chosen ${picks.size} of up to ${gallery.limit} photos.`; $('confirm').showModal(); };
+$('submit').onclick = () => { $('confirm-text').textContent = `You have chosen ${picks.size} of up to ${gallery.limit} ${gallery.limit === 1 ? 'photo' : 'photos'}.`; $('confirm').showModal(); };
 $('cancel-submit').onclick = () => $('confirm').close();
 $('confirm-submit').onclick = async () => {
   $('confirm-submit').disabled = true;

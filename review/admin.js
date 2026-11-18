@@ -21,7 +21,7 @@ async function open(id) {
   gallery = await api('gallery', id);
   panel('project');
   $('project-title').textContent = gallery.title;
-  $('project-info').textContent = `Up to ${gallery.limit} selections · ${gallery.photos.length} photos · ${gallery.published ? 'Published' : 'Draft'}`;
+  $('project-info').textContent = `Up to ${gallery.limit} ${gallery.limit === 1 ? 'selection' : 'selections'} · ${gallery.photos.length} ${gallery.photos.length === 1 ? 'photo' : 'photos'} · ${gallery.published ? 'Published' : 'Draft'}`;
   $('upload-panel').hidden = gallery.published;
   $('share').hidden = !gallery.published;
   $('share-url').value = `${location.origin}/review/?gallery=${id}`;
@@ -36,7 +36,7 @@ async function open(id) {
     $('project-photos').append(card);
   }
   if (gallery.selection) {
-    $('submission-date').textContent = `${shown.length} photos selected · ${new Date(gallery.selection.submitted).toLocaleString()}`;
+    $('submission-date').textContent = `${shown.length} ${shown.length === 1 ? 'photo' : 'photos'} selected · ${new Date(gallery.selection.submitted).toLocaleString()}`;
     $('editing-list').replaceChildren(...shown.map(p => text('li', p.filename)));
   }
   $('publish').disabled = !gallery.photos.length;

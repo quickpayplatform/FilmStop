@@ -6,7 +6,7 @@ export function endpoint(action, gallery, extra = {}) {
 }
 export async function api(action, gallery, data) {
   const response = await fetch(endpoint(action, gallery), data === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-  const result = await response.json();
+  const result = await response.json().catch(() => ({ error: response.status === 429 ? 'Too many requests. Please wait a minute and try again.' : 'Service unavailable. Please try again.' }));
   if (!response.ok) throw Object.assign(new Error(result.error || 'Request failed.'), { status: response.status });
   return result;
 }
