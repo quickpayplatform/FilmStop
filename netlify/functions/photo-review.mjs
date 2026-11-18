@@ -35,9 +35,10 @@ function check(condition, message, status = 400) {
   if (!condition) throw Object.assign(new Error(message), { status });
 }
 async function body(request) {
-  check(Number(request.headers.get('content-length') || 0) < 100000, 'Request too large', 413);
+  const maxSize = new URL(request.url).searchParams.get('action') === 'document-submit' ? 350000 : 100000;
+  check(Number(request.headers.get('content-length') || 0) < maxSize, 'Request too large', 413);
   const text = await request.text();
-  check(text.length < 100000, 'Request too large', 413);
+  check(text.length < maxSize, 'Request too large', 413);
   try { return JSON.parse(text); } catch { check(false, 'Invalid request'); }
 }
 export function validateSelection(picks, gallery) {

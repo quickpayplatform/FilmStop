@@ -143,6 +143,8 @@ test('private document lifecycle preserves source, validates fields and saves im
   const pdf=await PDFDocument.create();const page=pdf.addPage([612,792]);page.drawText('TEST ONLY — workflow verification',{x:50,y:720,font:await pdf.embedFont(StandardFonts.Helvetica),size:18});
   const source=await pdf.save();
   const fields=[field('text','a'),field('signature','b',{y:.5,h:.12}),field('radio','c',{group:'payment',y:.7,w:.03,h:.025}),field('radio','d',{group:'payment',y:.75,w:.03,h:.025})];
+  const badTransport=await handler(new Request(`https://filmstopcreate.com/.netlify/functions/photo-review?action=document-upload&gallery=${id}`,{method:'POST',headers:{origin:'https://filmstopcreate.com',cookie:owner,'content-type':'application/x-www-form-urlencoded'},body:source}));
+  assert.equal(badTransport.status,400);
   const upload=(auth=owner)=>request('document-upload',{id,cookie:auth,bytes:source,filename:'test.pdf'});
   assert.equal((await upload()).status,200);
   assert.equal((await upload()).status,409);
