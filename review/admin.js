@@ -17,8 +17,8 @@ async function list() {
     folder.append(text('summary', client));
     for (const project of projects.filter(p => (p.client || 'Other projects') === client)) {
       const row = text('button', '', 'project-row');
-      const label = project.kind === 'video' ? 'Video feedback' : 'Photo selection';
-      row.append(text('strong', project.title), text('span', `${label} · ${project.submitted ? 'Selections received' : project.published ? 'Published' : 'Draft'}`));
+      const label = project.kind === 'document' ? 'Document' : project.kind === 'video' ? 'Video feedback' : 'Photo selection';
+      row.append(text('strong', project.title), text('span', `${label} · ${project.submitted ? (project.kind === 'document' ? 'Document completed' : 'Selections received') : project.published ? 'Published' : 'Draft'}`));
       row.onclick = () => open(project.id).catch(e => status(e.message));
       folder.append(row);
     }
@@ -27,6 +27,7 @@ async function list() {
 }
 async function open(id) {
   gallery = await api('gallery', id);
+  if (gallery.kind === 'document') { location.href = `/review/document.html?gallery=${id}`; return; }
   panel('project');
   $('project-title').textContent = gallery.title;
   const isVideo = gallery.kind === 'video';
@@ -128,7 +129,7 @@ window.addEventListener('beforeunload', e => { if (busy) { e.preventDefault(); e
 list().catch(e => { panel('login-panel'); if(e.status !== 401) status(e.message); });
 
 $('create').elements.kind.onchange = () => {
-  $('create').elements.limit.closest('label').hidden = $('create').elements.kind.value === 'video';
+  $('create').elements.limit.closest('label').hidden = $('create').elements.kind.value !== 'photos';
 };
 async function videoMetadata(file) {
   const video = document.createElement('video');

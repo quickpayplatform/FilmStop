@@ -102,7 +102,7 @@ test('video lifecycle supports private playback, resumable chunks and timestampe
 
 test('batch feedback validates every row and prepares a complete Netlify form submission', async () => {
   const id='1'.repeat(32);
-  records.set(`gallery/${id}`,{data:{id,title:'Linkkind Mini documentary commercial',kind:'video',limit:12,published:false}});
+  records.set(`gallery/${id}`,{data:{id,title:'Linkkind Mini documentary commercial',kind:'video',limit:12,published:false,created:new Date().toISOString()}});
   records.set(`published/${id}`,{data:{video:{duration:150,size:100}}});
   const owner=cookie(await request('owner-login',{data:{password:secret}}));
   const data={id:'2'.repeat(32),author:'Client reviewer',notes:[{time:15,text:'Shorten this shot.'},{time:70,text:'Raise the music here.'}],general:'Use a warmer overall grade.'};
@@ -120,4 +120,58 @@ test('batch feedback validates every row and prepares a complete Netlify form su
   assert.equal((await request('feedback',{id,cookie:owner,data:{...data,general:'Changed'}})).status,409);
   assert.equal((await request('feedback-delivered',{id,cookie:owner,data:{id:data.id}})).status,200);
   const saved=await (await request('feedback-list',{id,cookie:owner})).json();assert.equal(saved.length,1);assert.equal(saved[0].notes.length,2);
+});
+
+import {PDFDocument, StandardFonts} from 'pdf-lib';
+import {writeFile} from 'node:fs/promises';
+import {validateSignature,validateFields,completedPDF} from '../netlify/lib/document-support.mjs';
+const testCheck=(condition,message)=>{if(!condition)throw new Error(message);};
+const signature=[[[.05,.7],[.2,.2],[.35,.8],[.5,.3],[.7,.7],[.9,.3]]];
+const field=(type,id,extra={})=>({id:id.repeat(32),type,label:type,page:0,x:.1,y:.3,w:.4,h:.06,required:true,...extra});
+test('document layout rejects forged fields and malformed signatures',()=>{
+  const pages=[{width:612,height:792}];
+  assert.throws(()=>validateFields([field('text','a',{page:9})],pages,testCheck));
+  assert.throws(()=>validateFields([field('text','a',{x:.9})],pages,testCheck));
+  assert.throws(()=>validateFields([field('text','a'),field('text','a')],pages,testCheck));
+  assert.throws(()=>validateSignature([[[0,0],[0,0]]],testCheck));
+  assert.throws(()=>validateSignature([[[0,0],[1,1],[2,2],[3,3],[4,4]]],testCheck));
+  assert.deepEqual(validateSignature(signature,testCheck),signature);
+});
+test('private document lifecycle preserves source, validates fields and saves immutable signed PDF',async()=>{
+  const owner=cookie(await request('owner-login',{data:{password:secret}}));
+  const {id}=await (await request('create',{cookie:owner,data:{kind:'document',client:'Workflow test',title:'TEST ONLY — not a contract',limit:12,passcode:'test-document'}})).json();
+  const pdf=await PDFDocument.create();const page=pdf.addPage([612,792]);page.drawText('TEST ONLY — workflow verification',{x:50,y:720,font:await pdf.embedFont(StandardFonts.Helvetica),size:18});
+  const source=await pdf.save();
+  const fields=[field('text','a'),field('signature','b',{y:.5,h:.12}),field('radio','c',{group:'payment',y:.7,w:.03,h:.025}),field('radio','d',{group:'payment',y:.75,w:.03,h:.025})];
+  const upload=(auth=owner)=>request('document-upload',{id,cookie:auth,bytes:source,filename:'test.pdf'});
+  assert.equal((await upload()).status,200);
+  assert.equal((await upload()).status,409);
+  assert.equal((await request('document-file',{id})).status,401);
+  assert.equal((await request('document-publish',{id,cookie:owner,data:{signing:true,fields:[]}})).status,400);
+  assert.equal((await request('document-publish',{id,cookie:owner,data:{signing:true,fields}})).status,200);
+  const client=cookie(await request('unlock',{id,data:{passcode:'test-document'}}));
+  assert.equal((await upload(client)).status,403);
+  assert.equal((await request('upload',{id,cookie:client,photo:'a'.repeat(32),filename:'fake.jpg',bytes:Buffer.from([255,216,255])})).status,400);
+  const fetched=await request('document-file',{id,cookie:client});assert.equal(fetched.status,200);assert.deepEqual(new Uint8Array(await fetched.arrayBuffer()),source);
+  const data={requestId:'a'.repeat(32),name:'Workflow Test',email:'test@example.com',consent:true,signature,values:{['a'.repeat(32)]:'Test signer',['c'.repeat(32)]:true,['d'.repeat(32)]:false}};
+  assert.equal((await request('document-submit',{id,cookie:client,data:{...data,consent:false}})).status,400);
+  assert.equal((await request('document-submit',{id,cookie:client,data:{...data,values:{...data.values,['d'.repeat(32)]:true}}})).status,400);
+  assert.equal((await request('document-submit',{id,cookie:client,data})).status,200);
+  assert.equal((await request('document-submit',{id,cookie:client,data})).status,200);
+  assert.equal((await request('document-submit',{id,cookie:client,data:{...data,requestId:'b'.repeat(32)}})).status,409);
+  const saved=records.get(`document-completed/${id}`).data;
+  const result=await PDFDocument.load(Buffer.from(saved.pdf,'base64'));assert.equal(result.getPageCount(),2);assert.equal(saved.values['a'.repeat(32)],'Test signer');assert.match(saved.hash,/^[a-f0-9]{64}$/);
+  const listed=await(await request('list',{cookie:owner})).json();assert.ok(listed.find(p=>p.id===id).submitted);
+  await writeFile('/tmp/filmstop-document-workflow-test.pdf',Buffer.from(saved.pdf,'base64'));
+});
+test('read-only documents publish without fields and cannot be signed',async()=>{
+  const owner=cookie(await request('owner-login',{data:{password:secret}}));
+  const {id}=await(await request('create',{cookie:owner,data:{kind:'document',client:'Test',title:'Script',limit:12,passcode:'test-script'}})).json();
+  const pdf=await PDFDocument.create();pdf.addPage();const source=await pdf.save();
+  assert.equal((await request('document-upload',{id,cookie:owner,bytes:source})).status,200);
+  assert.equal((await request('document-publish',{id,cookie:owner,data:{signing:false,fields:[field('text','a')]}})).status,400);
+  assert.equal((await request('document-publish',{id,cookie:owner,data:{signing:false,fields:[]}})).status,200);
+  const viewer=cookie(await request('unlock',{id,data:{passcode:'test-script'}}));
+  assert.equal((await request('document-submit',{id,cookie:viewer,data:{}})).status,409);
+  assert.equal((await request('document-file',{id,cookie:viewer})).status,200);
 });

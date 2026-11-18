@@ -1,3 +1,4 @@
+import { documentAction } from '../lib/document-support.mjs';
 import { feedbackAction } from '../lib/video-feedback.mjs';
 import { videoAction } from '../lib/video-support.mjs';
 import { getStore } from '@netlify/blobs';
@@ -78,7 +79,7 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
         const { blobs } = await store.list({ prefix: 'gallery/' });
         const galleries = await Promise.all(blobs.map(async ({ key }) => {
           const g = await store.get(key, { type: 'json' });
-          const submitted = await store.get(`selection/${g.id}`, { type: 'json' });
+          const submitted = await store.get(`${g.kind === 'document' ? 'document-completed' : 'selection'}/${g.id}`, { type: 'json' });
           const published = Boolean(await store.get(`published/${g.id}`, { type: 'json' }));
           return { id: g.id, title: g.title, client: g.client || g.title.split('·')[0].trim(), kind: g.kind || 'photos', limit: g.limit, created: g.created, published, submitted: submitted?.submitted || null };
         }));
@@ -88,7 +89,7 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
         check(owner, 'Sign in to continue.', 401);
         const data = await body(request);
         check(typeof data.title === 'string' && data.title.trim().length > 0 && data.title.length <= 150, 'Enter a project name.');
-        check(!data.kind || ['photos', 'video'].includes(data.kind), 'Choose photos or video.');
+        check(!data.kind || ['photos', 'video', 'document'].includes(data.kind), 'Choose photos, video or document.');
         check(!data.client || (typeof data.client === 'string' && data.client.length <= 100), 'Client name must be under 100 characters.');
         check(Number.isInteger(data.limit) && data.limit > 0 && data.limit <= 500, 'Selection limit must be between 1 and 500.');
         check(typeof data.passcode === 'string' && data.passcode.length >= 8 && data.passcode.length <= 128, 'Use a client passcode of 8–128 characters.');
@@ -102,7 +103,7 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
       let gallery = await store.get(`gallery/${id}`, { type: 'json' });
       check(gallery, 'Gallery not found.', 404);
       const manifest = await store.get(`published/${id}`, { type: 'json' });
-      if (manifest) gallery = { ...gallery, photos: manifest.photos || [], video: manifest.video, published: true };
+      if (manifest) gallery = { ...gallery, photos: manifest.photos || [], video: manifest.video, document: manifest.document, published: true };
       if (action === 'unlock' && request.method === 'POST') {
         check(gallery.published, 'This gallery is not ready yet.', 404);
         const data = await body(request);
@@ -112,6 +113,9 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
       }
       const client = authenticated(request, cookieName(id), id, secret);
       check(owner || (client && gallery.published), 'Enter the gallery passcode.', 401);
+      const documentResponse = await documentAction({ action, request, url, id, gallery, owner, store, body, check, json, headers });
+      if (documentResponse) return documentResponse;
+      check(gallery.kind !== 'document' || ['gallery'].includes(action), 'Action not available for documents.', 400);
       const feedbackResponse = await feedbackAction({ action, request, id, gallery, owner, store, body, check, json });
       if (feedbackResponse) return feedbackResponse;
       const videoResponse = await videoAction({ action, request, url, id, gallery, owner, store, body, check, json, headers });
@@ -157,7 +161,7 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
           const { blobs } = await store.list({ prefix: `photo/${id}/` });
           photos = await Promise.all(blobs.map(async ({ key }) => ({ id: key.split('/').at(-1), filename: (await store.getMetadata(key)).metadata.filename })));
         }
-        return json({ id, title: gallery.title, owner, kind: gallery.kind || 'photos', client: gallery.client || gallery.title.split('·')[0].trim(), video: gallery.video, limit: gallery.limit, published: gallery.published, photos, selection: await store.get(`selection/${id}`, { type: 'json' }) });
+        return json({ id, title: gallery.title, owner, kind: gallery.kind || 'photos', client: gallery.client || gallery.title.split('·')[0].trim(), video: gallery.video, document: gallery.document, limit: gallery.limit, published: gallery.published, photos, selection: await store.get(`selection/${id}`, { type: 'json' }) });
       }
       if (action === 'submit' && request.method === 'POST') {
         check(gallery.published, 'Gallery is not published.', 409);
