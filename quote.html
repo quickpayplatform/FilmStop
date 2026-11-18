@@ -630,37 +630,30 @@
             color: var(--color-accent);
         }
     </style>
+    <link rel="stylesheet" href="/css/navigation.css?v=1">
+    <script src="/js/navigation.js?v=1" defer></script>
 </head>
 <body class="quote-page">
     <!-- Navigation -->
-    <nav class="quote-nav">
-        <a href="/">
-            <img src="assets/images/filmstop-logo-white.png" alt="Film Stop" class="quote-nav-logo">
-        </a>
-        <ul class="quote-nav-links">
-            <li><a href="/#work">Work</a></li>
-            <li><a href="/#services">Services</a></li>
-            <li><a href="/#about">About</a></li>
-            <li><a href="/quote" class="active">Quote</a></li>
-            <li><a href="/#contact" class="quote-nav-cta">Book a Strategy Call</a></li>
-        </ul>
-        <button class="quote-nav-toggle" aria-label="Toggle menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+    <nav class="quote-nav compact-navigation" aria-label="Main navigation">
+        <a href="/" class="compact-logo" aria-label="Film Stop home"><img src="/assets/images/filmstop-logo-white.png" alt="Film Stop"></a>
+        <div class="compact-actions"><a class="compact-cta" href="/#contact">Book a Strategy Call</a>
+            <details class="site-menu">
+                <summary aria-label="Open navigation menu" aria-controls="site-dropdown"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></summary>
+                <div class="site-dropdown" id="site-dropdown"><a href="/#work">Work</a>
+<a href="/portfolio">Portfolio</a>
+<a href="/#services">Services</a>
+<a href="/#about">About</a>
+<a href="/quote">Quote</a>
+<a href="/blog/">Blog</a>
+<a href="/project-profiles/">Project Profiles</a>
+<a href="/#contact">Contact</a></div>
+            </details>
+        </div>
     </nav>
 
     <!-- Mobile Menu -->
-    <div class="quote-mobile-menu">
-        <ul class="quote-mobile-menu-links">
-            <li><a href="/#work">Work</a></li>
-            <li><a href="/#services">Services</a></li>
-            <li><a href="/#about">About</a></li>
-            <li><a href="/quote" class="active">Quote</a></li>
-            <li><a href="/#contact">Book a Strategy Call</a></li>
-        </ul>
-    </div>
+
 
     <!-- Hero -->
     <section class="quote-hero">
@@ -1024,24 +1017,6 @@
 
         toggleDroneAddon();
         updateEstimate();
-
-        // Mobile menu
-        const navToggle = document.querySelector('.quote-nav-toggle');
-        const mobileMenu = document.querySelector('.quote-mobile-menu');
-
-        navToggle.addEventListener('click', () => {
-            navToggle.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
-            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
-        });
-
-        mobileMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                navToggle.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-        });
 
         // Stagger video playback
         document.querySelectorAll('.quote-hero-bg video').forEach((video, i) => {

@@ -18,6 +18,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=white-logo">
+    <link rel="stylesheet" href="/css/navigation.css?v=1">
+    <script src="/js/navigation.js?v=1" defer></script>
 </head>
 <body>
     <!-- Loader -->
@@ -35,38 +37,25 @@
     <div class="cursor-follower"></div>
 
     <!-- Navigation -->
-    <nav class="nav">
-        <a href="#" class="nav-logo">
-            <img src="assets/images/filmstop-logo-white.png" alt="Film Stop">
-        </a>
-        <button class="nav-toggle" aria-label="Toggle menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        <ul class="nav-links">
-            <li><a href="#work">Work</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="/quote">Quote</a></li>
-            <li><a href="/blog/">Blog</a></li>
-                            <li><a href="/project-profiles/">Project Profiles</a></li>
-            <li><a href="#contact" class="nav-cta">Book a Consultation</a></li>
-        </ul>
+    <nav class="nav compact-navigation" aria-label="Main navigation">
+        <a href="/" class="compact-logo" aria-label="Film Stop home"><img src="/assets/images/filmstop-logo-white.png" alt="Film Stop"></a>
+        <div class="compact-actions"><a class="compact-cta" href="#contact">Book a Consultation</a>
+            <details class="site-menu">
+                <summary aria-label="Open navigation menu" aria-controls="site-dropdown"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></summary>
+                <div class="site-dropdown" id="site-dropdown"><a href="/#work">Work</a>
+<a href="/portfolio">Portfolio</a>
+<a href="/#services">Services</a>
+<a href="/#about">About</a>
+<a href="/quote">Quote</a>
+<a href="/blog/">Blog</a>
+<a href="/project-profiles/">Project Profiles</a>
+<a href="/#contact">Contact</a></div>
+            </details>
+        </div>
     </nav>
 
     <!-- Mobile Menu -->
-    <div class="mobile-menu">
-        <ul class="mobile-menu-links">
-            <li><a href="#work">Work</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="/quote">Quote</a></li>
-            <li><a href="/blog/">Blog</a></li>
-                            <li><a href="/project-profiles/">Project Profiles</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </div>
+
 
     <!-- Hero Section -->
     <section class="hero">
@@ -138,7 +127,7 @@
                 <h2 class="section-title">Featured Work</h2>
                 <p class="section-description">A curated selection of our finest productions across various genres and formats.</p>
             </div>
-            
+
             <div class="work-filters">
                 <button class="filter-btn active" data-filter="all">All</button>
                 <button class="filter-btn" data-filter="music">Music Videos</button>
@@ -793,7 +782,7 @@
                 <h2 class="section-title">What to Expect</h2>
                 <p class="section-description">Every project is different, but most Film Stop projects fall within these ranges.</p>
             </div>
-            
+
             <div class="investment-grid">
                 <div class="investment-card">
                     <h3 class="investment-service">Music Videos</h3>
@@ -816,7 +805,7 @@
                     <p class="investment-note">Full coverage and highlight reels</p>
                 </div>
             </div>
-            
+
             <p class="investment-disclaimer">Final pricing depends on scope, crew size, locations, and post-production needs. Let's talk about your vision — we'll build a package that fits. <a href="/faq.html" class="investment-faq-link">View all FAQs →</a></p>
         </div>
     </section>
@@ -845,7 +834,7 @@
                     <span class="section-label">Get in Touch</span>
                     <h2 class="section-title">Tell Us What You're Building</h2>
                     <p class="contact-description">Whether you have a full concept or just an idea, we'd love to hear about it. Serving Baltimore, DC, and the surrounding areas — and beyond for the right project.</p>
-                    
+
                     <div class="contact-details">
                         <div class="contact-item">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
