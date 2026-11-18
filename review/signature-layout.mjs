@@ -7,4 +7,4 @@ export function fitSignature(strokes,width,height,size=1){
   const x=(width-w*scale)/2,y=(height-h*scale)/2;
   return strokes.map(stroke=>stroke.map(p=>[x+(p[0]*900-left)*scale,y+(p[1]*240-top)*scale]));
 }
-export function signatureSize(value=1){if(!Number.isFinite(value)||value<.25||value>1)throw Object.assign(new Error('Signature size must be between 25% and 100%.'),{status:400});return value;}
+export function signatureSize(value=1){if(!Number.isFinite(value)||value<.25||value>2)throw Object.assign(new Error('Signature size must be between 25% and 200%.'),{status:400});return value;}

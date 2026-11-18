@@ -1,4 +1,4 @@
-import {fitSignature} from './signature-layout.mjs?v=1';
+import {fitSignature} from './signature-layout.mjs?v=2';
 import {profileLink,$,api,endpoint,status,text} from './shared.js';
 import {getDocument,GlobalWorkerOptions} from './vendor/pdf.mjs';
 GlobalWorkerOptions.workerSrc='/review/vendor/pdf.worker.mjs';
@@ -26,11 +26,11 @@ function redraw(){const c=$('signature-pad'),ctx=c.getContext('2d');ctx.clearRec
 function updateFieldList(){ $('field-list').replaceChildren();for(const f of fields){const li=text('li',`Page ${f.page+1} · ${f.label} · ${f.type}${f.required?' · Required':''}`);const remove=text('button','Remove','secondary');remove.type='button';remove.onclick=()=>{fields=fields.filter(x=>x.id!==f.id);delete values[f.id];changed();updateFieldList();renderFields();};li.append(remove);$('field-list').append(li);} }
 function paintSignature(canvas,strokes,size=1){
   const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.lineWidth=3;ctx.lineCap='round';ctx.strokeStyle='#111';
-  for(const stroke of fitSignature(strokes,canvas.width/3,canvas.height/3,size)){ctx.beginPath();stroke.forEach((p,i)=>ctx[i?'lineTo':'moveTo'](p[0]*3,p[1]*3));ctx.stroke();}
+  for(const stroke of fitSignature(strokes,canvas.width/6,canvas.height/6,size)){ctx.beginPath();stroke.forEach((p,i)=>ctx[i?'lineTo':'moveTo'](p[0]*3+canvas.width/4,p[1]*3+canvas.height/4));ctx.stroke();}
 }
 function renderSignaturePreview(){
   const f=signatureTarget,page=f&&config?.pages[f.page],canvas=$('signature-preview');if(!page)return;
-  const width=f.w*page.width,height=f.h*page.height;canvas.width=Math.round(width*3);canvas.height=Math.round(height*3);canvas.style.aspectRatio=`${width}/${height}`;paintSignature(canvas,signature,Number($('signature-size').value)/100);
+  const width=f.w*page.width,height=f.h*page.height;canvas.width=Math.round(width*6);canvas.height=Math.round(height*6);canvas.style.aspectRatio=`${width}/${height}`;paintSignature(canvas,signature,Number($('signature-size').value)/100);
   $('signature-size-value').textContent=$('signature-size').value+'%';
 }
 $('signature-size').oninput=renderSignaturePreview;
@@ -50,7 +50,7 @@ function renderFields(){
     if(['signature','owner-signature'].includes(f.type) && !completed){
       el=text('button',f.type==='owner-signature'?'Sign here · Film Stop':isSetup()?'Preview client signature':'Click to sign','signature-trigger');el.type='button';el.setAttribute('aria-label',f.label+' — draw signature');el.onclick=e=>{e.stopPropagation();openSignature(f);};
       const strokes=f.type==='owner-signature'?config.ownerSignatures?.[f.id]?.signature:isSetup()?previewSignatures[f.id]:signature;
-      if(strokes?.length){el.textContent='';const canvas=document.createElement('canvas');canvas.width=Math.round(f.w*config.pages[f.page].width*3);canvas.height=Math.round(f.h*config.pages[f.page].height*3);el.append(canvas);paintSignature(canvas,strokes,f.type==='owner-signature'?config.ownerSignatures?.[f.id]?.size??1:isSetup()?previewSignatureSizes[f.id]??1:signatureSizes[f.id]??1);el.setAttribute('aria-label',f.label+' — edit signature');}
+      if(strokes?.length){el.textContent='';const canvas=document.createElement('canvas');canvas.width=Math.round(f.w*config.pages[f.page].width*6);canvas.height=Math.round(f.h*config.pages[f.page].height*6);el.classList.add('has-signature');el.append(canvas);paintSignature(canvas,strokes,f.type==='owner-signature'?config.ownerSignatures?.[f.id]?.size??1:isSetup()?previewSignatureSizes[f.id]??1:signatureSizes[f.id]??1);el.setAttribute('aria-label',f.label+' — edit signature');}
     }else if(completed){el=text('div',completed?f.type==='signature'?'':String(values[f.id]||''):f.label,'field-marker');}
     else {el=document.createElement('input');el.type=f.type==='radio'?'radio':f.type==='checkbox'?'checkbox':f.type==='date'?'date':'text';el.required=f.required;el.maxLength=300;el.setAttribute('aria-label',`${f.label}${f.required?' (required)':''}`);if(!isSetup())el.setAttribute('form','complete-document');el.placeholder=f.label;el.title=f.label;if(f.type==='radio')el.name=`choice-${f.group}`;
       if(['checkbox','radio'].includes(f.type)){el.checked=values[f.id]===true;values[f.id]=el.checked;}else{el.value=values[f.id]||'';values[f.id]=el.value;}el.oninput=()=>{if(f.type==='radio'){for(const other of fields.filter(x=>x.type==='radio' && x.group===f.group))values[other.id]=other.id===f.id;}else values[f.id]=f.type==='checkbox'?el.checked:el.value;changed();};}

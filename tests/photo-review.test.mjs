@@ -272,7 +272,7 @@ test('signature fitting preserves drawing proportions in wide and tall boxes',()
  const strokes=[[[.1,.1],[.2,.9],[.4,.5],[.6,.3],[.9,.9]]];
  const bounds=lines=>{const p=lines.flat();return{w:Math.max(...p.map(p=>p[0]))-Math.min(...p.map(p=>p[0])),h:Math.max(...p.map(p=>p[1]))-Math.min(...p.map(p=>p[1]))};};
  for(const[w,h]of[[335,24],[80,100]]){const full=bounds(fitSignature(strokes,w,h));const small=bounds(fitSignature(strokes,w,h,.5));assert.ok(Math.abs(full.w/full.h-(.8*900)/(.8*240))<1e-9);assert.ok(full.w<=w&&full.h<=h);assert.ok(Math.abs(small.w/full.w-.5)<1e-9);assert.ok(Math.abs(small.h/full.h-.5)<1e-9);}
- for(const size of[0,NaN,2,-1])assert.throws(()=>signatureSize(size));
+ for(const size of[0,NaN,3,-1])assert.throws(()=>signatureSize(size));
 });
 test('published producer signature resizing keeps prior source and locks completed copies',async()=>{
  const owner=cookie(await request('owner-login',{data:{password:secret}}));const{id}=await(await request('create',{cookie:owner,data:{kind:'document',title:'TEST ONLY — resize',client:'Test',limit:12,passcode:'resize-test'}})).json();

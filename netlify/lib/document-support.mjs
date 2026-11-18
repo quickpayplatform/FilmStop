@@ -44,7 +44,13 @@ export function validateSignature(strokes, check) {
   return strokes;
 }
 function drawSignature(page, strokes, box, size=1) {
-  const fitted=fitSignature(strokes,box.w,box.h,signatureSize(size));
+  let fitted=fitSignature(strokes,box.w,box.h,signatureSize(size));
+  const points=fitted.flat(),{width,height}=page.getSize(),xs=points.map(p=>box.x+p[0]),ys=points.map(p=>box.y+box.h-p[1]);
+  const w=Math.max(...xs)-Math.min(...xs),h=Math.max(...ys)-Math.min(...ys),scale=Math.min(1,(width-4)/Math.max(w,1),(height-4)/Math.max(h,1));
+  if(scale<1)fitted=fitted.map(stroke=>stroke.map(p=>[(p[0]-box.w/2)*scale+box.w/2,(p[1]-box.h/2)*scale+box.h/2]));
+  const all=fitted.flat(),left=Math.min(...all.map(p=>box.x+p[0])),right=Math.max(...all.map(p=>box.x+p[0])),bottom=Math.min(...all.map(p=>box.y+box.h-p[1])),top=Math.max(...all.map(p=>box.y+box.h-p[1]));
+  const dx=left<2?2-left:right>width-2?width-2-right:0,dy=bottom<2?2-bottom:top>height-2?height-2-top:0;
+  fitted=fitted.map(stroke=>stroke.map(p=>[p[0]+dx,p[1]-dy]));
   for(const stroke of fitted)for(let i=1;i<stroke.length;i++)page.drawLine({start:{x:box.x+stroke[i-1][0],y:box.y+box.h-stroke[i-1][1]},end:{x:box.x+stroke[i][0],y:box.y+box.h-stroke[i][1]},thickness:1,color:rgb(.05,.05,.05)});
 }
 async function producerSource(store,id,draft,fields){
