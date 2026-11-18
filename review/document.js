@@ -73,8 +73,7 @@ async function load(){
   $('access').hidden=true;$('document-review').hidden=false;$('document-title').textContent=gallery.title;$('client-name').textContent=gallery.client;$('owner-back').hidden=!gallery.owner;
   $('setup').hidden=!isSetup();$('owner-share').hidden=!gallery.owner||!gallery.published;
   $('document-link').value=`${location.origin}/review/document.html?gallery=${id}`;
-  $('download-original').hidden=!config;$('download-original').href=endpoint('document-file',id,{download:'1'});
-  $('download-completed').hidden=!completed;$('download-completed').href=endpoint('document-file',id,{download:'1',completed:'1'});
+  $('download-filled').hidden=!config;$('download-filled').textContent=completed?'Download signed PDF':config?.signing===false?'Download PDF':'Download filled PDF';
   $('complete-document').hidden=isSetup()||!config?.signing||Boolean(completed);
   $('completion').hidden=!completed;if(completed)$('completion-details').textContent=`Submitted by ${completed.name} · ${new Date(completed.submitted).toLocaleString()}`;
   $('document-instructions').textContent=isSetup()?'Click the highlighted fields to fill out this draft. Entries save automatically. Click your signature box to sign.':completed?'Here is the completed copy saved for you and Film Stop.':config?.signing?'Review every page, fill in the highlighted fields, then sign and submit below.':'Review your document below or download a copy.';
@@ -82,6 +81,15 @@ async function load(){
   if(isSetup()){$('purpose').value=config?.signing===false?'read':'sign';$('field-tools').hidden=$('purpose').value==='read';}
   if(config){$('pdf-file').closest('label').hidden=true;await renderPDF(Boolean(completed));updateFieldList();}
 }
+$('download-filled').onclick=async()=>{
+  const button=$('download-filled');button.disabled=true;
+  try{
+    if(isSetup())await saveDraft();
+    const response=await fetch(endpoint('document-export',id),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({values,signature:isSetup()?[]:signature})});
+    if(!response.ok){const result=await response.json();throw new Error(result.error||'Unable to download the filled PDF.');}
+    const blob=await response.blob(),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`filmstop-${completed?'signed':'filled'}-${id}.pdf`;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);status('Downloaded the PDF with your current entries and saved signatures.');
+  }catch(e){report(e);}finally{button.disabled=false;}
+};
 $('unlock').onsubmit=async e=>{e.preventDefault();e.submitter.disabled=true;try{await api('unlock',id,{passcode:new FormData(e.target).get('passcode')});await load();status('');}catch(e){report(e);}finally{e.submitter.disabled=false;}};
 $('pdf-file').onchange=async e=>{const file=e.target.files[0];if(!file)return;e.target.disabled=true;try{if(file.size>3*1024*1024)throw new Error('Use a PDF up to 3 MB.');const response=await fetch(endpoint('document-upload',id,{filename:file.name}),{method:'POST',headers:{'Content-Type':'application/pdf'},body:file});const result=await response.json();if(!response.ok)throw new Error(result.error);await load();status('PDF uploaded. Add fields on the preview.');}catch(e){report(e);$('pdf-file').disabled=Boolean(config);}};
 $('purpose').onchange=()=>{setAddingField(false);changed();$('field-tools').hidden=$('purpose').value==='read';if($('purpose').value==='read'){fields=[];updateFieldList();renderFields();}};

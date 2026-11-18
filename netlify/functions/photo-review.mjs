@@ -36,7 +36,7 @@ function check(condition, message, status = 400) {
   if (!condition) throw Object.assign(new Error(message), { status });
 }
 async function body(request) {
-  const maxSize = ['document-submit','document-owner-signature'].includes(new URL(request.url).searchParams.get('action')) ? 350000 : 100000;
+  const maxSize = ['document-submit','document-owner-signature','document-export'].includes(new URL(request.url).searchParams.get('action')) ? 350000 : 100000;
   check(Number(request.headers.get('content-length') || 0) < maxSize, 'Request too large', 413);
   const text = await request.text();
   check(text.length < maxSize, 'Request too large', 413);

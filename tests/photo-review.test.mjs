@@ -251,3 +251,18 @@ test('draft entries persist, retain signatures, and carry into client completion
   assert.equal((await request('document-submit',{id,cookie:client,data})).status,200);
   assert.equal(records.get(`document-completed/${id}`).data.values['a'.repeat(32)],'Saved draft entry');
 });
+
+test('filled export includes partial draft entries and owner signature without finalizing',async()=>{
+ const owner=cookie(await request('owner-login',{data:{password:secret}}));
+ const{id}=await(await request('create',{cookie:owner,data:{kind:'document',title:'TEST ONLY — filled download',client:'Test',limit:12,passcode:'export-test'}})).json();
+ const pdf=await PDFDocument.create();pdf.addPage([612,792]);const source=await pdf.save();await request('document-upload',{id,cookie:owner,bytes:source});
+ const fields=[field('text','a'),field('owner-signature','b',{y:.5,h:.1}),field('signature','c',{y:.7,h:.1}),field('date','d',{y:.2})];
+ await request('document-layout',{id,cookie:owner,data:{fields,signing:true,values:{['a'.repeat(32)]:'FILLED EXPORT VERIFIED'}}});
+ await request('document-owner-signature',{id,cookie:owner,data:{fieldId:'b'.repeat(32),signature,name:'TEST producer'}});
+ assert.equal((await request('document-export',{id,data:{values:{}}})).status,401);
+ const response=await request('document-export',{id,cookie:owner,data:{values:{}}});assert.equal(response.status,200);assert.match(response.headers.get('content-disposition'),/filled/);
+ const output=Buffer.from(await response.arrayBuffer());const parsed=await PDFDocument.load(output);assert.equal(parsed.getPageCount(),1);assert.equal(records.has(`document-completed/${id}`),false);assert.equal(records.has(`published/${id}`),false);
+ assert.deepEqual(new Uint8Array(await(await request('document-file',{id,cookie:owner})).arrayBuffer()),source);
+ await writeFile('/tmp/filmstop-filled-export-test.pdf',output);
+ assert.equal((await request('document-export',{id,cookie:owner,data:{values:{['a'.repeat(32)]:'x'.repeat(301)}}})).status,400);
+});

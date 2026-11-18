@@ -45,7 +45,7 @@ export function validateSignature(strokes, check) {
 function drawSignature(page, strokes, box) {
   for (const stroke of strokes) for(let i=1;i<stroke.length;i++) page.drawLine({start:{x:box.x+stroke[i-1][0]*box.w,y:box.y+(1-stroke[i-1][1])*box.h},end:{x:box.x+stroke[i][0]*box.w,y:box.y+(1-stroke[i][1])*box.h},thickness:1.2,color:rgb(.05,.05,.05)});
 }
-export async function completedPDF(source, config, data, title, id, time, check) {
+export async function completedPDF(source, config, data, title, id, time, check, {receipt:includeReceipt=true}={}) {
   const doc=await PDFDocument.load(source); doc.registerFontkit(fontkit);
   const font=await doc.embedFont(fontBytes,{subset:true});
   const glyphs=new Set(font.getCharacterSet());
@@ -73,12 +73,14 @@ export async function completedPDF(source, config, data, title, id, time, check)
     if(text) page.drawText(text,{x:box.x+2,y:box.y+(box.h-size)/2+1,size,font,color:rgb(.05,.05,.05)});
   }
   // A separate receipt leaves the contract's original page layout intact.
+  if(includeReceipt){
   const receipt=doc.addPage([612,792]);
   const lines=['Film Stop | Document completion record',title,`Review ID: ${id}`,`Completed by: ${data.name.trim()}`,`Email (provided by signer): ${data.email.trim()}`,`Submitted (UTC): ${time}`,'','Source PDF SHA-256:',digest(source),'','Consent: I have reviewed this document and agree to use','my electronic signature and submit this completed copy.','','This record documents a passcode-protected submission.','The signer name and email were supplied by the signer.'];
   let y=740; for (const line of lines) { // Wrap long titles and email addresses without clipping.
     let remaining=line; while(remaining.length) { let length=remaining.length; while(font.widthOfTextAtSize(remaining.slice(0,length),10)>510) length--; receipt.drawText(remaining.slice(0,length),{x:50,y,size:10,font}); remaining=remaining.slice(length); y-=17; } if(!line)y-=17;
   }
-  doc.setTitle(`${title} — completed`); doc.setModificationDate(new Date(time));
+  }
+  doc.setTitle(`${title} — ${includeReceipt?'completed':'filled'}`); doc.setModificationDate(new Date(time));
   const bytes=await doc.save(); return {bytes,values:cleaned};
 }
 export async function documentAction({action,request,url,id,gallery,owner,store,body,check,json,headers}) {
@@ -147,6 +149,25 @@ export async function documentAction({action,request,url,id,gallery,owner,store,
     }
     const {ownerSignatures,...publicDraft}=draft;
     await store.setJSON(`published/${id}`,{document:{...publicDraft,sourceHash,signing:Boolean(data.signing),fields:fields.filter(f=>f.type!=='owner-signature'),producerSigned:ownerFields.length>0}},{onlyIfNew:true});return json({published:true});
+  }
+  if(action==='document-export' && request.method==='POST') {
+    const saved=await store.get(completedKey,{type:'json'});
+    let bytes;
+    if(saved)bytes=Buffer.from(saved.pdf,'base64');
+    else {
+      const config=gallery.document || (owner && await store.get(draftKey,{type:'json'}));check(config,'Upload a PDF first.');
+      const data=await body(request);
+      const entries=validateDraftValues({...config.prefill,...(data.values||{})},config.fields,check);
+      const editable=config.fields.filter(f=>!['signature','owner-signature'].includes(f.type)).map(f=>({...f,required:false}));
+      const values=Object.fromEntries(editable.map(f=>[f.id,entries[f.id]??(['checkbox','radio'].includes(f.type)?false:'')]));
+      const source=await store.get(gallery.document?.producerSigned?`document-published-source/${id}/${gallery.document.sourceHash}`:sourceKey,{type:'arrayBuffer'});check(source,'PDF not found.',404);
+      bytes=editable.length?(await completedPDF(source,{fields:editable},{name:'',email:'',values},gallery.title,id,new Date().toISOString(),check,{receipt:false})).bytes:new Uint8Array(source);
+      const signatures=[];
+      if(owner && !gallery.published)for(const field of config.fields.filter(f=>f.type==='owner-signature')){const mark=config.ownerSignatures?.[field.id];if(mark)signatures.push({field,strokes:mark.signature});}
+      if(data.signature?.length){const strokes=validateSignature(data.signature,check);for(const field of config.fields.filter(f=>f.type==='signature'))signatures.push({field,strokes});}
+      if(signatures.length){const pdf=await PDFDocument.load(bytes);for(const{field,strokes}of signatures){const page=pdf.getPage(field.page),{width,height}=page.getSize();drawSignature(page,strokes,{x:field.x*width,y:(1-field.y-field.h)*height,w:field.w*width,h:field.h*height});}bytes=await pdf.save();}
+    }
+    return new Response(bytes,{headers:{...headers,'Content-Type':'application/pdf','Content-Disposition':`attachment; filename="filmstop-${saved?'signed':'filled'}-${id}.pdf"`}});
   }
   if(action==='document-file' && request.method==='GET') {
     const completed=url.searchParams.get('completed')==='1';
