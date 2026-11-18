@@ -24,7 +24,7 @@ const store = {
     if (options.onlyIfNew && records.has(key)) return { modified: false };
     records.set(key, { data: structuredClone(data) }); return { modified: true };
   },
-  async set(key, data, options) { records.set(key, { data: await data.arrayBuffer(), metadata: options.metadata }); return { modified: true }; },
+  async set(key, data, options) { if (options.onlyIfNew && records.has(key)) return {modified:false}; records.set(key, { data: await data.arrayBuffer(), metadata: options.metadata }); return { modified: true }; },
   async getMetadata(key) { return records.get(key) ? { metadata: records.get(key).metadata } : null; },
   async getWithMetadata(key) { return records.get(key) || null; },
   async list({ prefix }) { return { blobs: [...records.keys()].filter(key => key.startsWith(prefix)).map(key => ({ key })) }; }
@@ -66,4 +66,36 @@ test('private gallery lifecycle enforces access, publication, limit and final su
   const listed=await (await request('list',{cookie:owner})).json();
   assert.ok(listed[0].submitted);
   assert.equal((await request('gallery',{id,cookie:client.replace(/.$/,'x')})).status,401);
+});
+
+import { videoRange, chunkSize } from '../netlify/lib/video-support.mjs';
+test('video byte ranges cap response size and support seeking and suffixes', () => {
+  assert.deepEqual(videoRange('bytes=20-39',100),{start:20,end:39});
+  assert.deepEqual(videoRange('bytes=-10',100),{start:90,end:99});
+  assert.deepEqual(videoRange('bytes=0-',chunkSize*3),{start:0,end:chunkSize-1});
+  for(const range of ['bytes=100-','bytes=30-10','bytes=0-1,3-4','invalid','bytes=-0']) assert.equal(videoRange(range,100),null);
+});
+test('video lifecycle supports private playback, resumable chunks and timestamped comments', async () => {
+  const owner=cookie(await request('owner-login',{data:{password:secret}}));
+  const created=await request('create',{cookie:owner,data:{kind:'video',client:'Linkind',title:'Rough cut V1',limit:12,passcode:'Linkkind'}});
+  const {id}=await created.json();
+  const bytes=Buffer.concat([Buffer.from([0,0,0,24]),Buffer.from('ftypisom00000000')]);
+  const meta={filename:'review.mp4',size:bytes.length,duration:150,fingerprint:'a'.repeat(64)};
+  assert.equal((await request('video-init',{id,cookie:owner,data:meta})).status,200);
+  assert.equal((await request('video-publish',{id,cookie:owner,data:{}})).status,400);
+  const upload=()=>handler(new Request(`https://filmstopcreate.com/.netlify/functions/photo-review?action=video-upload&gallery=${id}&chunk=0`,{method:'POST',headers:{origin:'https://filmstopcreate.com',cookie:owner},body:bytes}));
+  assert.equal((await upload()).status,200);
+  assert.equal((await upload()).status,200);
+  assert.equal((await request('video-init',{id,cookie:owner,data:{...meta,fingerprint:'b'.repeat(64)}})).status,409);
+  assert.equal((await request('video-publish',{id,cookie:owner,data:{}})).status,200);
+  assert.equal((await request('video',{id})).status,401);
+  const viewer=cookie(await request('unlock',{id,data:{passcode:'Linkkind'}}));
+  const streamed=await handler(new Request(`https://filmstopcreate.com/.netlify/functions/photo-review?action=video&gallery=${id}`,{headers:{cookie:viewer,range:'bytes=4-7'}}));
+  assert.equal(streamed.status,206);assert.equal(streamed.headers.get('Content-Range'),`bytes 4-7/${bytes.length}`);assert.equal(await streamed.text(),'ftyp');
+  const comment={id:'f'.repeat(32),time:65,author:'Client',text:'Shorten this section.'};
+  assert.equal((await request('comment',{id,cookie:viewer,data:{...comment,time:200}})).status,400);
+  assert.equal((await request('comment',{id,cookie:viewer,data:comment})).status,200);
+  assert.equal((await request('comment',{id,cookie:viewer,data:comment})).status,200);
+  assert.equal((await request('comment',{id,cookie:viewer,data:{...comment,text:'Changed'}})).status,409);
+  const comments=await (await request('comments',{id,cookie:owner})).json();assert.equal(comments.length,1);assert.equal(comments[0].time,65);
 });

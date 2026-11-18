@@ -1,3 +1,4 @@
+import { videoAction } from '../lib/video-support.mjs';
 import { getStore } from '@netlify/blobs';
 import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 
@@ -55,7 +56,7 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
     try {
       const secret = ownerSecret();
       check(secret?.length >= 20, 'Photo review is awaiting owner setup.', 503);
-      if (request.method !== 'GET') {
+      if (!['GET', 'HEAD'].includes(request.method)) {
         check(request.headers.get('origin') === new URL(request.url).origin, 'Request origin rejected.', 403);
       }
       const url = new URL(request.url);
@@ -78,7 +79,7 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
           const g = await store.get(key, { type: 'json' });
           const submitted = await store.get(`selection/${g.id}`, { type: 'json' });
           const published = Boolean(await store.get(`published/${g.id}`, { type: 'json' }));
-          return { id: g.id, title: g.title, limit: g.limit, created: g.created, published, submitted: submitted?.submitted || null };
+          return { id: g.id, title: g.title, client: g.client || g.title.split('·')[0].trim(), kind: g.kind || 'photos', limit: g.limit, created: g.created, published, submitted: submitted?.submitted || null };
         }));
         return json(galleries.sort((a,b) => b.created.localeCompare(a.created)));
       }
@@ -86,11 +87,13 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
         check(owner, 'Sign in to continue.', 401);
         const data = await body(request);
         check(typeof data.title === 'string' && data.title.trim().length > 0 && data.title.length <= 150, 'Enter a project name.');
+        check(!data.kind || ['photos', 'video'].includes(data.kind), 'Choose photos or video.');
+        check(!data.client || (typeof data.client === 'string' && data.client.length <= 100), 'Client name must be under 100 characters.');
         check(Number.isInteger(data.limit) && data.limit > 0 && data.limit <= 500, 'Selection limit must be between 1 and 500.');
         check(typeof data.passcode === 'string' && data.passcode.length >= 8 && data.passcode.length <= 128, 'Use a client passcode of 8–128 characters.');
         const galleryId = randomBytes(16).toString('hex');
         const salt = randomBytes(16).toString('hex');
-        const gallery = { id: galleryId, title: data.title.trim(), limit: data.limit, salt, hash: passwordHash(data.passcode, salt), created: new Date().toISOString(), published: false };
+        const gallery = { id: galleryId, title: data.title.trim(), client: data.client?.trim() || data.title.split('·')[0].trim(), kind: data.kind || 'photos', limit: data.limit, salt, hash: passwordHash(data.passcode, salt), created: new Date().toISOString(), published: false };
         await store.setJSON(`gallery/${galleryId}`, gallery, { onlyIfNew: true });
         return json({ id: galleryId });
       }
@@ -98,7 +101,7 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
       let gallery = await store.get(`gallery/${id}`, { type: 'json' });
       check(gallery, 'Gallery not found.', 404);
       const manifest = await store.get(`published/${id}`, { type: 'json' });
-      if (manifest) gallery = { ...gallery, photos: manifest.photos, published: true };
+      if (manifest) gallery = { ...gallery, photos: manifest.photos || [], video: manifest.video, published: true };
       if (action === 'unlock' && request.method === 'POST') {
         check(gallery.published, 'This gallery is not ready yet.', 404);
         const data = await body(request);
@@ -108,6 +111,8 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
       }
       const client = authenticated(request, cookieName(id), id, secret);
       check(owner || (client && gallery.published), 'Enter the gallery passcode.', 401);
+      const videoResponse = await videoAction({ action, request, url, id, gallery, owner, store, body, check, json, headers });
+      if (videoResponse) return videoResponse;
       if (action === 'upload' && request.method === 'POST') {
         check(owner && !gallery.published, 'Uploads are only available for owner drafts.', 403);
         const photoId = url.searchParams.get('photo');
@@ -144,12 +149,12 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
         return new Response(photo.data, { headers: { ...headers, 'Content-Type': photo.metadata.type, 'Content-Disposition': 'inline' } });
       }
       if (action === 'gallery' && request.method === 'GET') {
-        let photos = gallery.photos;
+        let photos = gallery.photos || [];
         if (!gallery.published) {
           const { blobs } = await store.list({ prefix: `photo/${id}/` });
           photos = await Promise.all(blobs.map(async ({ key }) => ({ id: key.split('/').at(-1), filename: (await store.getMetadata(key)).metadata.filename })));
         }
-        return json({ id, title: gallery.title, limit: gallery.limit, published: gallery.published, photos, selection: await store.get(`selection/${id}`, { type: 'json' }) });
+        return json({ id, title: gallery.title, owner, kind: gallery.kind || 'photos', client: gallery.client || gallery.title.split('·')[0].trim(), video: gallery.video, limit: gallery.limit, published: gallery.published, photos, selection: await store.get(`selection/${id}`, { type: 'json' }) });
       }
       if (action === 'submit' && request.method === 'POST') {
         check(gallery.published, 'Gallery is not published.', 409);

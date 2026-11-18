@@ -52,6 +52,7 @@ function render() {
 }
 async function load() {
   gallery = await api('gallery', id);
+  if (gallery.kind === 'video') { location.replace(`/review/video.html?gallery=${id}`); return; }
   picks = new Set(gallery.selection?.picks || []);
   if (!gallery.selection) {
     try { const saved = JSON.parse(sessionStorage.getItem(draftKey) || '[]'); picks = new Set(saved.filter(p => gallery.photos.some(photo => photo.id === p)).slice(0, gallery.limit)); } catch { /* Ignore invalid saved picks. */ }

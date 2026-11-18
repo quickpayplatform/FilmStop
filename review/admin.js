@@ -10,21 +10,42 @@ async function list() {
   panel('dashboard'); $('logout').hidden = false;
   $('projects').replaceChildren();
   if (!projects.length) $('projects').append(text('p', 'Create a gallery to begin.'));
-  for (const project of projects) {
-    const row = text('button', '', 'project-row');
-    row.append(text('strong', project.title), text('span', project.submitted ? 'Selections received' : project.published ? 'Awaiting client selections' : 'Draft · Add photos'));
-    row.onclick = () => open(project.id).catch(e => status(e.message));
-    $('projects').append(row);
+  const clients = [...new Set(projects.map(p => p.client || 'Other projects'))];
+  for (const client of clients) {
+    const folder = document.createElement('details');
+    folder.className = 'client-folder'; folder.open = true;
+    folder.append(text('summary', client));
+    for (const project of projects.filter(p => (p.client || 'Other projects') === client)) {
+      const row = text('button', '', 'project-row');
+      const label = project.kind === 'video' ? 'Video feedback' : 'Photo selection';
+      row.append(text('strong', project.title), text('span', `${label} · ${project.submitted ? 'Selections received' : project.published ? 'Published' : 'Draft'}`));
+      row.onclick = () => open(project.id).catch(e => status(e.message));
+      folder.append(row);
+    }
+    $('projects').append(folder);
   }
 }
 async function open(id) {
   gallery = await api('gallery', id);
   panel('project');
   $('project-title').textContent = gallery.title;
-  $('project-info').textContent = `Up to ${gallery.limit} ${gallery.limit === 1 ? 'selection' : 'selections'} · ${gallery.photos.length} ${gallery.photos.length === 1 ? 'photo' : 'photos'} · ${gallery.published ? 'Published' : 'Draft'}`;
-  $('upload-panel').hidden = gallery.published;
+  const isVideo = gallery.kind === 'video';
+  $('video-upload-panel').hidden = !isVideo || gallery.published;
+  $('photo-heading').hidden = isVideo;
+  $('project-photos').hidden = isVideo;
+  $('upload-status').textContent = '';
+  $('video-upload-status').textContent = '';
+  $('project-info').textContent = `${gallery.client} · Video review · ${gallery.published ? 'Published' : 'Draft'}`;
+  if (!isVideo) $('project-info').textContent = `Up to ${gallery.limit} ${gallery.limit === 1 ? 'selection' : 'selections'} · ${gallery.photos.length} ${gallery.photos.length === 1 ? 'photo' : 'photos'} · ${gallery.published ? 'Published' : 'Draft'}`;
+  $('upload-panel').hidden = isVideo || gallery.published;
   $('share').hidden = !gallery.published;
-  $('share-url').value = `${location.origin}/review/?gallery=${id}`;
+  $('share-url').value = `${location.origin}/review/${isVideo ? 'video.html' : ''}?gallery=${id}`;
+  $('open-review').href = $('share-url').value;
+  if (isVideo && !gallery.published) {
+    const draft = await api('video-draft', id);
+    $('video-upload-status').textContent = draft.meta ? `${draft.meta.filename} · ${draft.uploaded.length} of ${draft.meta.chunks} parts uploaded. Choose the same file to resume.` : '';
+    $('publish-video').disabled = !draft.meta || draft.uploaded.length !== draft.meta.chunks;
+  }
   $('results').hidden = !gallery.selection;
   $('project-photos').replaceChildren();
   const selected = new Set(gallery.selection?.picks || []);
@@ -46,12 +67,12 @@ $('login').onsubmit = async event => {
   try { await api('owner-login', null, { password: new FormData(event.target).get('password') }); event.target.reset(); await list(); } catch(e) { status(e.message); } finally { event.submitter.disabled = false; }
 };
 $('logout').onclick = async () => { try { await api('logout', null, {}); $('logout').hidden = true; panel('login-panel'); } catch(e) { status(e.message); } };
-$('new-project').onclick = () => { panel('create-panel'); $('create').reset(); const random = new Uint8Array(9); crypto.getRandomValues(random); $('create').elements.passcode.value = [...random].map(x => x.toString(16).padStart(2,'0')).join(''); };
+$('new-project').onclick = () => { panel('create-panel'); $('create').reset(); $('create').elements.limit.closest('label').hidden = false; const random = new Uint8Array(9); crypto.getRandomValues(random); $('create').elements.passcode.value = [...random].map(x => x.toString(16).padStart(2,'0')).join(''); };
 $('cancel-create').onclick = () => panel('dashboard');
 $('create').onsubmit = async event => {
   event.preventDefault(); event.submitter.disabled = true;
   const values = new FormData(event.target);
-  try { const result = await api('create', null, { title: values.get('title'), passcode: values.get('passcode'), limit: Number(values.get('limit')) }); await open(result.id); } catch(e) { status(e.message); } finally { event.submitter.disabled = false; }
+  try { const result = await api('create', null, { title: values.get('title'), passcode: values.get('passcode'), client: values.get('client'), kind: values.get('kind'), limit: Number(values.get('limit')) }); await open(result.id); } catch(e) { status(e.message); } finally { event.submitter.disabled = false; }
 };
 $('back').onclick = () => { if (!busy) list().catch(e => status(e.message)); };
 async function preview(file) {
@@ -105,3 +126,46 @@ $('download').onclick = () => {
 };
 window.addEventListener('beforeunload', e => { if (busy) { e.preventDefault(); e.returnValue = ''; } });
 list().catch(e => { panel('login-panel'); if(e.status !== 401) status(e.message); });
+
+$('create').elements.kind.onchange = () => {
+  $('create').elements.limit.closest('label').hidden = $('create').elements.kind.value === 'video';
+};
+async function videoMetadata(file) {
+  const video = document.createElement('video');
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    return await new Promise((resolve, reject) => {
+      video.preload = 'metadata';
+      video.onloadedmetadata = () => Number.isFinite(video.duration) && video.duration > 0 ? resolve(video.duration) : reject(new Error('Unable to read video duration.'));
+      video.onerror = () => reject(new Error('Export this video as an H.264 MP4 with AAC audio, then try again.'));
+      video.src = objectUrl;
+    });
+  } finally { video.removeAttribute('src'); video.load(); URL.revokeObjectURL(objectUrl); }
+}
+$('video-file').onchange = async event => {
+  const file = event.target.files[0];
+  if (!file || busy) return;
+  busy = true; $('back').disabled = true; $('video-file').disabled = true; $('publish-video').disabled = true;
+  try {
+    const duration = await videoMetadata(file);
+    const fingerprintBytes = await new Blob([file.slice(0, 1024 ** 2), file.slice(Math.max(0, file.size - 1024 ** 2)), String(file.size)]).arrayBuffer();
+    const fingerprint = [...new Uint8Array(await crypto.subtle.digest('SHA-256', fingerprintBytes))].map(b => b.toString(16).padStart(2, '0')).join('');
+    const meta = await api('video-init', gallery.id, { filename: file.name, size: file.size, duration, fingerprint });
+    const draft = await api('video-draft', gallery.id);
+    const uploaded = new Set(draft.uploaded);
+    for (let chunk = 0; chunk < meta.chunks; chunk++) {
+      $('video-upload-status').textContent = `Uploading ${Math.round(chunk / meta.chunks * 100)}% · Keep this page open`;
+      if (uploaded.has(chunk)) continue;
+      const response = await fetch(endpoint('video-upload', gallery.id, { chunk }), { method: 'POST', body: file.slice(chunk * meta.chunkSize, Math.min(file.size, (chunk + 1) * meta.chunkSize)) });
+      if (!response.ok) { const error = await response.json().catch(() => ({})); throw new Error(error.error || 'Upload interrupted. Choose the same file to resume.'); }
+    }
+    $('video-upload-status').textContent = `${file.name} · Upload complete`;
+    $('publish-video').disabled = false;
+  } catch(e) { status(e.message); }
+  finally { busy = false; $('back').disabled = false; $('video-file').disabled = false; $('video-file').value = ''; }
+};
+$('publish-video').onclick = async () => {
+  $('publish-video').disabled = true;
+  try { await api('video-publish', gallery.id, {}); await open(gallery.id); status('Video review published. Share the link and passcode with your client.'); }
+  catch(e) { status(e.message); $('publish-video').disabled = false; }
+};
