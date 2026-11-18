@@ -74,6 +74,8 @@ export async function documentAction({action,request,url,id,gallery,owner,store,
   const draftKey=`document-draft/${id}`, sourceKey=`document-source/${id}`, completedKey=`document-completed/${id}`;
   if(action==='document-upload' && request.method==='POST') {
     check(owner && !gallery.published,'Only owner drafts accept uploads.',403);
+    const contentType=request.headers.get('content-type')?.split(';')[0].trim().toLowerCase();
+    check(!contentType || ['application/pdf','application/octet-stream'].includes(contentType),'Send this file as a PDF upload, not as a web form.');
     const bytes=Buffer.from(await request.arrayBuffer());
     check(bytes.length>0 && bytes.length<=3*1024*1024,'Upload a PDF up to 3 MB.',413);
     check(bytes.subarray(0,5).toString()==='%PDF-','Choose a PDF file.');

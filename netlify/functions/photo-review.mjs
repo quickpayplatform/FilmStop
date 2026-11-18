@@ -179,7 +179,6 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
       return json({ error: 'Action not found.' }, 404);
     } catch (error) {
       if (!error.status) console.error('Photo review request failed', error.name);
-      if (!error.status && new URL(request.url).searchParams.get('action')?.startsWith('document-') && authenticated(request, 'fs_owner', 'owner', ownerSecret())) return json({error: `Document processing failed: ${error.message}`}, 500);
       return json({ error: error.status ? error.message : 'Unable to complete this request. Please try again.' }, error.status || 500);
     }
   }
