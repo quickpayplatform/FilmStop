@@ -177,3 +177,24 @@ test('read-only documents publish without fields and cannot be signed',async()=>
   assert.equal((await request('document-submit',{id,cookie:viewer,data:{}})).status,409);
   assert.equal((await request('document-file',{id,cookie:viewer})).status,200);
 });
+
+test('owner signature stays private in draft and is embedded before client signing',async()=>{
+  const owner=cookie(await request('owner-login',{data:{password:secret}}));
+  const {id}=await(await request('create',{cookie:owner,data:{kind:'document',client:'Workflow verification',title:'TEST ONLY — two signatures',limit:12,passcode:'test-contract'}})).json();
+  const pdf=await PDFDocument.create();pdf.addPage();const source=await pdf.save();
+  await request('document-upload',{id,cookie:owner,bytes:source});
+  const fields=[field('owner-signature','a'),field('signature','b',{y:.6,h:.1})];
+  await request('document-layout',{id,cookie:owner,data:{fields,signing:true}});
+  assert.equal((await request('document-owner-signature',{id,data:{fieldId:'a'.repeat(32),signature,name:'TEST producer'}})).status,401);
+  assert.equal((await request('document-publish',{id,cookie:owner,data:{fields,signing:true}})).status,400);
+  assert.equal((await request('document-owner-signature',{id,cookie:owner,data:{fieldId:'a'.repeat(32),signature,name:'TEST producer'}})).status,200);
+  const draft=await(await request('document-config',{id,cookie:owner})).json();assert.ok(draft.config.ownerSignatures['a'.repeat(32)]);
+  assert.equal((await request('document-publish',{id,cookie:owner,data:{fields,signing:true}})).status,200);
+  const client=cookie(await request('unlock',{id,data:{passcode:'test-contract'}}));
+  const shared=await(await request('document-config',{id,cookie:client})).json();assert.equal(shared.config.fields.length,1);assert.equal(shared.config.ownerSignatures,undefined);assert.equal(shared.config.producerSigned,true);
+  assert.equal((await request('document-owner-signature',{id,cookie:client,data:{fieldId:'a'.repeat(32),signature,name:'Imposter'}})).status,403);
+  const published=await(await request('document-file',{id,cookie:client})).arrayBuffer();assert.notDeepEqual(new Uint8Array(published),source);
+  const data={requestId:'e'.repeat(32),name:'TEST client',email:'test@example.com',signature,values:{},consent:true};
+  assert.equal((await request('document-submit',{id,cookie:client,data})).status,200);
+  const saved=records.get(`document-completed/${id}`).data;assert.equal(saved.sourceHash,shared.config.sourceHash);
+});
