@@ -1,3 +1,4 @@
+import { feedbackAction } from '../lib/video-feedback.mjs';
 import { videoAction } from '../lib/video-support.mjs';
 import { getStore } from '@netlify/blobs';
 import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
@@ -111,6 +112,8 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
       }
       const client = authenticated(request, cookieName(id), id, secret);
       check(owner || (client && gallery.published), 'Enter the gallery passcode.', 401);
+      const feedbackResponse = await feedbackAction({ action, request, id, gallery, owner, store, body, check, json });
+      if (feedbackResponse) return feedbackResponse;
       const videoResponse = await videoAction({ action, request, url, id, gallery, owner, store, body, check, json, headers });
       if (videoResponse) return videoResponse;
       if (action === 'upload' && request.method === 'POST') {

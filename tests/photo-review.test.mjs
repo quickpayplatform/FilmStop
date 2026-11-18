@@ -99,3 +99,25 @@ test('video lifecycle supports private playback, resumable chunks and timestampe
   assert.equal((await request('comment',{id,cookie:viewer,data:{...comment,text:'Changed'}})).status,409);
   const comments=await (await request('comments',{id,cookie:owner})).json();assert.equal(comments.length,1);assert.equal(comments[0].time,65);
 });
+
+test('batch feedback validates every row and prepares a complete Netlify form submission', async () => {
+  const id='1'.repeat(32);
+  records.set(`gallery/${id}`,{data:{id,title:'Linkkind Mini documentary commercial',kind:'video',limit:12,published:false}});
+  records.set(`published/${id}`,{data:{video:{duration:150,size:100}}});
+  const owner=cookie(await request('owner-login',{data:{password:secret}}));
+  const data={id:'2'.repeat(32),author:'Client reviewer',notes:[{time:15,text:'Shorten this shot.'},{time:70,text:'Raise the music here.'}],general:'Use a warmer overall grade.'};
+  assert.equal((await request('feedback',{id,data})).status,401);
+  for(const invalid of [{...data,notes:[]},{...data,notes:[{time:151,text:'Outside video'}]},{...data,notes:[{time:2,text:' '}]},{...data,author:''}]) {
+    assert.equal((await request('feedback',{id,cookie:owner,data:invalid})).status,400);
+  }
+  const result=await request('feedback',{id,cookie:owner,data});assert.equal(result.status,200);
+  const {fields}=await result.json();
+  assert.equal(fields['form-name'],'feedback-notes');
+  assert.equal(fields['video-title'],'Linkkind Mini documentary commercial');
+  assert.equal(fields['feedback-notes'],'00:15\nShorten this shot.\n\n01:10\nRaise the music here.');
+  assert.equal(fields['general-request'],data.general);
+  assert.equal((await request('feedback',{id,cookie:owner,data})).status,200);
+  assert.equal((await request('feedback',{id,cookie:owner,data:{...data,general:'Changed'}})).status,409);
+  assert.equal((await request('feedback-delivered',{id,cookie:owner,data:{id:data.id}})).status,200);
+  const saved=await (await request('feedback-list',{id,cookie:owner})).json();assert.equal(saved.length,1);assert.equal(saved[0].notes.length,2);
+});
