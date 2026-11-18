@@ -1,4 +1,4 @@
-import { $, api, endpoint, status, text } from './shared.js';
+import {profileLink, $, api, endpoint, status, text } from './shared.js';
 const id = new URLSearchParams(location.search).get('gallery');
 let gallery;
 let picks = new Set();
@@ -51,7 +51,7 @@ function render() {
   $('photos').replaceChildren(fragment); updateCount();
 }
 async function load() {
-  gallery = await api('gallery', id);
+  gallery = await api('gallery', id); profileLink(gallery);
   if (gallery.kind === 'video') { location.replace(`/review/video.html?gallery=${id}`); return; }
   picks = new Set(gallery.selection?.picks || []);
   if (!gallery.selection) {

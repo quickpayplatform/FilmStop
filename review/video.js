@@ -1,4 +1,4 @@
-import { $, api, endpoint, status, text } from './shared.js';
+import {profileLink, $, api, endpoint, status, text } from './shared.js';
 const id = new URLSearchParams(location.search).get('gallery');
 const player = $('player');
 const form = $('feedback-form');
@@ -55,7 +55,7 @@ function restoreDraft() {
   } else addRow('00:00');
 }
 async function load() {
-  gallery = await api('gallery', id);
+  gallery = await api('gallery', id); profileLink(gallery);
   if (gallery.kind !== 'video' || !gallery.published) throw new Error('This video review is not ready to view.');
   $('video-title').textContent = gallery.title; $('client-name').textContent = gallery.client;
   $('video-shell').classList.toggle('burned-watermark', Boolean(gallery.video.watermarked));

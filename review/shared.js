@@ -30,3 +30,10 @@ export function photoCard(photo, gallery) {
   card.append(img, meta);
   return card;
 }
+
+export function profileLink(gallery){
+  let link=document.getElementById('back-profile');
+  if(!gallery.profile){if(link)link.remove();return;}
+  if(!link){link=document.createElement('a');link.id='back-profile';document.querySelector('main').prepend(link);}
+  link.href=`/project-profiles/?profile=${gallery.profile.id}`;link.textContent=`← ${gallery.profile.name} profile`;link.style.display='inline-block';link.style.marginBottom='20px';
+}

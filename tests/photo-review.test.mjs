@@ -27,14 +27,15 @@ const store = {
   async set(key, data, options) { if (options.onlyIfNew && records.has(key)) return {modified:false}; records.set(key, { data: await data.arrayBuffer(), metadata: options.metadata }); return { modified: true }; },
   async getMetadata(key) { return records.get(key) ? { metadata: records.get(key).metadata } : null; },
   async getWithMetadata(key) { return records.get(key) || null; },
+  async delete(key) { records.delete(key); },
   async list({ prefix }) { return { blobs: [...records.keys()].filter(key => key.startsWith(prefix)).map(key => ({ key })) }; }
 };
 const secret = 'test-owner-password-long-enough';
 const handler = createHandler(() => store, () => secret);
-async function request(action, { id, data, cookie, photo, filename, bytes, origin = 'https://filmstopcreate.com' } = {}) {
+async function request(action, { id, data, cookie, photo, filename, bytes, profile, origin = 'https://filmstopcreate.com' } = {}) {
   const url = new URL('https://filmstopcreate.com/.netlify/functions/photo-review');
   url.searchParams.set('action', action);
-  for (const [key, value] of Object.entries({ gallery:id, photo, filename })) if(value) url.searchParams.set(key,value);
+  for (const [key, value] of Object.entries({ gallery:id, photo, filename, profile })) if(value) url.searchParams.set(key,value);
   return handler(new Request(url, { method: data || bytes ? 'POST' : 'GET', headers: { origin, ...(cookie ? { cookie } : {}) }, body: bytes || (data ? JSON.stringify(data) : undefined) }));
 }
 const cookie = response => response.headers.get('set-cookie').split(';')[0];
@@ -197,4 +198,37 @@ test('owner signature stays private in draft and is embedded before client signi
   const data={requestId:'e'.repeat(32),name:'TEST client',email:'test@example.com',signature,values:{},consent:true};
   assert.equal((await request('document-submit',{id,cookie:client,data})).status,200);
   const saved=records.get(`document-completed/${id}`).data;assert.equal(saved.sourceHash,shared.config.sourceHash);
+});
+
+test('profiles isolate projects, hide drafts, share access, and revoke old sessions',async()=>{
+  const owner=cookie(await request('owner-login',{data:{password:secret}}));
+  assert.equal((await request('profile-create',{data:{name:'Unauthorized',passcode:'123456'}})).status,403);
+  const a=await(await request('profile-create',{cookie:owner,data:{name:'Profile A',passcode:'simple-A',listed:true}})).json();
+  const b=await(await request('profile-create',{cookie:owner,data:{name:'Profile B',passcode:'simple-B',listed:false}})).json();
+  assert.equal((await request('profile-create',{cookie:owner,data:{name:'profile a',passcode:'123456'}})).status,409);
+  const directory=await(await request('profile-list')).json();assert.deepEqual(directory.map(p=>p.id),[a.id]);assert.equal(directory[0].hash,undefined);
+  const create=async(title,profileId)=> (await(await request('create',{cookie:owner,data:{title,client:'Test',profileId,kind:'document',category:'agreements',limit:12,passcode:'item-passcode'}})).json()).id;
+  const first=await create('Published A',a.id),draft=await create('Draft A',a.id),other=await create('Published B',b.id);
+  for(const id of[first,other]){const pdf=await PDFDocument.create();pdf.addPage();await request('document-upload',{id,cookie:owner,bytes:await pdf.save()});await request('document-publish',{id,cookie:owner,data:{fields:[],signing:false}});}
+  assert.equal((await request('profile-detail',{profile:a.id})).status,401);
+  assert.equal((await request('profile-unlock',{profile:a.id,data:{passcode:'wrong'}})).status,401);
+  const client=cookie(await request('profile-unlock',{profile:a.id,data:{passcode:'simple-A'}}));
+  const detail=await(await request('profile-detail',{profile:a.id,cookie:client})).json();assert.deepEqual(detail.items.map(i=>i.id),[first]);assert.equal(detail.hash,undefined);
+  assert.equal((await request('document-file',{id:first,cookie:client})).status,200);
+  assert.equal((await request('gallery',{id:first,cookie:client})).status,200);
+  assert.equal((await request('gallery',{id:draft,cookie:client})).status,401);
+  assert.equal((await request('document-file',{id:other,cookie:client})).status,401);
+  assert.equal((await request('profile-detail',{profile:b.id,cookie:client})).status,401);
+  assert.equal((await request('profile-assign',{profile:a.id,cookie:client,data:{gallery:other,category:'agreements'}})).status,403);
+  assert.equal((await request('profile-assign',{profile:b.id,cookie:owner,data:{gallery:first,category:'scripts'}})).status,200);
+  assert.equal((await request('document-file',{id:first,cookie:client})).status,401);
+  const clientB=cookie(await request('profile-unlock',{profile:b.id,data:{passcode:'simple-B'}}));
+  assert.equal((await request('document-file',{id:first,cookie:clientB})).status,200);
+  const bItems=await(await request('profile-detail',{profile:b.id,cookie:clientB})).json();assert.equal(bItems.items.find(i=>i.id===first).category,'scripts');
+  await request('profile-update',{profile:b.id,cookie:owner,data:{name:'Profile B',passcode:'changed-B',listed:false}});
+  assert.equal((await request('document-file',{id:first,cookie:clientB})).status,401);
+  const fresh=cookie(await request('profile-unlock',{profile:b.id,data:{passcode:'changed-B'}}));
+  await request('profile-assign',{profile:b.id,cookie:owner,data:{gallery:first,category:'scripts',remove:true}});
+  assert.equal((await request('document-file',{id:first,cookie:fresh})).status,401);
+  const ownerDetail=await(await request('profile-detail',{profile:a.id,cookie:owner})).json();assert.ok(ownerDetail.items.find(i=>i.id===draft));
 });

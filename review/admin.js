@@ -68,12 +68,14 @@ $('login').onsubmit = async event => {
   try { await api('owner-login', null, { password: new FormData(event.target).get('password') }); event.target.reset(); await list(); } catch(e) { status(e.message); } finally { event.submitter.disabled = false; }
 };
 $('logout').onclick = async () => { try { await api('logout', null, {}); $('logout').hidden = true; panel('login-panel'); } catch(e) { status(e.message); } };
-$('new-project').onclick = () => { panel('create-panel'); $('create').reset(); $('create').elements.limit.closest('label').hidden = false; const random = new Uint8Array(9); crypto.getRandomValues(random); $('create').elements.passcode.value = [...random].map(x => x.toString(16).padStart(2,'0')).join(''); };
+$('new-project').onclick = async () => { panel('create-panel'); $('create').reset(); $('create').elements.limit.closest('label').hidden = false; $('create').elements.category.closest('label').hidden=true;
+  const select=$('create').elements.profileId;select.replaceChildren(new Option('No profile',''));try{for(const p of await api('profile-list'))select.add(new Option(p.name,p.id));}catch(e){status(e.message);}
+  const random = new Uint8Array(9); crypto.getRandomValues(random); $('create').elements.passcode.value = [...random].map(x => x.toString(16).padStart(2,'0')).join(''); };
 $('cancel-create').onclick = () => panel('dashboard');
 $('create').onsubmit = async event => {
   event.preventDefault(); event.submitter.disabled = true;
   const values = new FormData(event.target);
-  try { const result = await api('create', null, { title: values.get('title'), passcode: values.get('passcode'), client: values.get('client'), kind: values.get('kind'), limit: Number(values.get('limit')) }); await open(result.id); } catch(e) { status(e.message); } finally { event.submitter.disabled = false; }
+  try { const result = await api('create', null, { title: values.get('title'), passcode: values.get('passcode'), client: values.get('client'), profileId:values.get('profileId'), category:values.get('category'), kind: values.get('kind'), limit: Number(values.get('limit')) }); await open(result.id); } catch(e) { status(e.message); } finally { event.submitter.disabled = false; }
 };
 $('back').onclick = () => { if (!busy) list().catch(e => status(e.message)); };
 async function preview(file) {
@@ -130,6 +132,7 @@ list().catch(e => { panel('login-panel'); if(e.status !== 401) status(e.message)
 
 $('create').elements.kind.onchange = () => {
   $('create').elements.limit.closest('label').hidden = $('create').elements.kind.value !== 'photos';
+  $('create').elements.category.closest('label').hidden = $('create').elements.kind.value !== 'document';
 };
 async function videoMetadata(file) {
   const video = document.createElement('video');

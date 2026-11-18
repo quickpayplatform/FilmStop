@@ -1,4 +1,4 @@
-import {$,api,endpoint,status,text} from './shared.js';
+import {profileLink,$,api,endpoint,status,text} from './shared.js';
 import {getDocument,GlobalWorkerOptions} from './vendor/pdf.mjs';
 GlobalWorkerOptions.workerSrc='/review/vendor/pdf.worker.mjs';
 const id=new URLSearchParams(location.search).get('gallery');
@@ -55,7 +55,7 @@ async function renderPDF(done=false){
   if(!done)renderFields();
 }
 async function load(){
-  gallery=await api('gallery',id);const state=await api('document-config',id);config=state.config;completed=state.completed;fields=config?.fields||[];
+  gallery=await api('gallery',id);profileLink(gallery);const state=await api('document-config',id);config=state.config;completed=state.completed;fields=config?.fields||[];
   $('access').hidden=true;$('document-review').hidden=false;$('document-title').textContent=gallery.title;$('client-name').textContent=gallery.client;$('owner-back').hidden=!gallery.owner;
   $('setup').hidden=!isSetup();$('owner-share').hidden=!gallery.owner||!gallery.published;
   $('document-link').value=`${location.origin}/review/document.html?gallery=${id}`;

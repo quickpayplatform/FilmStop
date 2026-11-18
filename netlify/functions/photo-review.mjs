@@ -1,3 +1,4 @@
+import { profileAction, profileForGallery, profileCookie, profileSubject } from '../lib/profile-support.mjs';
 import { documentAction } from '../lib/document-support.mjs';
 import { feedbackAction } from '../lib/video-feedback.mjs';
 import { videoAction } from '../lib/video-support.mjs';
@@ -82,7 +83,7 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
           const g = await store.get(key, { type: 'json' });
           const submitted = await store.get(`${g.kind === 'document' ? 'document-completed' : 'selection'}/${g.id}`, { type: 'json' });
           const published = Boolean(await store.get(`published/${g.id}`, { type: 'json' }));
-          return { id: g.id, title: g.title, client: g.client || g.title.split('·')[0].trim(), kind: g.kind || 'photos', limit: g.limit, created: g.created, published, submitted: submitted?.submitted || null };
+          return { id: g.id, title: g.title, profileId: (await store.get(`profile-link/${g.id}`, {type:'json'}))?.profileId || null, client: g.client || g.title.split('·')[0].trim(), kind: g.kind || 'photos', limit: g.limit, created: g.created, published, submitted: submitted?.submitted || null };
         }));
         return json(galleries.sort((a,b) => b.created.localeCompare(a.created)));
       }
@@ -94,12 +95,17 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
         check(!data.client || (typeof data.client === 'string' && data.client.length <= 100), 'Client name must be under 100 characters.');
         check(Number.isInteger(data.limit) && data.limit > 0 && data.limit <= 500, 'Selection limit must be between 1 and 500.');
         check(typeof data.passcode === 'string' && data.passcode.length >= 8 && data.passcode.length <= 128, 'Use a client passcode of 8–128 characters.');
+        if(data.profileId)check(idPattern.test(data.profileId) && await store.get(`profile/${data.profileId}`,{type:'json'}),'Choose a valid profile.');
+        check(!data.category||['agreements','scripts','other'].includes(data.category),'Choose a document folder.');
         const galleryId = randomBytes(16).toString('hex');
         const salt = randomBytes(16).toString('hex');
         const gallery = { id: galleryId, title: data.title.trim(), client: data.client?.trim() || data.title.split('·')[0].trim(), kind: data.kind || 'photos', limit: data.limit, salt, hash: passwordHash(data.passcode, salt), created: new Date().toISOString(), published: false };
         await store.setJSON(`gallery/${galleryId}`, gallery, { onlyIfNew: true });
+        if(data.profileId)await store.setJSON(`profile-link/${galleryId}`,{profileId:data.profileId,category:data.category||'other'});
         return json({ id: galleryId });
       }
+      const profileResponse = await profileAction({action,request,url,store,owner,body,check,json,session,authenticated,secret,headers});
+      if(profileResponse)return profileResponse;
       check(idPattern.test(id || ''), 'Gallery not found.', 404);
       let gallery = await store.get(`gallery/${id}`, { type: 'json' });
       check(gallery, 'Gallery not found.', 404);
@@ -112,7 +118,8 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
         check(equal(passwordHash(data.passcode, gallery.salt), gallery.hash), 'Incorrect passcode.', 401);
         return new Response('{}', { headers: session(cookieName(id), id, secret) });
       }
-      const client = authenticated(request, cookieName(id), id, secret);
+      const profile = await profileForGallery(store,id);
+      const client = authenticated(request, cookieName(id), id, secret) || Boolean(profile && authenticated(request,profileCookie(profile.id),profileSubject(profile),secret));
       check(owner || (client && gallery.published), 'Enter the gallery passcode.', 401);
       const documentResponse = await documentAction({ action, request, url, id, gallery, owner, store, body, check, json, headers });
       if (documentResponse) return documentResponse;
@@ -162,7 +169,7 @@ export function createHandler(storageFactory = getStore, ownerSecret = () => pro
           const { blobs } = await store.list({ prefix: `photo/${id}/` });
           photos = await Promise.all(blobs.map(async ({ key }) => ({ id: key.split('/').at(-1), filename: (await store.getMetadata(key)).metadata.filename })));
         }
-        return json({ id, title: gallery.title, owner, kind: gallery.kind || 'photos', client: gallery.client || gallery.title.split('·')[0].trim(), video: gallery.video, document: gallery.document, limit: gallery.limit, published: gallery.published, photos, selection: await store.get(`selection/${id}`, { type: 'json' }) });
+        return json({ id, title: gallery.title, owner, kind: gallery.kind || 'photos', client: gallery.client || gallery.title.split('·')[0].trim(), video: gallery.video, document: gallery.document, profile: profile?{id:profile.id,name:profile.name}:null, limit: gallery.limit, published: gallery.published, photos, selection: await store.get(`selection/${id}`, { type: 'json' }) });
       }
       if (action === 'submit' && request.method === 'POST') {
         check(gallery.published, 'Gallery is not published.', 409);
