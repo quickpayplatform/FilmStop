@@ -52,14 +52,14 @@ export async function profileAction({action,request,url,store,owner,body,check,j
   if(action==='profile-finals' && request.method==='GET'){
     const manifest=await store.get(`finals/${id}`,{type:'json'});
     let downloads=[];if(owner){const {blobs}=await store.list({prefix:`final-download/${id}/`});downloads=(await Promise.all(blobs.map(b=>store.get(b.key,{type:'json'})))).filter(Boolean).sort((a,b)=>b.time.localeCompare(a.time));}
-    return json({files:manifest?.files||[],downloads,owner});
+    return json({files:(manifest?.files||[]).map(f=>({...f,name:f.name.replace(/enhanced/gi,'edited')})),downloads,owner});
   }
   if(action==='profile-final-download' && request.method==='GET'){
     const manifest=await store.get(`finals/${id}`,{type:'json'});check(manifest,'No finals available.',404);
     const file=url.searchParams.get('file');const entry=file==='all'?manifest.archive:manifest.files.find(f=>f.id===file);check(entry,'File not found.',404);
     const bytes=await store.get(entry.key,{type:'arrayBuffer'});check(bytes,'File unavailable.',404);
     if(!owner)await store.setJSON(`final-download/${id}/${randomBytes(16).toString('hex')}`,{time:new Date().toISOString(),filename:entry.name,type:file==='all'?'All photos ZIP':'Individual photo'});
-    return new Response(bytes,{headers:{...headers,'Content-Type':file==='all'?'application/zip':'image/png','Content-Disposition':`attachment; filename="${entry.name}"`,'Cache-Control':'private, no-store'}});
+    return new Response(bytes,{headers:{...headers,'Content-Type':file==='all'?'application/zip':'image/png','Content-Disposition':`attachment; filename="${entry.name.replace(/enhanced/gi,'edited')}"`,'Cache-Control':'private, no-store'}});
   }
   if(action==='profile-detail' && request.method==='GET'){
     const{blobs}=await store.list({prefix:'profile-link/'});const items=[];
