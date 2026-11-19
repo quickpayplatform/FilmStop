@@ -9,7 +9,7 @@ function render(){
   $('folders').replaceChildren();$('items').replaceChildren();$('breadcrumbs').replaceChildren();
   const root=text('button','Profile');root.onclick=()=>{section='';folder='';render();};$('breadcrumbs').append(root);
   if(section==='finals'){renderFinals();return;}
-  if(!section){$('folders').append(card('Finals','Media · Photos · Download final files',()=>{section='finals';render();}),card('Media','Photos and videos',()=>{section='media';render();}),card('Documents','Agreements, scripts, and project files',()=>{section='documents';render();}));return;}
+  if(!section){$('folders').append(card('Finals','Media · Edited Photos · Download final files',()=>{section='finals';render();}),card('Media','Photos and videos',()=>{section='media';render();}),card('Documents','Agreements, scripts, and project files',()=>{section='documents';render();}));return;}
   const parent=text('button',section==='media'?'Media':'Documents');parent.onclick=()=>{folder='';render();};$('breadcrumbs').append(text('span','/'),parent);
   const choices=section==='media'?[['photos','Photos'],['video','Videos']]:[['agreements','Agreements'],['scripts','Scripts'],['other','Other documents']];
   if(!folder){for(const[key,label]of choices){const count=current.items.filter(p=>section==='media'?p.kind===key:p.kind==='document'&&p.category===key).length;$('folders').append(card(label,`${count} ${count===1?'project':'projects'}`,()=>{folder=key;render();}));}return;}
@@ -35,11 +35,11 @@ async function start(){const profiles=await route('profile-list');try{await api(
 start().catch(e=>status(e.message));
 
 async function renderFinals(){
- $('breadcrumbs').append(text('span',' / Finals / Media / Photos'));
+ $('breadcrumbs').append(text('span',' / Finals / Media / Edited Photos'));
  try{const data=await route('profile-finals');if(section!=='finals')return;
- if(!data.files.length){$('items').append(text('p','Final photos will appear here when ready.'));return;}
+ if(!data.files.length){$('items').append(text('p','Edited photos will appear here when ready.'));return;}
  const linkFor=file=>'/.netlify/functions/photo-review'+'?'+new URLSearchParams({action:'profile-final-download',profile:profileId,file});
- const all=text('a','Download all photos (JPEG ZIP)','project-row');all.href=linkFor('all');$('items').append(all);
+ const all=text('a','Download all edited photos (JPEG ZIP)','project-row');all.href=linkFor('all');$('items').append(all);
  for(const f of data.files){const row=text('div','','project-row');const image=document.createElement('img');image.alt=f.name;image.loading='lazy';image.src=linkFor(f.id)+'&preview=1';image.style.cssText='width:160px;max-height:120px;object-fit:contain';const a=text('a','Download '+f.name);a.href=linkFor(f.id);row.append(a);$('items').append(row);}
  if(data.owner){$('items').append(text('h2','Client download activity'),text('p','Records file requests from unlocked client sessions, not proof of a completed save. Owner downloads are excluded.'));if(!data.downloads.length)$('items').append(text('p','No client downloads recorded yet.'));for(const e of data.downloads)$('items').append(text('p',new Date(e.time).toLocaleString()+' · '+e.type+' · '+e.filename));}
  }catch(e){status(e.message);}
