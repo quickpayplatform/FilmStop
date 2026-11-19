@@ -38,8 +38,8 @@ async function renderFinals(){
  $('breadcrumbs').append(text('span',' / Finals / Media / Photos'));
  try{const data=await route('profile-finals');if(section!=='finals')return;
  if(!data.files.length){$('items').append(text('p','Final photos will appear here when ready.'));return;}
- const linkFor=file=>'/ .netlify/functions/photo-review'.replace('/ ','/')+'?'+new URLSearchParams({action:'profile-final-download',profile:profileId,file});
- const all=text('a','Download all photos (ZIP)','project-row');all.href=linkFor('all');$('items').append(all);
+ const linkFor=file=>'/.netlify/functions/photo-review'+'?'+new URLSearchParams({action:'profile-final-download',profile:profileId,file});
+ const all=text('a','Download all photos (JPEG ZIP)','project-row');all.href=linkFor('all');$('items').append(all);
  for(const f of data.files){const row=text('div','','project-row');const image=document.createElement('img');image.alt=f.name;image.loading='lazy';image.src=linkFor(f.id)+'&preview=1';image.style.cssText='width:160px;max-height:120px;object-fit:contain';const a=text('a','Download '+f.name);a.href=linkFor(f.id);row.append(a);$('items').append(row);}
  if(data.owner){$('items').append(text('h2','Client download activity'),text('p','Records file requests from unlocked client sessions, not proof of a completed save. Owner downloads are excluded.'));if(!data.downloads.length)$('items').append(text('p','No client downloads recorded yet.'));for(const e of data.downloads)$('items').append(text('p',new Date(e.time).toLocaleString()+' · '+e.type+' · '+e.filename));}
  }catch(e){status(e.message);}
