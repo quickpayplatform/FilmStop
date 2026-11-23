@@ -1,5 +1,63 @@
 [
   {
+    "slug": "spacex-launch-live-event-video-production",
+    "title": "SpaceX launch coverage: What it teaches us about filming live events",
+    "description": "What SpaceX launch coverage can teach businesses about event video production: camera planning, clean audio, backup coverage, and capturing moments that happen once.",
+    "category": "Event video production",
+    "image": "/assets/blog/spacex-launch-live-event-video-production.jpg",
+    "imageAlt": "Illustrative cinema camera at a distant rocket launch viewing area at dusk",
+    "date": "2026-11-23",
+    "displayDate": "November 23, 2026",
+    "cta": [
+      "Have an event you cannot film twice?",
+      "Tell Film Stop about your event in Baltimore, Maryland, or the Washington, DC area. We’ll help plan the coverage and deliverables.",
+      "Plan your event video",
+      "/form"
+    ],
+    "sections": [
+      [
+        "Why a rocket launch is a useful filmmaking lesson",
+        "Watch a SpaceX launch and you quickly understand the appeal: a countdown, a moment nobody wants to miss, and people waiting to see what happens next. The engineering is the headline. For a filmmaker, the challenge is also familiar. You have to help viewers understand an event while it is happening, with no option to ask for another take.",
+        "A company announcement or conference keynote has different stakes, but the production problem is similar. The ribbon gets cut once. The audience reacts once. Your video team needs a plan that works before that moment arrives."
+      ],
+      [
+        "Where to watch a SpaceX launch",
+        "For mission information and official coverage, start with <a href='https://www.spacex.com/launches/'>SpaceX’s official launches page</a>. Check the specific mission listing rather than relying on a countdown copied into an old article. This article is about filmmaking, not a live launch-status tracker.",
+        "Film Stop is not affiliated with SpaceX. The lessons below are our production recommendations, not a description of SpaceX’s internal filming procedures."
+      ],
+      [
+        "Give every camera a job",
+        "For a live event, start with the shot you cannot afford to lose. That usually means a dependable wide view of the stage or action. Then assign a tighter angle for the speaker, product, or demonstration. A third position, when the budget allows, can capture audience reactions and room details.",
+        "Do not have every operator chasing the same close-up. If everyone reframes at the same time, an editor can be left with three moving shots and no clean view of the moment. Agree on who holds the safe angle and who has room to move."
+      ],
+      [
+        "Build the shot list around moments, not just a schedule",
+        "A run of show tells you when a presentation begins. A useful production brief tells you what matters within it. Is there a surprise announcement? A customer walking onstage? A product lighting up for the first time? Identify those beats with the client before setting camera positions.",
+        "For example, a lighting demonstration needs more than a shot of the person pressing a button. Capture the unlit scene, the change itself, and the people seeing it. Those three pieces let an editor build a sequence the audience can follow."
+      ],
+      [
+        "Make communication simple before the countdown",
+        "Choose one person to relay timing changes to the crew. Confirm how operators will hear the cue and what happens if that channel fails. A venue contact announcing a change to one camera operator is not the same as the whole team receiving it.",
+        "Before doors open, walk the important positions. Check sightlines with the actual stage setup and ask whether standing guests might block the frame. Leave enough time to move a tripod or reroute a cable without disrupting attendees."
+      ],
+      [
+        "Protect the sound as carefully as the picture",
+        "A sharp image cannot rescue an announcement nobody can hear. Arrange the feed from the venue’s audio team, test it during rehearsal, and monitor the recording. Where practical, record an independent backup and room sound as well.",
+        "Keep applause and reactions. They give an event recap a sense of scale and feeling. Music can support a sequence, but the actual voice, cheer, or pause often tells the story better than another dramatic track."
+      ],
+      [
+        "Plan the recap and social edits before filming",
+        "A livestream, a two-minute recap, and a vertical social clip need different things. Decide what you are delivering before the shoot so the crew can leave room for crops, record useful interviews, and capture details between the headline moments.",
+        "Ask a few focused questions while the experience is fresh: What were you waiting to see? What surprised you? Why does this matter to your team? A short, specific answer gives the finished film a human point of view."
+      ],
+      [
+        "What businesses should put in an event-video brief",
+        "Share the location, audience, schedule, must-capture moments, access restrictions, and intended delivery formats. Name the person who can approve changes on the day. If you need both live coverage and edited films, spell out both so staffing and audio are planned around the full job.",
+        "For a closer look at hiring and deliverables, read our <a href='/blog/hire-event-videographer/'>conference videographer guide</a> and <a href='/blog/event-videographer-deliverables/'>event video deliverables guide</a>. A strong brief will not remove every surprise. It gives the crew a useful starting point when one happens."
+      ]
+    ]
+  },
+  {
     "slug": "friday-the-13th-how-filmmakers-build-suspense",
     "title": "Friday the 13th: How filmmakers build suspense before anything happens",
     "description": "Learn how framing, offscreen sound, and editing build suspense in a film, even before the door opens.",
