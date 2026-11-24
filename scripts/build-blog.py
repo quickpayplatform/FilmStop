@@ -38,7 +38,7 @@ def page(title, description, path, body, image):
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css?v=white-logo">
-    <link rel="stylesheet" href="/css/blog.css?v={4 if path == '/blog/' else 2}">
+    <link rel="stylesheet" href="/css/blog.css?v={5 if path == '/blog/' else 2}">
 </head>
 <body>
     <nav class="blog-nav blog-shell" aria-label="Main navigation">
