@@ -83,7 +83,7 @@ def render():
                 {cover(post['image'], lazy=True)}
                 <div class="blog-card-content">
                     <p class="blog-kicker">{escape(post['category'])}</p>
-                    <p class="blog-card-meta"><time datetime="{escape(post['date'])}">{escape(post['displayDate'])}</time><span aria-hidden="true">·</span><span>{reading_minutes(post)} min read</span></p>
+                    <p class="blog-card-meta"><time datetime="{escape(post['date'])}">{escape(post['displayDate'])}</time><span>{reading_minutes(post)} min read</span></p>
                     <h2>{escape(post['title'])}</h2>
                     <p>{escape(post['description'])}</p>
                     <span class="blog-link" aria-hidden="true">Read article &rarr;</span>
