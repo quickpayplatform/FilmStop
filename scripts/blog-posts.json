@@ -1,5 +1,68 @@
 [
   {
+    "slug": "stranger-things-film-production-atmosphere",
+    "title": "How Stranger Things builds atmosphere: 5 filmmaking lessons in lighting, sound, and framing",
+    "description": "Explore five practical film production techniques that create suspenseful atmosphere, from motivated lighting and deliberate framing to layered sound and patient editing.",
+    "category": "Filmmaking",
+    "image": "/assets/blog/stranger-things-film-production-atmosphere.jpg",
+    "imageAlt": "A professional cinema camera aimed down a moody, empty school corridor set with practical lights",
+    "date": "2026-11-24",
+    "displayDate": "November 24, 2026",
+    "cta": [
+      "Planning a film or video with a strong point of view?",
+      "Tell us what you want your audience to feel and what you need the finished video to do. Film Stop can help shape a practical production plan.",
+      "Plan a project with Film Stop",
+      "/form"
+    ],
+    "secondary": [
+      "Explore the quote calculator",
+      "/quote"
+    ],
+    "sources": [
+      [
+        "Netflix Tudum: Other Worlds announcement",
+        "https://www.netflix.com/tudum/articles/other-worlds-a-stranger-things-adventure-live-action-spinoff-release-date-news"
+      ]
+    ],
+    "sections": [
+      [
+        "Why the show’s atmosphere is a useful filmmaking lesson",
+        "Netflix recently announced Other Worlds: A Stranger Things Adventure, a new live-action prequel planned for 2028. The news has brought Hawkins back into the conversation, and it is a good moment to look at one of the franchise’s most recognizable strengths: the way a place can feel inviting, strange, and a little unsettling at the same time.",
+        "This is a craft breakdown inspired by the show’s mood, not a report on its production methods. The same visual and sound choices can help a short film, interview, commercial, or documentary feel more intentional without copying a specific scene or look."
+      ],
+      [
+        "1. Give the light a reason to be there",
+        "A lit window, a hallway fixture, or a lamp in the next room gives the viewer a reason for the light and a clue about the space. Start by deciding what sources belong in the scene. Then shape their brightness and direction so the subject reads clearly while some of the room stays in shadow.",
+        "For a client interview, that might mean soft key light on the speaker, a practical lamp in the background, and enough separation to keep the room from feeling flat. A few motivated sources often feel more believable than lighting every corner evenly."
+      ],
+      [
+        "2. Compose the frame to guide attention",
+        "A frame can show the character and the space they are reacting to at once. Place the subject off center, leave open space where the viewer expects something might happen, and hold the shot long enough for the audience to notice the details.",
+        "On set, capture a clean wide frame before moving in for close coverage. The wide shot gives the editor room to build anticipation; the close shot gives the scene a clear emotional beat. Make each camera position solve a different storytelling problem."
+      ],
+      [
+        "3. Let sound establish the room",
+        "Suspense often starts with ordinary sound: ventilation, a clock, distant traffic, or the soft movement of a door. Record room tone and useful details separately, then listen to how they change the feeling of a quiet moment. A sudden sound lands better when the audience already understands the silence around it.",
+        "The principle works beyond suspense. Clean dialogue, room tone, and small environmental sounds make a testimonial or documentary feel present. Music can support the emotion, but it should not have to cover a room that was never recorded properly."
+      ],
+      [
+        "4. Use production design selectively",
+        "A few specific details can tell us where we are and when the story takes place. Choose props, colors, and textures that support the idea, then keep the frame clear enough that the audience knows what matters.",
+        "For a brand film, the equivalent may be a real workbench, a product in use, or a location that says something about the company. Ask what each background element adds. If it distracts from the story, remove it."
+      ],
+      [
+        "5. Give the edit room to breathe",
+        "A suspenseful beat needs a beginning, a pause, and a payoff. Coverage should include the moments just before and after the key action, not only the action itself. In the edit, try the pause at different lengths and see when it creates anticipation rather than delay.",
+        "That timing matters in a business story too. Let a person finish a thought. Stay on a reaction for a moment. Give a visual change time to register. A cut should move the story forward or change what the audience understands."
+      ],
+      [
+        "Bring the feeling into your own production",
+        "You do not need a supernatural premise, a large crew, or a replica of Hawkins to create a memorable atmosphere. Begin with the emotion you want people to leave with. Build a simple lighting plan, choose frames with intention, record clean sound, and give the editor purposeful coverage.",
+        "If you are planning a short film, commercial, or company story, our guide to building suspense through framing and sound goes deeper on one of those tools. For a project with a business audience, see our corporate video production guide for the steps from brief to final cut."
+      ]
+    ]
+  },
+  {
     "slug": "spacex-launch-live-event-video-production",
     "title": "SpaceX launch coverage: What it teaches us about filming live events",
     "description": "What SpaceX launch coverage can teach businesses about event video production: camera planning, clean audio, backup coverage, and capturing moments that happen once.",
