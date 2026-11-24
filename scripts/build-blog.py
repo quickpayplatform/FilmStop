@@ -1,11 +1,21 @@
 """Render static blog pages from scripts/blog-posts.json before committing."""
 import json
+import math
+import re
+from html import unescape
 from html import escape
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ORIGIN = "https://filmstopcreate.com"
 POSTS = json.loads((ROOT / "scripts/blog-posts.json").read_text())
+
+
+def reading_minutes(post):
+    article_text = " ".join(text for section in post["sections"] for text in section)
+    article_text = unescape(re.sub(r"<[^>]+>", " ", article_text))
+    word_count = len(re.findall(r"\b[\w’'-]+\b", article_text))
+    return max(1, math.ceil(word_count / 200))
 
 
 def page(title, description, path, body, image):
@@ -73,6 +83,7 @@ def render():
                 {cover(post['image'], lazy=True)}
                 <div class="blog-card-content">
                     <p class="blog-kicker">{escape(post['category'])}</p>
+                    <p class="blog-card-meta"><time datetime="{escape(post['date'])}">{escape(post['displayDate'])}</time><span aria-hidden="true">·</span><span>{reading_minutes(post)} min read</span></p>
                     <h2>{escape(post['title'])}</h2>
                     <p>{escape(post['description'])}</p>
                     <span class="blog-link" aria-hidden="true">Read article &rarr;</span>
