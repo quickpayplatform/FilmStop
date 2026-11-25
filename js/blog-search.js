@@ -6,7 +6,7 @@
     const articles = Array.from(grid.querySelectorAll('.blog-card'), card => ({
         card,
         text: Array.from(card.querySelectorAll('h2, p'), element => element.textContent)
-            .join(' ').toLowerCase()
+            .join(' ').toLowerCase() + ' ' + (card.dataset.searchTerms || '').toLowerCase()
     }));
 
     function filterArticles() {
