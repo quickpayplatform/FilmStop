@@ -1,5 +1,86 @@
 [
   {
+    "slug": "wind-advisory-weather-film-shoot-reschedule",
+    "title": "Wind Advisory and Film Shoots: 7 Ways to Limit Weather-Reschedule Disruption",
+    "description": "A Maryland wind advisory and rainy forecast are a reminder to protect people, gear, schedule, and budget. These seven practical steps can make an inclement-weather film shoot easier to reschedule.",
+    "category": "Production planning",
+    "image": "/assets/blog/weather-reschedule-film-shoot.jpg",
+    "imageAlt": "Professional cinema camera in a fitted rain cover, protected inside a doorway during a windy rainstorm",
+    "date": "2026-11-25",
+    "displayDate": "November 25, 2026",
+    "cta": [
+      "Need to move a shoot because of weather?",
+      "Talk with Film Stop about a realistic new date, location, and production plan for your project.",
+      "Plan your project",
+      "/form"
+    ],
+    "secondary": [
+      "Explore the quote calculator",
+      "/quote"
+    ],
+    "sources": [
+      [
+        "National Weather Service: Baltimore/Washington alerts",
+        "https://forecast.weather.gov/wwamap/wwatxtget.php?cwa=LWX&wwa=all"
+      ],
+      [
+        "National Weather Service: Outdoor event lightning safety",
+        "https://www.weather.gov/safety/lightning-sports"
+      ],
+      [
+        "camRade: Camera rain protection",
+        "https://www.aspectra.nl/products/rain-protection-camera-covers"
+      ]
+    ],
+    "sections": [
+      [
+        "A weather delay is easier to manage when the decision is planned",
+        "A wind advisory is in the forecast for parts of Maryland and the wider DMV on Thanksgiving Day, November 26. The National Weather Service says some affected areas could see gusts of 50 to 55 mph, along with soaking rain. Alerts vary by location and can change, so check the current forecast for your exact set and travel route before making a call.",
+        "For a production, the question is not only whether a camera can be covered. It is whether the crew, cast, location, equipment, and travel can be kept safe while still delivering the footage the client needs. These seven steps help reduce the cost and scramble when bad weather changes the plan."
+      ],
+      [
+        "1. Set a weather decision time and a clear go/no-go rule",
+        "Choose one person to monitor the National Weather Service forecast and alerts, and agree on when the production decision will be made. Share the decision time with the client, crew, cast, and vendors before the shoot. Set practical triggers around the conditions at the location, travel safety, and venue rules, rather than waiting until people are already on the road.",
+        "If lightning is possible, include a shelter and stop-work plan. The National Weather Service recommends a specific lightning safety plan for outdoor activities. A desire to finish the shot list should never override that plan."
+      ],
+      [
+        "2. Hold a backup date before the calendar fills up",
+        "When you book the first date, ask the client, key cast, crew, and location about a rain date or alternate window. Even a soft hold can make rescheduling much easier than starting from scratch. If a full second day is too expensive, identify which essential scenes could be completed in a shorter pickup session.",
+        "Confirm availability for the people whose presence is hardest to replace: the featured talent, director or producer, camera and sound leads, and the location contact."
+      ],
+      [
+        "3. Check rental, permit, location, and vendor terms early",
+        "Do not assume a weather cancellation automatically makes every rental or location fee refundable. Ask each vendor about rescheduling windows, extension charges, pickup and return deadlines, minimum rental periods, and cancellation fees. Check permit and location policies too, and save the answers with the production paperwork.",
+        "If a vendor cannot shift the booking, ask whether another date, a smaller package, or a credit is possible. Confirm any change in writing before you revise the budget."
+      ],
+      [
+        "4. Build a weather-flexible shot list",
+        "Separate the must-have story beats from the shots that depend on a specific exterior, time of day, or weather. Prepare useful indoor coverage you can shoot safely on the same day, such as interviews, product details, voiceover, or close-ups. Get the client’s approval for that alternate plan before the crew arrives.",
+        "An indoor pivot is useful only if it supports the final story and the location is ready. Do not rush into a different setup that creates extra costs or leaves the project without its key visuals."
+      ],
+      [
+        "5. Pack a proper rain plan, not a false sense of security",
+        "For light rain in otherwise safe conditions, a camera-specific rain cover fitted to the full camera and lens setup can help protect equipment. Keep a lens hood on, carry dry cloths and a sheltered place to stage gear, and avoid opening the camera or changing lenses in exposed rain. A waterproof bag is useful for storing or transporting gear; it is not a substitute for an operating rain cover.",
+        "A cover does not make a camera waterproof, protect crew from a storm, or make high winds safe. Follow the camera and cover manufacturers’ limits, keep equipment dry before packing it away, and move the shoot indoors or reschedule if conditions exceed the plan."
+      ],
+      [
+        "6. Treat strong wind as a set-safety issue",
+        "Wind can turn stands, frames, flags, umbrellas, tents, and unsecured cases into hazards. Do not deploy large exposed gear just to save a shot. Secure or bring equipment inside, keep people away from trees and other hazards, and follow the venue’s restrictions and official alerts. If the forecast creates unsafe conditions for the crew, talent, or travel, postpone.",
+        "For a wind advisory or warning, check the latest alert for the specific location. Wind speed and timing differ across the region, and the conditions can change after an earlier forecast."
+      ],
+      [
+        "7. Communicate the change and update the paperwork",
+        "Send one clear update with the decision, reason, new date or next check-in time, and what happens to call time, location, and deliverables. Notify cast, crew, rentals, venue staff, and the client through the agreed channels. Update the call sheet and budget so nobody is working from the old plan.",
+        "Keep the tone calm and factual. A timely update protects people’s time and helps the client understand which costs are avoided, shifted, or still apply."
+      ],
+      [
+        "A safer plan protects the work too",
+        "Weather-proof planning is mostly communication done early: set decision rules, reserve a backup window, understand vendor terms, and know which shots can move indoors. Use a fitted camera rain cover only when conditions are appropriate for people to work safely. When wind, lightning, or travel conditions are hazardous, rescheduling is part of responsible production.",
+        "Film Stop is an independent Baltimore-area video production studio. For each shoot, follow current National Weather Service alerts, the venue’s safety instructions, and the equipment manufacturers’ guidance."
+      ]
+    ]
+  },
+  {
     "slug": "seven-tips-for-filming-sports-pistons-magic",
     "title": "7 Tips for Filming Sports: What Pistons vs. Magic Can Teach Every Crew",
     "description": "The Pistons–Magic matchup puts fast basketball in the spotlight. These seven practical sports video tips help crews capture the action, reactions, and story without missing the moment.",
